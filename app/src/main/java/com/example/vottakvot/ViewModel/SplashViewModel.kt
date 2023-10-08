@@ -16,6 +16,7 @@ import javax.inject.Inject
 
 // для экрана загрузки
 
+@HiltViewModel
 class SplashViewModel @Inject constructor(
     private val repository: DataStoreRepository
 ) : ViewModel() {

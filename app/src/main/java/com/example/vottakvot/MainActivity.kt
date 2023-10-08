@@ -36,7 +36,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //
         installSplashScreen().setKeepOnScreenCondition {
+            // ещё не загружался экран загрузки
             !splashViewModel.isLoading.value
         }
 
