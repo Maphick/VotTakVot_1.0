@@ -18,8 +18,9 @@ fun HomeScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "HOME",
-            fontSize = 16.sp
+            text = "ВотТакВот",
+            color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+            fontSize = 36.sp
         )
     }
 }

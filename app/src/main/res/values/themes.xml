@@ -3,7 +3,7 @@
 
 
     <style name="Theme.VotTakVot" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/red</item>
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 
     <style name="Theme.CustomSplashScreenTheme" parent="Theme.SplashScreen">

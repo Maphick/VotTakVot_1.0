@@ -7,40 +7,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-
 
 // для экрана загрузки
-
-@HiltViewModel
-class SplashViewModel @Inject constructor(
+class SplashViewModel(
     private val repository: DataStoreRepository
-) : ViewModel() {
+): ViewModel() {
 
-    //
     private val _isLoading: MutableState<Boolean> = mutableStateOf(true)
     val isLoading: State<Boolean> = _isLoading
 
-    // установка стартового экрана
     private val _startDestination: MutableState<String> = mutableStateOf(Screen.Welcome.route)
     val startDestination: State<String> = _startDestination
 
     init {
-        // если онбординг пройден - сразу к домашнему экрану
         viewModelScope.launch {
             repository.readOnBoardingState().collect { completed ->
-                if (completed) {
-                    _startDestination.value = Screen.Home.route
-                } else {
+                if (completed) _startDestination.value = Screen.Home.route else
                     _startDestination.value = Screen.Welcome.route
-                }
             }
             _isLoading.value = false
         }
     }
-
 }

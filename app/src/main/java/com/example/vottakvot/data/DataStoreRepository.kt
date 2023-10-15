@@ -17,13 +17,14 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "on_boarding_pref")
 
 class DataStoreRepository(context: Context) {
+    private val dataStore = context.dataStore
+
 
     //  ключ, по которму сохраняем в БД флаг, пройден ли онбординг
     private object PreferencesKey {
         val onBoardingKey = booleanPreferencesKey(name = "on_boarding_completed")
     }
 
-    private val dataStore = context.dataStore
 
     // сохранение в БД флага, пройден ли онбординг
     suspend fun saveOnBoardingState(completed: Boolean) {
@@ -46,5 +47,10 @@ class DataStoreRepository(context: Context) {
                 val onBoardingState = preferences[PreferencesKey.onBoardingKey] ?: false
                 onBoardingState
             }
+    }
+
+
+    fun provideDataStoreRepository(context: Context): DataStoreRepository {
+        return DataStoreRepository(context = context)
     }
 }
