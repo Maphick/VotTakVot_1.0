@@ -9,16 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.ViewModel.InquirerViewModel
-import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.navigation.SetupNavGraph
 import com.example.vottakvot.screen.MainScreen
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -36,7 +31,8 @@ class MainActivity : ComponentActivity() {
         }
          */
         // для экранов приветствия
-        var welcomeViewModel = WelcomeViewModel(DataStoreRepository(this))
+        var welcomeViewModel = WelcomeViewModel()
+        // var welcomeViewModel = WelcomeViewModel(DataStoreRepository(this))
         // для экранов загрузки
         var inquirerViewModel = InquirerViewModel(DataStoreRepository(this))
 

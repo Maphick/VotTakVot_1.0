@@ -47,7 +47,7 @@ fun SetupNavGraph(
         }
         // add destination
         composable(route = Screen.Welcome.route) {
-            WelcomeScreen(context = context, navController = navController, welcomeViewModel = welcomeViewModel)
+            WelcomeScreen(navController = navController, welcomeViewModel = welcomeViewModel)
         }
         // add destination
         composable(route = Screen.Home.route) {

@@ -1,23 +1,13 @@
 package com.example.vottakvot.ViewModel
 
-import android.graphics.pdf.PdfDocument.Page
-import androidx.annotation.DrawableRes
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.R
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.navigation.WelcomePage
-import com.example.vottakvot.util.InquirerPage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class WelcomeViewModel(
-    private val repository: DataStoreRepository
+    //dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
     private var _welcomePagesList: MutableList<WelcomePage> = mutableListOf()
 
