@@ -63,9 +63,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
-    // Splash API
-    implementation("androidx.core:core-splashscreen:1.0.0-beta01")
-
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.5.0-alpha02")
     implementation("javax.inject:javax.inject:1")
@@ -77,4 +74,8 @@ dependencies {
 
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.test:monitor:1.6.1")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
+    androidTestImplementation("junit:junit:4.12")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
 }

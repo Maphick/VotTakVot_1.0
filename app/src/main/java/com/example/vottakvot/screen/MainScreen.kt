@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
+import com.example.vottakvot.navigation.Screen
 import com.example.vottakvot.navigation.SetupNavGraph
 import com.google.accompanist.pager.ExperimentalPagerApi
 
@@ -19,12 +20,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun MainScreen(
     context: Context,
-    splashViewModel: SplashViewModel,
+    //splashViewModel: SplashViewModel,
     welcomeViewModel: WelcomeViewModel,
     inquirerViewModel: InquirerViewModel
 ) {
     val navHostController = rememberNavController()
-    val screen by splashViewModel.startDestination
+    //val screen by splashViewModel.startDestination
+    val screen = Screen.Splash.route
     val navController = rememberNavController()
     //val context =
     SetupNavGraph(
