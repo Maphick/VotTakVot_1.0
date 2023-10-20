@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
@@ -80,12 +82,17 @@ fun WelcomeScreen(
 
     Column(
         modifier = Modifier
+            .fillMaxHeight()
             .fillMaxWidth()
-            .background(androidx.compose.material3.MaterialTheme.colorScheme.surface)
+            .background(
+                colorScheme.surface
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween,
+
     ) {
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
-                //.weight(10f),
             count = pagerCount,
             state = pagerState,
             verticalAlignment = Alignment.Top,
@@ -94,14 +101,15 @@ fun WelcomeScreen(
                 onBoardingPage = pages[position]
             )
         }
-
-        Spacer(
-            modifier = Modifier
-                .height(100.dp)
+        Spacer(modifier = Modifier
+            .height(20.dp)
         )
         BottomNavigation(
-            modifier = Modifier.
-            fillMaxWidth(),
+            modifier = Modifier
+                // .height(80.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .weight(2f, false),
             navController = navController,
             pagerState = pagerState,
             pagerCount = pagerCount
@@ -129,23 +137,21 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
             title = "ВотТакВот"
         )
         Spacer(modifier = Modifier
-            .height(20.dp)
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = 20.dp
                 ),
-            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+            color = colorScheme.background,
             text = onBoardingPage.title,
-            fontSize = 25.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
 
         )
         Spacer(modifier = Modifier
-            .height(20.dp)
+            //.height(20.dp)
         )
         Text(
             modifier = Modifier
@@ -156,9 +162,9 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
                     end = 40.dp
                 ),
             text = onBoardingPage.description,
-            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+            color = colorScheme.background,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Light,
             textAlign = TextAlign.Justify,
             lineHeight = 25.sp
         )
@@ -175,47 +181,39 @@ fun ImageAndText(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            ,
-    contentAlignment = Alignment.TopCenter,
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter,
     ) {
         Box (
             modifier = modifier
                 .fillMaxWidth()
         )
+        Spacer(modifier = Modifier
+            .width(20.dp)
+        )
         Image(painter =  painter,
             contentDescription = "",
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.55f)
+                .fillMaxHeight(0.6f)
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color.Black
+                            Color.White
                         ),
                         startY = size.height / 3,
                         endY = size.height
                     )
                     onDrawWithContent {
                         drawContent()
-                        drawRect(gradient, blendMode = BlendMode.Darken)
+                        drawRect(gradient, blendMode = BlendMode.SrcOver)
                     }
                 }
         )
-        /*
-        Image(
-            painter = painter,
-            contentDescription = contentDescription,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.55f),
-            alignment = Alignment.TopCenter
-        )
-        */
         Row (
             modifier = Modifier
-                .padding(top = 10.dp),
+                .padding(top = 30.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Top
 
@@ -225,7 +223,6 @@ fun ImageAndText(
                 painter = ico,
                 contentDescription = contentDescription,
                 modifier = Modifier
-                    .padding(top = 5.dp)
             )
             Text(
                 text = title,
@@ -233,7 +230,7 @@ fun ImageAndText(
                 fontFamily = FontFamily.Cursive,
                 color = Color.Black,
                 modifier = Modifier
-                    .padding(top = 0.dp)
+                    .padding(top = 3.dp)
 
             )
         }
@@ -251,7 +248,6 @@ fun BottomNavigation(
     Box(
         modifier = modifier
             .fillMaxWidth(),
-            //.fillMaxHeight(),
         contentAlignment = BottomCenter
 
     )
@@ -266,10 +262,9 @@ fun BottomNavigation(
     {
         SkipButton(
             modifier = Modifier
-                // .fillMaxWidth(1f),
                 .size(
                     width = 160.dp,
-                    height = 80.dp
+                    height = 40.dp
                 ),
             pagerState = pagerState
         ) {
@@ -277,30 +272,18 @@ fun BottomNavigation(
             navController.popBackStack()
             navController.navigate(Screen.Home.route)
         }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-            // modifier = Modifier
-            //.fillMaxWidth(1f)
-            // .padding(bottom = 16.dp),
-            //  horizontalArrangement = Arrangement.Center,
-            //verticalAlignment = Alignment.CenterVertically
-        ) {
             HorizontalPagerIndicator(
-                modifier = Modifier
-                    //.fillMaxWidth(1f)
-                    .padding(bottom = 24.dp),
-                activeColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                inactiveColor = Color(R.color.inactive),
+                modifier = modifier,
+                activeColor = colorScheme.primary,
+                inactiveColor = colorScheme.onBackground,
                 pagerState = pagerState
             )
-        }
         ContinueButton(
             modifier = Modifier
                 // .fillMaxWidth(1f),
                 .size(
                     width = 160.dp,
-                    height = 80.dp
+                    height = 40.dp
                 ),
             pagerState = pagerState,
             text = "Да, конечно!",
@@ -342,26 +325,11 @@ fun SkipButton(
                 // modifier = modifier,
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
-                    contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer,
+                    contentColor = colorScheme.onSecondaryContainer,
                     backgroundColor = Color.Transparent
-                    //androidx.compose.material3.MaterialTheme.colorScheme.background
                 )
             ) {
-                //Icon(Icons.Default.Add,"")
                 Text(text)
-                /*
-                Button(
-                    onClick = onClick,
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer,
-                        backgroundColor = Color.White
-                        //androidx.compose.material3.MaterialTheme.colorScheme.background
-                    )
-                ) {
-                    Text(text)
-                }
-
-                 */
             }
 
 
@@ -389,35 +357,22 @@ fun ContinueButton(
         ) {
             OutlinedButton(
                 modifier = modifier,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = colorScheme.onSecondaryContainer,
+                    backgroundColor = Color.Transparent
+                ),
                 border = BorderStroke(0.dp, Color.Transparent),
-                // modifier = modifier,
                 onClick = onClick
             ) {
-                //Icon(Icons.Default.Add,"")
                 var _text = text
                 if (pagerState.currentPage != pagerCount - 1)
                     _text = "Продолжить..."
                 Text(_text)
             }
-
-            /*
-             Button(
-
-                 onClick = onClick,
-                 colors = ButtonDefaults.buttonColors(
-
-                     contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer,
-                     backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.background
-                 )
-             ) {
-
-             }
-
-             */
         }
     }
 }
+
 @Composable
 fun SplashScreen2() {
     Column (
@@ -441,14 +396,14 @@ fun SplashScreen2() {
                 text = "ВотТакВот",
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                color = colorScheme.onBackground
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
         androidx.compose.material3.Text(
             text = "Загружаем...",
             fontSize = 16.sp,
-            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+            color = colorScheme.onBackground
         )
     }
 }
@@ -458,9 +413,7 @@ fun SplashScreen2() {
     backgroundColor = 0xFFFFFFFF
 )
 @Composable
-fun SplashScreenPrev2() {
-    // для экранов приветствия
-        //getApplication<Application>().applicationContext
+fun WelcomecreenPrevDark() {
     var welcomeViewModel = WelcomeViewModel()
     WelcomeScreen(
         navController = rememberNavController(),
@@ -468,6 +421,15 @@ fun SplashScreenPrev2() {
     )
 }
 
-fun provideContext(application: Application): Context? {
-    return application.applicationContext
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
+@Preview(
+
+)
+@Composable
+fun WelcomecreenPrevLight() {
+    var welcomeViewModel = WelcomeViewModel()
+    WelcomeScreen(
+        navController = rememberNavController(),
+        welcomeViewModel = welcomeViewModel
+    )
 }

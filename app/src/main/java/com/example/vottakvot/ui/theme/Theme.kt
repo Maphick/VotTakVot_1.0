@@ -17,33 +17,33 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 
+
 private val DarkColorScheme = darkColorScheme(
-    primary = primary,
+    primary = primary_dark,
     secondary = Color.Black,
     tertiary = Color.Black,
-    background = dark,
-    surface = surfaceDark,
+    background = background_dark,
+    surface = surface_dark,
     onPrimary = Color.Black,
     onSecondary = Color.Red,
-    onSecondaryContainer = on_secondary_container,
+    onSecondaryContainer = on_secondary_container_dark,
     onTertiary = Color.White,
-    onBackground = on_background,
+    onBackground = on_background_dark,
     onSurface = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color.White,
+    primary = primary_light ,
     secondary = Color.White,
     tertiary = Color.White,
-    background = Color.White,
-    surface = Color.White,
+    background =  background_light,
+    surface = surface_light,
     onPrimary = Color.White,
     onSecondary = Color.Red,
     onTertiary = Color.Black,
-    onBackground = Color.Black,
+    onBackground = on_background_light,
     onSurface = Color.Black
 )
-
 @Composable
 fun VotTakVotTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

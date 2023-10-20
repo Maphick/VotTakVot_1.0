@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,14 +49,14 @@ fun SplashScreen() {
                     text = "ВотТакВот",
                     fontWeight = FontWeight.Bold,
                     fontSize = 25.sp,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                    color = colorScheme.onBackground
                 )
             }
         Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "Загружаем...",
                 fontSize = 16.sp,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                color = colorScheme.onBackground
             )
     }
 }
@@ -65,6 +66,14 @@ fun SplashScreen() {
     backgroundColor = 0xFFFFFFFF
 )
 @Composable
-fun SplashScreenPrev() {
+fun SplashScreenWhitePrev() {
+    SplashScreen()
+}
+
+@Preview(showBackground = true,
+    backgroundColor = 0x00000000
+)
+@Composable
+fun SplashScreenBlackPrev() {
     SplashScreen()
 }
