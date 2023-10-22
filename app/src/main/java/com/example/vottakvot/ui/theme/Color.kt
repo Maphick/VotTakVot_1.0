@@ -8,6 +8,7 @@ val dark_dark  = Color(0xFF0F0F0F)
 val background_dark  = Color(0xFF0F0F0F)
 val surface_dark = Color(0xFF181212)
 val not_now_dark  = Color(0xFFFFDADB)
+val secondary_container_dark = Color(0xFF7D2935)
 val surface_container_dark = Color(0xFF3A3333) //
 val surfacecontainerhighest = Color(0xFF3A333) //
 val inactiveColorPager  = Color(0xFF3A3333)
@@ -35,6 +36,7 @@ val surface_light  = Color(0xFFFFF8F7)
     //Color(0xFF40000E) // not_now_dark
 val dark_light  = Color(0xFF0F0F0F)
 val background_light  = Color(0xFFECE0DF) // text
+val secondary_container_light = Color(0xFFFFDADB)
 val surface_container_light = Color(0xFFECE0DF) //
 //val on_primary_light =
 //val on_secondary_light =

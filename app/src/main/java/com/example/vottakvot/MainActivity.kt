@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
+import com.example.vottakvot.ViewModel.WorkoutViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.screen.MainScreen
 import com.example.vottakvot.ui.theme.VotTakVotTheme
@@ -38,6 +39,8 @@ class MainActivity : ComponentActivity() {
         // var welcomeViewModel = WelcomeViewModel(DataStoreRepository(this))
         // для экранов загрузки
         var inquirerViewModel = InquirerViewModel(DataStoreRepository(this))
+        // вью модель для карточки тренировки
+        var workoutViewModel = WorkoutViewModel()
 
         setContent {
             VotTakVotTheme {
@@ -53,7 +56,8 @@ class MainActivity : ComponentActivity() {
                         context = context,
                         splashViewModel = splashViewModel,
                         welcomeViewModel = welcomeViewModel,
-                        inquirerViewModel = inquirerViewModel
+                        inquirerViewModel = inquirerViewModel,
+                        workoutViewModel = workoutViewModel
                     )
                 }
             }

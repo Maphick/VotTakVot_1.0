@@ -6,7 +6,7 @@ import com.example.vottakvot.R
 sealed class InquirerPage(
     @DrawableRes
     val image: Int,
-    val title: String,
+    var title: String,
     val info: String,
     val description: String,
     val question: String,

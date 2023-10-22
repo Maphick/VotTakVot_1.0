@@ -8,9 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.vottakvot.ViewModel.InquirerViewModel
-import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
-import com.example.vottakvot.screen.HomeScreen
+import com.example.vottakvot.ViewModel.WorkoutViewModel
 import com.example.vottakvot.screen.HomeScreenWithOnboarding
 import com.example.vottakvot.screen.HomeScreenWithoutOnboarding
 import com.example.vottakvot.screen.InquirerScreen
@@ -29,7 +28,8 @@ fun SetupNavGraph(
     startDestination: String,
     //splashViewModel: SplashViewModel,
     welcomeViewModel: WelcomeViewModel,
-    inquirerViewModel: InquirerViewModel
+    inquirerViewModel: InquirerViewModel,
+    workoutViewModel: WorkoutViewModel
 ) {
     NavHost(
         navController = navController,
@@ -55,7 +55,7 @@ fun SetupNavGraph(
         }
         // онбординг пройден
         composable(route = Screen.HomeOnboardingPassed.route) {
-            HomeScreenWithOnboarding()
+            HomeScreenWithOnboarding(workoutViewModel = workoutViewModel)
         }
         // онбординг не пройден
         composable(route = Screen.HomeWithoutOnboarding.route) {
