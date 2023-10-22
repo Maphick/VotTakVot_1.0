@@ -1,16 +1,29 @@
 package com.example.vottakvot.ViewModel
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.R
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.navigation.WelcomePage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class WelcomeViewModel(
     //dataStoreRepository: DataStoreRepository
+    private val repository: DataStoreRepository
 ) : ViewModel() {
-    private var _welcomePagesList: MutableList<WelcomePage> = mutableListOf()
 
+    // сохранение в базу флага, был ли пройден онбординг
+    fun saveWelcomeScreenState(completed: Boolean) {
+        // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveOnBoardingState(completed = completed)
+        }
+    }
+
+    private var _welcomePagesList: MutableList<WelcomePage> = mutableListOf()
 
     fun getWelcomePagesList(): List<WelcomePage>
     {
@@ -55,7 +68,8 @@ class WelcomeViewModel(
             image = R.drawable.welcome_2,
             title = "Персональные тренировки",
             description = "Здесь Вы сможете подобрать для себя комплекс упражнений и сделать свои " +
-                    "тренировки  регулярными. Готовы сделать первый шаг к своей цели?"
+                    "тренировки  регулярными. Готовы сделать первый шаг к своей цели?",
+            colorText = Color.White
         )
         _newWelcomePagesList.add(welcomePage_2)
         return _newWelcomePagesList

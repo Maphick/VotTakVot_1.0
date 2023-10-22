@@ -11,6 +11,8 @@ import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.screen.HomeScreen
+import com.example.vottakvot.screen.HomeScreenWithOnboarding
+import com.example.vottakvot.screen.HomeScreenWithoutOnboarding
 import com.example.vottakvot.screen.InquirerScreen
 import com.example.vottakvot.screen.SplashScreen
 import com.example.vottakvot.screen.WelcomeScreen
@@ -47,11 +49,17 @@ fun SetupNavGraph(
         }
         // add destination
         composable(route = Screen.Welcome.route) {
-            WelcomeScreen(navController = navController, welcomeViewModel = welcomeViewModel)
+            WelcomeScreen(
+                //context = context ,
+                navController = navController, welcomeViewModel = welcomeViewModel)
         }
-        // add destination
-        composable(route = Screen.Home.route) {
-            HomeScreen()
+        // онбординг пройден
+        composable(route = Screen.HomeOnboardingPassed.route) {
+            HomeScreenWithOnboarding()
+        }
+        // онбординг не пройден
+        composable(route = Screen.HomeWithoutOnboarding.route) {
+            HomeScreenWithoutOnboarding()
         }
     }
 }

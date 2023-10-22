@@ -1,5 +1,6 @@
 package com.example.vottakvot.ui.theme
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -29,7 +30,8 @@ private val DarkColorScheme = darkColorScheme(
     onSecondaryContainer = on_secondary_container_dark,
     onTertiary = Color.White,
     onBackground = on_background_dark,
-    onSurface = Color.White
+    onSurface = on_surface_dark,
+    onSurfaceVariant = on_surface_variant_dark
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -40,34 +42,32 @@ private val LightColorScheme = lightColorScheme(
     surface = surface_light,
     onPrimary = Color.White,
     onSecondary = Color.Red,
+    onSecondaryContainer = on_secondary_container_light,
     onTertiary = Color.Black,
     onBackground = on_background_light,
-    onSurface = Color.Black
+    onSurface = on_surface_light,
+    onSurfaceVariant = on_surface_variant_light
 )
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun VotTakVotTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
+    //dynamicColor: Boolean = true,
+    content: @Composable () -> Unit) {
+ val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+     /*
+     when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme ->
+            DarkColorScheme
+        else ->
+            LightColorScheme
     }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-           // window.statusBarColor = colorScheme.primary.toArgb()
-           // WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
-    }
+    */
 
     MaterialTheme(
         colorScheme = colorScheme,

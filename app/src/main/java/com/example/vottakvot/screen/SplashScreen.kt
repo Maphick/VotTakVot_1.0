@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vottakvot.R
+import com.example.vottakvot.ui.theme.VotTakVotTheme
 
 @Composable
 fun SplashScreen() {
@@ -62,18 +63,22 @@ fun SplashScreen() {
 }
 
 
-@Preview(showBackground = true,
-    backgroundColor = 0xFFFFFFFF
-)
+@Preview
 @Composable
 fun SplashScreenWhitePrev() {
-    SplashScreen()
+    VotTakVotTheme(
+        darkTheme = false)
+    {
+        SplashScreen()
+    }
 }
 
-@Preview(showBackground = true,
-    backgroundColor = 0x00000000
-)
+@Preview
 @Composable
 fun SplashScreenBlackPrev() {
-    SplashScreen()
+    VotTakVotTheme(
+        darkTheme = true)
+    {
+        SplashScreen()
+    }
 }

@@ -20,13 +20,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun MainScreen(
     context: Context,
-    //splashViewModel: SplashViewModel,
+    splashViewModel: SplashViewModel,
     welcomeViewModel: WelcomeViewModel,
     inquirerViewModel: InquirerViewModel
 ) {
     val navHostController = rememberNavController()
     //val screen by splashViewModel.startDestination
-    val screen = Screen.Splash.route
+    //val screen = Screen.Splash.route
+    val screen = Screen.HomeWithoutOnboarding.route
     val navController = rememberNavController()
     //val context =
     SetupNavGraph(

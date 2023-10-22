@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.vottakvot.ViewModel.InquirerViewModel
+import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.screen.MainScreen
@@ -24,14 +27,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // заставочка
-        /*
+
         var splashViewModel: SplashViewModel = SplashViewModel(DataStoreRepository(context = this) )
-        installSplashScreen().setKeepOnScreenCondition {
-            !splashViewModel.isLoading.value
-        }
-         */
+    //    installSplashScreen().setKeepOnScreenCondition {
+         //   !splashViewModel.isLoading.value
+        //}
+
         // для экранов приветствия
-        var welcomeViewModel = WelcomeViewModel()
+        var welcomeViewModel = WelcomeViewModel(DataStoreRepository(this))
         // var welcomeViewModel = WelcomeViewModel(DataStoreRepository(this))
         // для экранов загрузки
         var inquirerViewModel = InquirerViewModel(DataStoreRepository(this))
@@ -39,16 +42,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             VotTakVotTheme {
                 // A surface container using the 'background' color from the theme
-                Box(
+                Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(colorScheme.background)
                         .padding(0.dp),
                 ) {
                     val context = applicationContext
                     MainScreen(
                         context = context,
-                        //splashViewModel = splashViewModel,
+                        splashViewModel = splashViewModel,
                         welcomeViewModel = welcomeViewModel,
                         inquirerViewModel = inquirerViewModel
                     )

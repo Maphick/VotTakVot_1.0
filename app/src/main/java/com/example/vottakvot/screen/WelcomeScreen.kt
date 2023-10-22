@@ -1,13 +1,10 @@
 package com.example.vottakvot.screen
 
-import android.app.Application
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,23 +17,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,11 +44,16 @@ import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.navigation.Screen
 import com.example.vottakvot.navigation.WelcomePage
+import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 fun DataGeneration(welcomeViewModel: WelcomeViewModel)
@@ -65,16 +65,31 @@ fun DataGeneration(welcomeViewModel: WelcomeViewModel)
 @ExperimentalPagerApi
 @Composable
 fun WelcomeScreen(
-    // context: Context,
+    //context: Context,
     navController: NavHostController,
     welcomeViewModel: WelcomeViewModel
 ) {
+
+    /*
+    // сохранение в базу флага, был ли пройден онбординг
+    fun saveOnBoardingState(completed: Boolean) {
+        // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveOnBoardingState(completed = completed)
+        }
+    }
+    8/
+     */
+
     // заполнение моками
     DataGeneration(welcomeViewModel)
     //  все страницы приветствия
     val pages = welcomeViewModel.getWelcomePagesList()
-    if (pages.size == 0) {
-        navController.navigate(Screen.Home.route)
+   // if (pages.size == 0) {
+    if (true)
+    {
+        navController.navigate(Screen.HomeOnboardingPassed.route)
+        navController.popBackStack()
         return
     }
     val pagerCount = pages.size
@@ -82,17 +97,14 @@ fun WelcomeScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .background(
-                colorScheme.surface
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
-
+            .fillMaxSize()
+            .background(colorScheme.surface),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
+                //.weight(10f),
             count = pagerCount,
             state = pagerState,
             verticalAlignment = Alignment.Top,
@@ -101,15 +113,13 @@ fun WelcomeScreen(
                 onBoardingPage = pages[position]
             )
         }
-        Spacer(modifier = Modifier
-            .height(20.dp)
-        )
-        BottomNavigation(
+
+        Spacer(
             modifier = Modifier
-                // .height(80.dp)
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .weight(2f, false),
+                .height(100.dp)
+        )
+        BottomNav(
+            welcomeViewModel,
             navController = navController,
             pagerState = pagerState,
             pagerCount = pagerCount
@@ -125,33 +135,37 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
             .fillMaxWidth()
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         ImageAndText(
-            modifier = Modifier
-                .fillMaxWidth(),
+
+            modifier = Modifier,
+
                // .fillMaxHeight(1f),
             painter = painterResource(id = onBoardingPage.image),
             ico = painterResource(id = R.drawable.logo),
             contentDescription = "Pager Image",
-            title = "ВотТакВот"
+            title = stringResource(R.string.vot_tak_vot),
+            colorText = onBoardingPage.colorText
         )
         Spacer(modifier = Modifier
+            .width(20.dp)
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
+                    top = 20.dp
                 ),
-            color = colorScheme.background,
+            color = colorScheme.onBackground,
             text = onBoardingPage.title,
-            fontSize = 20.sp,
+            fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
 
         )
         Spacer(modifier = Modifier
-            //.height(20.dp)
+            .height(0.dp)
         )
         Text(
             modifier = Modifier
@@ -162,9 +176,9 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
                     end = 40.dp
                 ),
             text = onBoardingPage.description,
-            color = colorScheme.background,
+            color = colorScheme.onBackground,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Light,
+            fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Justify,
             lineHeight = 25.sp
         )
@@ -173,34 +187,31 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
 
 @Composable
 fun ImageAndText(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     painter: Painter,
-    ico : Painter,
+    ico: Painter,
     contentDescription: String,
-    title: String
+    title: String,
+    colorText: Color
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter,
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f),
+    contentAlignment = Alignment.TopCenter,
     ) {
-        Box (
-            modifier = modifier
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier
-            .width(20.dp)
-        )
+        val gradient_color = colorScheme.background
         Image(painter =  painter,
             contentDescription = "",
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.6f)
+                .fillMaxSize()
+                //.padding(bottom = 80.dp)
+                // .align(Alignment.TopCenter)
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color.White
+                            gradient_color
                         ),
                         startY = size.height / 3,
                         endY = size.height
@@ -211,27 +222,25 @@ fun ImageAndText(
                     }
                 }
         )
-        Row (
+        Row(
             modifier = Modifier
-                .padding(top = 30.dp),
+                .padding(top = 20.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Top
-
+            verticalAlignment = Alignment.CenterVertically
         )
         {
+
             Image(
                 painter = ico,
-                contentDescription = contentDescription,
-                modifier = Modifier
+                contentDescription = "Splash Screen",
+                modifier = Modifier.size(48.dp)
             )
-            Text(
+            Spacer(modifier = Modifier.width(10.dp))
+            androidx.compose.material3.Text(
                 text = title,
-                fontSize = 36.sp,
-                fontFamily = FontFamily.Cursive,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(top = 3.dp)
-
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                color = colorScheme.onBackground
             )
         }
     }
@@ -239,67 +248,100 @@ fun ImageAndText(
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
-fun BottomNavigation(
-    modifier: Modifier = Modifier,
+fun BottomNav(
+    //modifier: Modifier = Modifier,
+    welcomeViewModel: WelcomeViewModel,
     navController: NavHostController,
     pagerState: PagerState,
     pagerCount: Int
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth(),
-        contentAlignment = BottomCenter
-
-    )
-    {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
     )
     {
+        val skipText = stringResource(R.string.not_now)
         SkipButton(
             modifier = Modifier
+                    // .fillMaxWidth(1f),
                 .size(
                     width = 160.dp,
-                    height = 40.dp
-                ),
-            pagerState = pagerState
-        ) {
-            //welcomeViewModel.saveOnBoardingState(completed = true)
-            navController.popBackStack()
-            navController.navigate(Screen.Home.route)
-        }
-            HorizontalPagerIndicator(
-                modifier = modifier,
-                activeColor = colorScheme.primary,
-                inactiveColor = colorScheme.onBackground,
-                pagerState = pagerState
-            )
-        ContinueButton(
-            modifier = Modifier
-                // .fillMaxWidth(1f),
-                .size(
-                    width = 160.dp,
-                    height = 40.dp
+                    height = 80.dp
                 ),
             pagerState = pagerState,
-            text = "Да, конечно!",
+            text = skipText,
             pagerCount = pagerCount
         ) {
-            //welcomeViewModel.saveOnBoardingState(completed = true)
-            navController.popBackStack()
-            navController.navigate(Screen.Home.route)
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+
+                    // к предыдущей странице приветствия
+                    if (pagerState.currentPage != pagerCount - 1)
+                        pagerState.scrollToPage(
+                            pagerState.currentPage - 1,
+                            pageOffset = 0f
+                        )
+                    else
+                    {
+                        //  c последней страницы приветствия идём на главный экран БЕЗ ОНБОРДИНГА
+                        //  и сохраняем флаг о том, что приветствие пройдено
+                        welcomeViewModel.saveWelcomeScreenState(completed = true)
+                        navController.navigate(Screen.HomeOnboardingPassed.route)
+                        navController.popBackStack()
+                    }
+
+                }
+
+            }
         }
-    }
-    }
+                HorizontalPagerIndicator(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .fillMaxHeight(),
+                    activeColor = colorScheme.primary,
+                    inactiveColor = colorScheme.onSecondaryContainer,
+                    pagerState = pagerState
+                )
+        val  continueText = stringResource(R.string.continue_)
+        ContinueButton(
+            modifier = Modifier
+                .size(
+                    width = 160.dp,
+                    height = 80.dp
+                ),
+            pagerState = pagerState,
+            text = continueText,
+            pagerCount = pagerCount
+        ) {
+
+            //  c последней страницы приветствия идё на главный экран С ОНБОРДИНГОМ
+            //  и сохраняем флаг о том, что приветствие пройдено
+                        if (pagerState.currentPage == pagerCount - 1)
+                        {
+                            welcomeViewModel.saveWelcomeScreenState(completed = true)
+                            navController.navigate(Screen.HomeOnboardingPassed.route)
+                            navController.popBackStack()
+                        }
+
+                        // к следующей странице приветствия
+                        else
+                        {
+                            GlobalScope.launch {
+                                withContext(Dispatchers.Main) {
+                                    pagerState.scrollToPage(
+                                        pagerState.currentPage + 1,
+                                        pageOffset = 0f
+                                    )
+                                }
+                            }
+                        }
 
 
+                    }
 
-
-}
+                }
+        }
 
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -307,16 +349,20 @@ fun BottomNavigation(
 fun SkipButton(
     modifier: Modifier,
     pagerState: PagerState,
-    text: String = "Не сейчас",
+    pagerCount: Int,
+    text: String,
     onClick: () -> Unit
 ) {
+
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Start
     ) {
+        //AnimatedVisibility
         AnimatedVisibility(
-            //modifier = Modifier.fillMaxHeight(),
-            visible = pagerState.currentPage >= 0
+            modifier = modifier.
+            fillMaxHeight(),
+            visible = pagerState.currentPage > 0
         ) {
             OutlinedButton(
                 modifier = modifier,
@@ -329,7 +375,12 @@ fun SkipButton(
                     backgroundColor = Color.Transparent
                 )
             ) {
-                Text(text)
+                var _text = text
+                if (pagerState.currentPage != pagerCount  - 1)
+                    _text = "Вернуться"
+                else
+                    _text = "Не сейчас"
+                Text(_text)
             }
 
 
@@ -344,92 +395,73 @@ fun ContinueButton(
     modifier: Modifier,
     pagerState: PagerState,
     pagerCount: Int,
-    text: String = "Да, конечно!",
+    text: String,
     onClick: () -> Unit
 ) {
+
+    val col = colorScheme.onSecondaryContainer
     Row(
         verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         AnimatedVisibility(
-            //modifier = Modifier.fillMaxHeight(),
             visible = pagerState.currentPage >= 0
         ) {
             OutlinedButton(
-                modifier = modifier,
-                colors = ButtonDefaults.outlinedButtonColors(
+                colors = ButtonDefaults.outlinedButtonColors
+                    (
                     contentColor = colorScheme.onSecondaryContainer,
-                    backgroundColor = Color.Transparent
+                    backgroundColor = Color.Transparent),
+                border = BorderStroke(0.dp, Color.Transparent
                 ),
-                border = BorderStroke(0.dp, Color.Transparent),
                 onClick = onClick
             ) {
                 var _text = text
                 if (pagerState.currentPage != pagerCount - 1)
                     _text = "Продолжить..."
+                else
+                    _text = "Да, конечно!"
                 Text(_text)
+
             }
         }
     }
 }
 
+
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
+@Preview
 @Composable
-fun SplashScreen2() {
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+fun DarkWelcomeScreenPrev() {
+    VotTakVotTheme(
+        darkTheme = true
     )
     {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Splash Screen",
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            androidx.compose.material3.Text(
-                text = "ВотТакВот",
-                fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                color = colorScheme.onBackground
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material3.Text(
-            text = "Загружаем...",
-            fontSize = 16.sp,
-            color = colorScheme.onBackground
+        val context =  LocalContext.current
+        var welcomeViewModel = WelcomeViewModel(DataStoreRepository(context))
+        WelcomeScreen(
+            //conext = context,
+            navController = rememberNavController(),
+            welcomeViewModel = welcomeViewModel
         )
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
-@Preview(showBackground = true,
-    backgroundColor = 0xFFFFFFFF
-)
+@Preview
 @Composable
-fun WelcomecreenPrevDark() {
-    var welcomeViewModel = WelcomeViewModel()
-    WelcomeScreen(
-        navController = rememberNavController(),
-        welcomeViewModel = welcomeViewModel
+fun LightWelcomeScreenPrev() {
+    VotTakVotTheme(
+        darkTheme = false
     )
-}
-
-@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
-@Preview(
-
-)
-@Composable
-fun WelcomecreenPrevLight() {
-    var welcomeViewModel = WelcomeViewModel()
-    WelcomeScreen(
-        navController = rememberNavController(),
-        welcomeViewModel = welcomeViewModel
-    )
+    {
+        val context =  LocalContext.current
+        var welcomeViewModel = WelcomeViewModel(DataStoreRepository(context))
+        WelcomeScreen(
+            //conext = context,
+            navController = rememberNavController(),
+            welcomeViewModel = welcomeViewModel
+        )
+    }
 }
