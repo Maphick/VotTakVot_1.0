@@ -1,176 +1,262 @@
 package com.example.vottakvot.ui.theme
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.PlaylistAdd
+import androidx.compose.material.icons.sharp.PlayCircleFilled
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.vottakvot.ViewModel.GeneralViewModel
 import com.example.vottakvot.ViewModel.WorkoutViewModel
-import com.example.vottakvot.domain.FeedPost
-import com.example.vottakvot.domain.StatisticItem
-import com.example.vottakvot.domain.StatisticType
-
+import com.example.vottakvot.domain.WorkoutDataItem
 
 @Composable
 fun WorkoutCard(
-    modifier: Modifier,
-    workoutViewModel: WorkoutViewModel
+    workoutItem: WorkoutDataItem,
+    onPlayClickListener: (WorkoutDataItem) -> Unit,
+    onAddedClickListener: (WorkoutDataItem) -> Unit,
+    onLikeClickListener: (WorkoutDataItem) -> Unit,
+) {
+    // это нужно, т.к. компоуз не умеет работать с лайвдатой напрямую
+   // val isPlaying = workoutViewModel.isPlaying.observeAsState(false)
+   // val isAddedToMyTrainList = workoutViewModel.isAddedToMyTrainList.observeAsState(false)
+   // val isAddedToFavourite = workoutViewModel.isAddedToFavourite.observeAsState(false)
+    // карточка тренировки
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+        .height(140.dp),
+        backgroundColor = colorScheme.surface,
+        shape = RoundedCornerShape(
+            topStart = 16.dp,
+            topEnd = 16.dp,
+            bottomStart = 16.dp,
+            bottomEnd = 16.dp
+        ),
+        border = BorderStroke(1.dp, colorScheme.onBackground)
     ) {
-        androidx.compose.material.Card(
-            modifier = modifier
-        ) {
+        Row(
+            modifier = Modifier.padding(
+                top = 8.dp,
+               //start = 8.dp
+            ),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Top
+        )
+        {
             Column(
-                modifier = Modifier.padding(8.dp)
-            ) {
-                //PostHeader(feedPost)
-               // Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "ghgb")
-                Spacer(modifier = Modifier.height(8.dp))
-                Image(
+                modifier = Modifier.fillMaxSize(0.7f)
+            )
+            {
+                Row(
+                    //modifier = Modifier.fillMaxWidth(0.7f),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.Top
+                )
+                {
+                    Text(
+                        //modifier = Modifier
+                        //    .fillMaxWidth(0.8f),
+                        text = "${workoutItem.title}",
+                        fontSize = 25.sp,
+                        color = colorScheme.primary,
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row()
+                {
+                        InfoIconWithText(
+                            iconResId = Icons.Outlined.AccessTime,
+                            text = workoutItem.time.toString() + "  мин."
+                        )
+                        Spacer(modifier = Modifier.width(24.dp))
+                        InfoIconWithText(
+                            iconResId = Icons.Outlined.Edit,
+                            text = workoutItem.body_part
+                        )
+                }
+            }
+            Spacer(modifier = Modifier.width(24.dp))
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top
+            )
+            {
+                Row(
+                    modifier = Modifier.padding(
+                        //top = 16.dp,
+                        end = 16.dp
+                    ),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                )
+                {
+                    // добавление тренировки в свои тренировки
+                    IcoButton(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp
+                            ),
+                        iconResId = Icons.Outlined.PlaylistAdd,
+                        iconResIdPressed = Icons.Outlined.PlaylistAdd,
+                        isChanged = workoutItem.isAddedToMyTrainList
+                    )
+                    {
+                        onAddedClickListener(workoutItem)
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    // добавление тренировки в избранное
+                    IcoButton(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp
+                            ),
+                        iconResId = Icons.Outlined.FavoriteBorder,
+                        iconResIdPressed = Icons.Outlined.Favorite,
+                        isChanged = workoutItem.isAddedToFavourite
+                    )
+                    {
+                        onLikeClickListener(workoutItem)
+                    }
+                }
+                IcoButton(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    painter = painterResource(id = feedPost.contentImageResId),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Statistics(
-                    statistics = feedPost.statistics,
-                )
+                        .padding(
+                            top = 16.dp
+                        )
+                        .fillMaxSize(0.6f),
+                    iconResId = Icons.Sharp.PlayCircleFilled,
+                    iconResIdPressed = Icons.Sharp.PlayCircleFilled,
+                    isChanged = workoutItem.isPlaying
+                ) {
+                    onPlayClickListener(workoutItem)
+                }
             }
+
+
         }
     }
+}
 
-    @Composable
-    private fun PostHeader(
-        feedPost: FeedPost
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape),
-                painter = painterResource(id = feedPost.avatarResId),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = feedPost.communityName,
-                    color = androidx.compose.material.MaterialTheme.colors.onPrimary
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = feedPost.publicationDate,
-                    color = androidx.compose.material.MaterialTheme.colors.onSecondary
-                )
-            }
-            Icon(
-                imageVector = Icons.Rounded.MoreVert,
-                contentDescription = null,
-                tint = androidx.compose.material.MaterialTheme.colors.onSecondary
-            )
-        }
+@Composable
+fun InfoIconWithText(
+    modifier: Modifier = Modifier,
+    iconResId: ImageVector,
+    text: String,
+
+) {
+    Row(
+        modifier = Modifier,
+        verticalAlignment = Alignment.CenterVertically
+    )
+{ Row(
+    verticalAlignment = Alignment.CenterVertically
+) {
+    Icon(
+        modifier = modifier
+            .size(15.dp),
+        imageVector = iconResId,
+        contentDescription = null,
+        tint = colorScheme.onSurface
+    )
+}
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            color = colorScheme.onSurface
+        )
     }
+}
 
-    @Composable
-    private fun Statistics(
-        statistics: List<StatisticItem>,
+@Composable
+private fun IcoButton(
+    modifier: Modifier = Modifier,
+    iconResId: ImageVector,
+    iconResIdPressed: ImageVector,
+    isChanged: Boolean,
+    onItemClickListener: () -> Unit
+) {
+    Row(
+        modifier = Modifier.clickable {
+            onItemClickListener()
+        },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row {
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
-                IconWithText(
-                    iconResId = androidx.compose.foundation.layout.R.drawable.,
-                    text = viewsItem.count.toString(),
-                    onItemClickListener = {
-                        onViewsClickListener(viewsItem)
-                    }
-                )
-            }
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                val sharesItem = statistics.getItemByType(StatisticType.SHARES)
-                IconWithText(
-                    iconResId = androidx.compose.foundation.layout.R.drawable.ic_share,
-                    text = sharesItem.count.toString(),
-                    onItemClickListener = {
-                        onShareClickListener(sharesItem)
-                    }
-                )
-                val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
-                IconWithText(
-                    iconResId = androidx.compose.foundation.layout.R.drawable.ic_comment,
-                    text = commentItem.count.toString(),
-                    onItemClickListener = {
-                        onCommentClickListener(commentItem)
-                    }
-                )
-                val likesItem = statistics.getItemByType(StatisticType.LIKES)
-                IconWithText(
-                    iconResId = androidx.compose.foundation.layout.R.drawable.ic_like,
-                    text = likesItem.count.toString(),
-                    onItemClickListener = {
-                        onLikeClickListener(likesItem)
-                    }
-                )
-            }
-        }
-    }
-
-    private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
-        return this.find { it.type == type } ?: throw IllegalStateException()
-    }
-
-    @Composable
-    private fun IconWithText(
-        iconResId: Int,
-        text: String,
-        onItemClickListener: () -> Unit
-    ) {
-        Row(
-            modifier = Modifier.clickable {
-                onItemClickListener()
+        Icon(
+            modifier = modifier,
+            imageVector = if (isChanged) {
+                iconResIdPressed
+            } else {
+                iconResId
             },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = iconResId),
-                contentDescription = null,
-                tint = androidx.compose.material.MaterialTheme.colors.onSecondary
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            androidx.compose.material.Text(
-                text = text,
-                color = androidx.compose.material.MaterialTheme.colors.onSecondary
-            )
-        }
+            contentDescription = null,
+            tint = if (isChanged) {
+                colorScheme.primary
+                    } else {
+                colorScheme.onSurfaceVariant
+                    }
+        )
     }
+}
+
+@Preview
+@Composable
+fun WorkoutCardWhitePrev() {
+    VotTakVotTheme(
+        darkTheme = false)
+    {
+        val generalViewModel =  GeneralViewModel()
+        val workoutItem = WorkoutDataItem()
+        WorkoutCard(
+            //workoutViewModel = workoutViewModel,
+            workoutItem = workoutItem,
+            // слушатели клика
+            onAddedClickListener = {
+
+            },
+            onLikeClickListener = {
+                generalViewModel.changeLikedStatusListSearchResult(it)
+            },
+            onPlayClickListener = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun WorkoutCardBlackPrev() {
+    VotTakVotTheme(
+        darkTheme = true)
+    {
+        val generalViewModel =  GeneralViewModel()
+        val workoutItem = WorkoutDataItem()
+        WorkoutCard(
+            //workoutViewModel = workoutViewModel,
+            workoutItem = workoutItem,
+            // слушатели клика
+            onAddedClickListener = {
+
+            },
+            onLikeClickListener = {
+                generalViewModel.changeLikedStatusListSearchResult(it)
+            },
+            onPlayClickListener = {}
+        )
+    }
+}
+

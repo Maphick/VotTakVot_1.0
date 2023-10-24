@@ -27,7 +27,7 @@ fun MainScreen(
     val navHostController = rememberNavController()
     //val screen by splashViewModel.startDestination
     //val screen = Screen.Splash.route
-    val screen = Screen.HomeWithoutOnboarding.route
+    val screen = Screen.HomeOnboardingPassed.route
     val navController = rememberNavController()
     //val context =
     SetupNavGraph(

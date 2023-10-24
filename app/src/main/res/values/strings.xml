@@ -7,4 +7,5 @@
     <string name="not_now">Не сейчас</string>
     <string name="continue_">Продолжить...</string>
     <string name="vot_tak_vot">ВотТакВот</string>
+    <string name="search_result">Результаты поиска</string>
 </resources>

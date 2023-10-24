@@ -2,6 +2,7 @@ package com.example.vottakvot.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
@@ -19,7 +20,7 @@ sealed class BottomNavigationItem (
     )
     object MyWorkouts: BottomNavigationItem(
         titleResId = R.string.botton_navigation_item_my_workouts,
-        icon = Icons.Outlined.Edit
+        icon = Icons.Outlined.EditNote
     )
     object Favourite: BottomNavigationItem(
         titleResId = R.string.botton_navigation_item_favourite,

@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,8 +35,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
-import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.ViewModel.WorkoutViewModel
+import com.example.vottakvot.domain.WorkoutDataItem
 import com.example.vottakvot.navigation.BottomNavigationItem
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.ui.theme.WorkoutCard
@@ -57,26 +58,40 @@ fun HomeScreenWithOnboarding(
 @Composable
 fun ContentHomeScreen(
     workoutViewModel: WorkoutViewModel
-)
-{
+) {
     Box(
         modifier = androidx.compose.ui.Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        //NavigationHomeScreen()
-        LazyColumn {
-            item {
-                Text(text = "Title", color = Color.White)
-            }
-            items(10) {
-                WorkoutCard(workoutViewModel = workoutViewModel)
-            }
-            item {
-                Image(painter = painterResource(id = R.drawable.logo), contentDescription = null)
-            }
-            items(500) {
-                WorkoutCard(workoutViewModel = workoutViewModel)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+        ) {
+            LazyColumn {
+                item {
+                    Text(text = "Title", color = Color.White)
+                }
+                items(10) {
+                    val workoutItem = WorkoutDataItem()
+                   // WorkoutCard(
+                  //      workoutItem = workoutItem
+                  //  )
+                }
+                item {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = null
+                    )
+                }
+                items(500) {
+                    val workoutItem = WorkoutDataItem()
+                   // WorkoutCard(
+                    //    workoutViewModel = workoutViewModel,
+                    //    workoutItem = workoutItem
+                   // )
+                }
             }
         }
     }
@@ -126,10 +141,10 @@ fun NavigationHomeScreen(
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            indicatorColor = colorScheme.secondaryContainer,
+                            indicatorColor = colorScheme.tertiary,
                             selectedIconColor = colorScheme.onSecondaryContainer,
                             selectedTextColor = colorScheme.onSurface, //colorScheme.onSurface,
-                            unselectedIconColor = colorScheme.onSecondaryContainer, //colorScheme.onSurface,
+                            unselectedIconColor = Color.White,//colorScheme.onSecondaryContainer, //colorScheme.onSurface,
                             unselectedTextColor = colorScheme.onSurface//colorScheme.onSurface,
 
                         )
@@ -171,3 +186,4 @@ fun HomeScreenWithOnboardingBlackPrev() {
         )
     }
 }
+

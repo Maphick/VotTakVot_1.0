@@ -3,6 +3,7 @@ package com.example.vottakvot.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primary_dark  = Color(0xFFFFB2B6) // selected pager 3A3333
+val tertiary_dark = Color(0xFFFFB2B6)
     //Color(0xFFFFDADB) // not_now_dark
 val dark_dark  = Color(0xFF0F0F0F)
 val background_dark  = Color(0xFF0F0F0F)
@@ -29,7 +30,9 @@ val on_secondary_container_dark = Color(0xFFFFDADB)
 
 
 val primary_light = Color(0xFFBE0038) // selected pager activeColor
+val tertiary_light = Color(0xFFFFB2B6)
 val surface_light  = Color(0xFFFFF8F7)
+val surface_variant_light  = Color(0xFFF4DDDD)
 
     //Color(0xFF40000E)
     //Color.Red
