@@ -1,7 +1,8 @@
 pluginManagement {
     repositories {
+        maven("https://plugins.gradle.org/m2/")
         google()
-        mavenCentral()
+        //mavenCentral()
         gradlePluginPortal()
     }
 }

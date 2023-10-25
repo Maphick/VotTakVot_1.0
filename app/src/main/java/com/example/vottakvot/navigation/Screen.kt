@@ -11,6 +11,7 @@ sealed class  Screen(
     object Home : Screen(route = ROUTE_HOME_SCREEN)
     object HomeOnboardingPassed : Screen(route = ROUTE_HOME_WITH_ONBOARDING)
     object HomeWithoutOnboarding : Screen(route = ROUTE_HOME_WITHOUT_ONBOARDING)
+    object SearchResult : Screen(route = ROUTE_SEARCH_RESULT)
 
     private companion object {
         const val ROUTE_SPLASH_SCREEN = "splash_screen"
@@ -19,6 +20,7 @@ sealed class  Screen(
         const val ROUTE_HOME_SCREEN = "home_screen"
         const val ROUTE_HOME_WITH_ONBOARDING = "home_with_onboarding"
         const val ROUTE_HOME_WITHOUT_ONBOARDING = "home_without_onboarding"
+        const val ROUTE_SEARCH_RESULT = "search_result"
     }
 
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.vottakvot.ViewModel.GeneralViewModel
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // заставочка
 
+        val generalViewModel:GeneralViewModel = GeneralViewModel()
         var splashViewModel: SplashViewModel = SplashViewModel(DataStoreRepository(context = this) )
     //    installSplashScreen().setKeepOnScreenCondition {
          //   !splashViewModel.isLoading.value
@@ -54,6 +56,7 @@ class MainActivity : ComponentActivity() {
                     val context = applicationContext
                     MainScreen(
                         context = context,
+                        generalViewModel = generalViewModel,
                         splashViewModel = splashViewModel,
                         welcomeViewModel = welcomeViewModel,
                         inquirerViewModel = inquirerViewModel,

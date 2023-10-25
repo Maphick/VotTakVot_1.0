@@ -4,13 +4,16 @@ import androidx.compose.foundation.layout.Row
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
@@ -67,33 +70,43 @@ fun ContentSearchResultScreen(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(40.dp)
+                .fillMaxWidth()
+                .height(60.dp)
                 .padding(
-                    start = 16.dp
-                )
+                    start = 8.dp
+                ),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
         )
         {
-            
-
-           Text(
-               text = title,
-               fontSize = 25.dp
-
-           )
-            IconCloseButton(
+            Column(
                 modifier = Modifier
-                    .padding(
-                        top = 0.dp
-                    ),
-                iconResId = Icons.Outlined.PlaylistAdd,
-                iconResIdPressed = Icons.Outlined.Close,
-                isChanged = true
+                    .padding(2.dp)
+                    .fillMaxWidth(0.8f)
             )
             {
-                //onAddedClickListener(workoutItem)
+                Text(
+                    text = title,
+                    fontSize = 25.sp,
+                    color = colorScheme.onBackground,
+                )
             }
-
+            Column(
+            )
+            {
+                IconCloseButton(
+                    modifier = Modifier
+                        .padding(
+                            top = 0.dp
+                        ),
+                    iconResId = Icons.Outlined.PlaylistAdd,
+                    iconResIdPressed = Icons.Outlined.Close,
+                    isChanged = true
+                )
+                {
+                    //onAddedClickListener(workoutItem)
+                }
+            }
         }
         Box(
             modifier = Modifier
@@ -157,10 +170,16 @@ private fun IconCloseButton(
     onItemClickListener: () -> Unit
 ) {
     Row(
-        modifier = Modifier.clickable {
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                end = 8.dp
+            )
+            .clickable {
             onItemClickListener()
         },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
     ) {
         Icon(
             modifier = modifier,
@@ -171,9 +190,9 @@ private fun IconCloseButton(
             },
             contentDescription = null,
             tint = if (isChanged) {
-                colorScheme.primary
-            } else {
                 colorScheme.onSurfaceVariant
+            } else {
+                colorScheme.onSurface
             }
         )
     }
@@ -247,7 +266,7 @@ fun NavigationSearchResult(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SearchResultScreenWithOnboardingWhitePrev() {
+fun SearchResultScreenWhitePrev() {
     VotTakVotTheme(
         darkTheme = false)
     {
@@ -265,7 +284,7 @@ fun SearchResultScreenWithOnboardingWhitePrev() {
 
 @Preview
 @Composable
-fun SearchResultScreenWithOnboardingBlackPrev() {
+fun SearchResultScreenBlackPrev() {
     VotTakVotTheme(
         darkTheme = true)
     {

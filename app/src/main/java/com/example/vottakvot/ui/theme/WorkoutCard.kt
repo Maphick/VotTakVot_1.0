@@ -70,8 +70,6 @@ fun WorkoutCard(
                 )
                 {
                     Text(
-                        //modifier = Modifier
-                        //    .fillMaxWidth(0.8f),
                         text = "${workoutItem.title}",
                         fontSize = 25.sp,
                         color = colorScheme.primary,

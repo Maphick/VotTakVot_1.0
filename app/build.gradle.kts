@@ -81,4 +81,8 @@ dependencies {
 
     // Livedata to state
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
+
+    // Icons
+    implementation("androidx.compose.material:material-icons-core-android:1.5.4")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 }
