@@ -1,4 +1,4 @@
-package com.example.vottakvot.screen
+package com.example.vottakvot.navigation.screens
 
 import androidx.compose.foundation.layout.Row
 import android.annotation.SuppressLint
@@ -7,20 +7,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,28 +37,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
-import com.example.vottakvot.ViewModel.GeneralViewModel
+import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.ViewModel.WorkoutViewModel
-import com.example.vottakvot.navigation.BottomNavigationItem
+import com.example.vottakvot.domain.WorkoutDataItem
+import com.example.vottakvot.navigation.navigationLogic.BottomNavigationItem
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.ui.theme.WorkoutCard
+import sourceListPopularExample
+import sourceListSearchResultExample
+import sourceListTrainsForYouExample
 
 
 // ЭКРАН С РЕЗУЛЬТАТАМИ ПОИСКА
 
 
 @Composable
-fun ContentSearchResultScreen(
-    generalViewModel: GeneralViewModel,
-    workoutViewModel: WorkoutViewModel,
-    title: String
+fun SearchResultScreen(
+    navController: NavHostController,
+    title: String,
+    trainList: TrainListViewModel
 ) {
     Column(
         modifier = androidx.compose.ui.Modifier
@@ -71,7 +75,7 @@ fun ContentSearchResultScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(80.dp)
                 .padding(
                     start = 8.dp
                 ),
@@ -79,23 +83,16 @@ fun ContentSearchResultScreen(
             verticalAlignment = Alignment.CenterVertically
         )
         {
-            Column(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth(0.8f)
-            )
-            {
                 Text(
                     text = title,
-                    fontSize = 25.sp,
+                    fontSize = 30.sp,
                     color = colorScheme.onBackground,
                 )
-            }
-            Column(
-            )
-            {
                 IconCloseButton(
                     modifier = Modifier
+                        .size(
+                            35.dp
+                        )
                         .padding(
                             top = 0.dp
                         ),
@@ -104,21 +101,24 @@ fun ContentSearchResultScreen(
                     isChanged = true
                 )
                 {
+                    // закрыть окно с поиском
+                    navController.popBackStack()
                     //onAddedClickListener(workoutItem)
                 }
-            }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-        ) {
-            Text(
-                text = "d"
-            )
             // список найденных тренировок
 
-            val searchedWorkouts =  generalViewModel.workoutListSearchResult.observeAsState(listOf())
+            //val searchedWorkouts =  generalViewModel.workoutListSearchResult.observeAsState(listOf())
+/*
+            // источник данных для списк тренировок
+            val source: List<WorkoutDataItem> = sourceListTrainsForYouExample
+            // список тренировок
+            val trainList = TrainListViewModel(
+                source
+            )
+
+ */
+            val searchedWorkouts =  trainList.workoutListGeneral.observeAsState(listOf())
                 //workoutViewModel.workoutList.observeAsState(listOf())
                 // значение по умолчанию - пустая коллекция
             LazyColumn(
@@ -137,13 +137,16 @@ fun ContentSearchResultScreen(
                             workoutItem = workoutItem,
                             // слушатели клика
                             onAddedClickListener = {
-                                generalViewModel.changeAddedStatusListSearchResult(it)
+                                trainList.changeAddedStatusList(it)
+                                //generalViewModel.changeAddedStatusListSearchResult(it)
                             },
                             onLikeClickListener = {
-                                generalViewModel.changeLikedStatusListSearchResult(it)
+                                trainList.changeLikedStatusList(it)
+                                //generalViewModel.changeLikedStatusListSearchResult(it)
                             },
                             onPlayClickListener = {
-                                generalViewModel.changePlayingtatusListSearchResult(it)
+                                trainList.changePlayingStatusList(it)
+                                //generalViewModel.changePlayingtatusListSearchResult(it)
                             }
                         )
                     }
@@ -151,7 +154,6 @@ fun ContentSearchResultScreen(
             }
         }
     }
-}
 
 /*
 repeat(models.value?.size!!) {
@@ -176,7 +178,8 @@ private fun IconCloseButton(
                 end = 8.dp
             )
             .clickable {
-            onItemClickListener()
+            onItemClickListener(
+            )
         },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
@@ -197,10 +200,12 @@ private fun IconCloseButton(
         )
     }
 }
+
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavigationSearchResult(
+fun SearchResult(
     generalViewModel: GeneralViewModel,
     workoutViewModel: WorkoutViewModel,
     title: String
@@ -242,10 +247,10 @@ fun NavigationSearchResult(
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            indicatorColor = colorScheme.tertiary,
-                            selectedIconColor = colorScheme.onSecondaryContainer,
+                            indicatorColor = Color.White,
+                            selectedIconColor = Color.Red,//colorScheme.onSurface,//colorScheme.onSecondaryContainer,
                             selectedTextColor = colorScheme.onSurface, //colorScheme.onSurface,
-                            unselectedIconColor = Color.White,//colorScheme.onSecondaryContainer, //colorScheme.onSurface,
+                            unselectedIconColor = colorScheme.onSurface,//colorScheme.onSecondaryContainer, //colorScheme.onSurface,
                             unselectedTextColor = colorScheme.onSurface//colorScheme.onSurface,
 
                         )
@@ -262,6 +267,7 @@ fun NavigationSearchResult(
         )
     }
 }
+*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -269,16 +275,18 @@ fun NavigationSearchResult(
 fun SearchResultScreenWhitePrev() {
     VotTakVotTheme(
         darkTheme = false)
-    {
-        val generalViewModel = GeneralViewModel()
-        val workoutViewModel = WorkoutViewModel()
-        val title = stringResource(R.string.search_result)
-        NavigationSearchResult (
-            generalViewModel = generalViewModel,
-            workoutViewModel = workoutViewModel,
-            title = title
-        )
-    }
+        {
+            val context = LocalContext.current
+            val navController = NavHostController(context = context)
+            val title = stringResource(R.string.search_result)
+            val trainList: TrainListViewModel =
+                TrainListViewModel(source = sourceListSearchResultExample)
+            SearchResultScreen (
+                navController = navController,
+                title = title,
+                trainList = trainList
+            )
+        }
 }
 
 
@@ -288,13 +296,15 @@ fun SearchResultScreenBlackPrev() {
     VotTakVotTheme(
         darkTheme = true)
     {
-        val generalViewModel = GeneralViewModel()
-        val workoutViewModel = WorkoutViewModel()
+        val context = LocalContext.current
+        val navController = NavHostController(context = context)
         val title = stringResource(R.string.search_result)
-        NavigationSearchResult (
-            generalViewModel = generalViewModel,
-            workoutViewModel = workoutViewModel,
-            title = title
+        val trainList: TrainListViewModel =
+            TrainListViewModel(source = sourceListSearchResultExample)
+        SearchResultScreen (
+            navController = navController,
+            title = title,
+            trainList = trainList
         )
     }
 }

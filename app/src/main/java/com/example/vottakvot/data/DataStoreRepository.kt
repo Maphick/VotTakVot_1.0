@@ -22,14 +22,23 @@ class DataStoreRepository(context: Context) {
 
     //  ключ, по которму сохраняем в БД флаг, пройден ли онбординг
     private object PreferencesKey {
+        val welcomeKey = booleanPreferencesKey(name = "welcome_completed")
         val onBoardingKey = booleanPreferencesKey(name = "on_boarding_completed")
+
     }
 
 
     // сохранение в БД флага, пройден ли онбординг
-    suspend fun saveOnBoardingState(completed: Boolean) {
+    suspend fun saveOnBoardingState(onBoardingCompleted: Boolean) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKey.onBoardingKey] = completed
+            preferences[PreferencesKey.onBoardingKey] = onBoardingCompleted
+        }
+    }
+
+    // сохранение в БД флага, профдено ли приветствие
+    suspend fun saveWelcomeState(welcomeCompleted: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.welcomeKey] = welcomeCompleted
         }
     }
 
@@ -48,6 +57,23 @@ class DataStoreRepository(context: Context) {
                 onBoardingState
             }
     }
+
+    // чтение из БД флага, профдено ли приветствие
+    fun readWelcomeState(): Flow<Boolean> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                val welcomeState = preferences[PreferencesKey.welcomeKey] ?: false
+                welcomeState
+            }
+    }
+
 
 
     fun provideDataStoreRepository(context: Context): DataStoreRepository {

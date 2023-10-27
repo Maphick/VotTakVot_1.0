@@ -1,8 +1,7 @@
-package com.example.vottakvot.navigation
+package com.example.vottakvot.navigation.navigationLogic
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
-import com.example.vottakvot.R
 
 data class WelcomePage(
     @DrawableRes

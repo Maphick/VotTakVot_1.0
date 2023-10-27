@@ -1,4 +1,4 @@
-package com.example.vottakvot.screen
+package com.example.vottakvot.navigation.screens
 
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.vottakvot.ViewModel.InquirerViewModel
-import com.example.vottakvot.navigation.Screen
+import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.util.InquirerPage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager

@@ -8,4 +8,16 @@
     <string name="continue_">Продолжить...</string>
     <string name="vot_tak_vot">ВотТакВот</string>
     <string name="search_result">Результаты поиска</string>
+    <string name="full_body">Всё тело</string>
+    <string name="botttom_body">Низ тела</string>
+    <string name="upper_body">Верх тела</string>
+    <string name="abd">Пресс</string>
+    <string name="workouts_for_you">Тренировки для Вас</string>
+    <string name="popular">Популярные</string>
+    <string name="trains_block_without_onboarding">Если Вы хотите подобрать свой индивидуальный
+        план тренировок, то предлагаем Вам пройти небольшой опрос и ответить на вопросы."</string>
+    <string name="trains_block_without_internet">Возможно, Вы не подключены к интернету.
+    Попробуйте установить подключение и попробовать ещё раз - и тогда мы сможем предложить самые
+    популярные тренировки!</string>
+    <string name="more_trains">Больше тренировок ...</string>
 </resources>

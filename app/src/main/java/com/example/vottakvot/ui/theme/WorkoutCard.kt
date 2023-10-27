@@ -1,8 +1,10 @@
 package com.example.vottakvot.ui.theme
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,13 +18,19 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.vottakvot.ViewModel.GeneralViewModel
-import com.example.vottakvot.ViewModel.WorkoutViewModel
+import com.example.vottakvot.R
+import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.domain.BodyType
 import com.example.vottakvot.domain.WorkoutDataItem
+import sourceListTrainsForYouExample
 
 @Composable
 fun WorkoutCard(
@@ -32,15 +40,15 @@ fun WorkoutCard(
     onLikeClickListener: (WorkoutDataItem) -> Unit,
 ) {
     // это нужно, т.к. компоуз не умеет работать с лайвдатой напрямую
-   // val isPlaying = workoutViewModel.isPlaying.observeAsState(false)
-   // val isAddedToMyTrainList = workoutViewModel.isAddedToMyTrainList.observeAsState(false)
-   // val isAddedToFavourite = workoutViewModel.isAddedToFavourite.observeAsState(false)
+    // val isPlaying = workoutViewModel.isPlaying.observeAsState(false)
+    // val isAddedToMyTrainList = workoutViewModel.isAddedToMyTrainList.observeAsState(false)
+    // val isAddedToFavourite = workoutViewModel.isAddedToFavourite.observeAsState(false)
     // карточка тренировки
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-        .height(140.dp),
+            .height(120.dp),
         backgroundColor = colorScheme.surface,
         shape = RoundedCornerShape(
             topStart = 16.dp,
@@ -50,65 +58,50 @@ fun WorkoutCard(
         ),
         border = BorderStroke(1.dp, colorScheme.onBackground)
     ) {
-        Row(
+        Column(
             modifier = Modifier.padding(
-                top = 8.dp,
-               //start = 8.dp
+                top = 16.dp,
+                bottom = 16.dp,
+                start = 16.dp,
+                end = 16.dp
             ),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.Top
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         )
         {
-            Column(
-                modifier = Modifier.fillMaxSize(0.7f)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    //.fillMaxWidth(0.5f)
+                // horizontalArrangement = Arrangement.Start,
             )
             {
                 Row(
-                    //modifier = Modifier.fillMaxWidth(0.7f),
+                    modifier = Modifier
+                        .fillMaxWidth(0.75f),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.Top
-                )
-                {
+                ) {
                     Text(
                         text = "${workoutItem.title}",
-                        fontSize = 25.sp,
+                        fontSize = 20.sp,
                         color = colorScheme.primary,
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row()
-                {
-                        InfoIconWithText(
-                            iconResId = Icons.Outlined.AccessTime,
-                            text = workoutItem.time.toString() + "  мин."
-                        )
-                        Spacer(modifier = Modifier.width(24.dp))
-                        InfoIconWithText(
-                            iconResId = Icons.Outlined.Edit,
-                            text = workoutItem.body_part
-                        )
-                }
-            }
-            Spacer(modifier = Modifier.width(24.dp))
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top
-            )
-            {
+                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
                 Row(
-                    modifier = Modifier.padding(
-                        //top = 16.dp,
-                        end = 16.dp
-                    ),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth(1f),
+                    horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.Top
                 )
                 {
                     // добавление тренировки в свои тренировки
                     IcoButton(
                         modifier = Modifier
+                            .size(35.dp)
                             .padding(
-                                top = 8.dp
+                                //top = 8.dp
                             ),
                         iconResId = Icons.Outlined.PlaylistAdd,
                         iconResIdPressed = Icons.Outlined.PlaylistAdd,
@@ -121,8 +114,9 @@ fun WorkoutCard(
                     // добавление тренировки в избранное
                     IcoButton(
                         modifier = Modifier
+                            .size(35.dp)
                             .padding(
-                                top = 8.dp
+                                //top = 8.dp
                             ),
                         iconResId = Icons.Outlined.FavoriteBorder,
                         iconResIdPressed = Icons.Outlined.Favorite,
@@ -132,22 +126,114 @@ fun WorkoutCard(
                         onLikeClickListener(workoutItem)
                     }
                 }
-                IcoButton(
-                    modifier = Modifier
-                        .padding(
-                            top = 16.dp
-                        )
-                        .fillMaxSize(0.6f),
-                    iconResId = Icons.Sharp.PlayCircleFilled,
-                    iconResIdPressed = Icons.Sharp.PlayCircleFilled,
-                    isChanged = workoutItem.isPlaying
-                ) {
-                    onPlayClickListener(workoutItem)
-                }
             }
 
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.Top
+                    )
+                {
+                    InfoIconWithText(
+                        modifier = Modifier
+                            .padding(
+                                //top = 16.dp
+                            ),
+                        iconResId = Icons.Outlined.AccessTime,
+                        text = workoutItem.time.toString() + "  мин."
+                    )
+                    Spacer(modifier = Modifier.width(24.dp))
+                    InfoImageWithText(
+                        modifier = Modifier
+                            .padding(
+                                //top = 8.dp
+                            ),
+                        painterResourceId = when(workoutItem.bodyType)
+                        {
+                            BodyType.FULL_BODY ->  R.drawable.body
+                            BodyType.UPPER_BODY ->  R.drawable.upper
+                            BodyType.BOTTOM_BODY ->  R.drawable.lower
+                            BodyType.ABD ->  R.drawable.abs
+                            else -> R.drawable.body
+                        },
 
+                        text = when(workoutItem.bodyType)
+                        {
+                            BodyType.FULL_BODY -> stringResource(R.string.full_body)
+                            BodyType.UPPER_BODY ->  stringResource(R.string.upper_body)
+                            BodyType.BOTTOM_BODY -> stringResource(R.string.botttom_body)
+                            BodyType.ABD ->  stringResource(R.string.abd)
+                            else -> stringResource(R.string.full_body)
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier,
+                       // .size(60.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Top
+                )
+                {
+                    IcoButton(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(
+                                bottom = 8.dp,
+                                end = 8.dp
+                            )
+                            .fillMaxSize(1f),
+                        iconResId = Icons.Sharp.PlayCircleFilled,
+                        iconResIdPressed = Icons.Sharp.PlayCircleFilled,
+                        isChanged = workoutItem.isPlaying
+                    ) {
+                        onPlayClickListener(workoutItem)
+                    }
+                }
+            }
         }
+    }
+}
+
+
+@Composable
+fun InfoImageWithText(
+    modifier: Modifier = Modifier,
+    painterResourceId: Int,
+    text: String,
+) {
+    Row(
+        modifier = Modifier,
+        verticalAlignment = Alignment.CenterVertically
+    )
+    { Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+       // imageView.setColorFilter(ContextCompat.getColor(context, android.R.color.white),
+       //     PorterDuff.Mode.MULTIPLY);
+        Image(
+            modifier = modifier
+                .size(25.dp),
+            painter = painterResource(id = painterResourceId),
+            colorFilter = ColorFilter.tint(color = colorScheme.onSurface),
+                //    = colorScheme.background,
+            contentDescription = null
+        )
+    }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            modifier = modifier,
+            text = text,
+            color = colorScheme.onSurface
+        )
     }
 }
 
@@ -167,7 +253,9 @@ fun InfoIconWithText(
 ) {
     Icon(
         modifier = modifier
-            .size(15.dp),
+            .size(25.dp)
+           // .padding()
+        ,
         imageVector = iconResId,
         contentDescription = null,
         tint = colorScheme.onSurface
@@ -175,6 +263,7 @@ fun InfoIconWithText(
 }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
+            modifier = modifier,
             text = text,
             color = colorScheme.onSurface
         )
@@ -190,9 +279,11 @@ private fun IcoButton(
     onItemClickListener: () -> Unit
 ) {
     Row(
-        modifier = Modifier.clickable {
-            onItemClickListener()
-        },
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                onItemClickListener()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -218,7 +309,15 @@ fun WorkoutCardWhitePrev() {
     VotTakVotTheme(
         darkTheme = false)
     {
-        val generalViewModel =  GeneralViewModel()
+        //val generalViewModel =  GeneralViewModel()
+        // источник данных для списк атренировок
+        val source: List<WorkoutDataItem> = sourceListTrainsForYouExample
+        // список тренировок
+        val trainList = TrainListViewModel(
+            source
+        )
+
+
         val workoutItem = WorkoutDataItem()
         WorkoutCard(
             //workoutViewModel = workoutViewModel,
@@ -228,7 +327,8 @@ fun WorkoutCardWhitePrev() {
 
             },
             onLikeClickListener = {
-                generalViewModel.changeLikedStatusListSearchResult(it)
+                trainList.changeLikedStatusList(it)
+                //generalViewModel.changeLikedStatusListSearchResult(it)
             },
             onPlayClickListener = {}
         )
@@ -241,7 +341,12 @@ fun WorkoutCardBlackPrev() {
     VotTakVotTheme(
         darkTheme = true)
     {
-        val generalViewModel =  GeneralViewModel()
+        //val generalViewModel =  GeneralViewModel()
+        val source: List<WorkoutDataItem> = sourceListTrainsForYouExample
+        // список тренировок
+        val trainList = TrainListViewModel(
+            source
+        )
         val workoutItem = WorkoutDataItem()
         WorkoutCard(
             //workoutViewModel = workoutViewModel,
@@ -251,7 +356,8 @@ fun WorkoutCardBlackPrev() {
 
             },
             onLikeClickListener = {
-                generalViewModel.changeLikedStatusListSearchResult(it)
+                trainList.changeLikedStatusList(it)
+                //generalViewModel.changeLikedStatusListSearchResult(it)
             },
             onPlayClickListener = {}
         )

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.R
 import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.navigation.WelcomePage
+import com.example.vottakvot.navigation.navigationLogic.WelcomePage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +19,7 @@ class WelcomeViewModel(
     fun saveWelcomeScreenState(completed: Boolean) {
         // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
         viewModelScope.launch(Dispatchers.IO) {
-            repository.saveOnBoardingState(completed = completed)
+            repository.saveOnBoardingState(completed)
         }
     }
 
@@ -54,7 +54,7 @@ class WelcomeViewModel(
             image = R.drawable.welcome_0,
             title = "Добро пожаловать!",
             description = "Мы рады, что Вы присоединились к нашему спортивному сообществу. " +
-                    "Наше приложение здесь, чтобы поддержать Ваш спортивный путь."
+                    "Наше приложение здесь, чтобы поддержать Ваш спортивный путь.",
         )
         _newWelcomePagesList.add(welcomePage_0)
         val welcomePage_1 = WelcomePage(

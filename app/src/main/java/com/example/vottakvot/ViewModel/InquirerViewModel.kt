@@ -15,7 +15,7 @@ class InquirerViewModel (
     fun saveOnBoardingState(completed: Boolean) {
         // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
         viewModelScope.launch(Dispatchers.IO) {
-            repository.saveOnBoardingState(completed = completed)
+            repository.saveOnBoardingState(completed)
         }
     }
 

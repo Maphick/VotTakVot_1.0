@@ -1,4 +1,4 @@
-package com.example.vottakvot.screen
+package com.example.vottakvot.navigation.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -42,8 +42,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.navigation.Screen
-import com.example.vottakvot.navigation.WelcomePage
+import com.example.vottakvot.navigation.navigationLogic.Screen
+import com.example.vottakvot.navigation.navigationLogic.WelcomePage
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -70,28 +70,22 @@ fun WelcomeScreen(
     welcomeViewModel: WelcomeViewModel
 ) {
 
-    /*
-    // сохранение в базу флага, был ли пройден онбординг
-    fun saveOnBoardingState(completed: Boolean) {
-        // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.saveOnBoardingState(completed = completed)
-        }
-    }
-    8/
-     */
+
+
 
     // заполнение моками
     DataGeneration(welcomeViewModel)
     //  все страницы приветствия
     val pages = welcomeViewModel.getWelcomePagesList()
    // if (pages.size == 0) {
-    if (true)
+  /*  if (true)
     {
-        navController.navigate(Screen.HomeOnboardingPassed.route)
+        navController.navigate(Screen.Home.route)
         navController.popBackStack()
         return
     }
+
+   */
     val pagerCount = pages.size
     val pagerState = rememberPagerState()
 
@@ -132,16 +126,13 @@ fun WelcomeScreen(
 fun PagerScreen(onBoardingPage: WelcomePage) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(1f)
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         ImageAndText(
-
             modifier = Modifier,
-
-               // .fillMaxHeight(1f),
             painter = painterResource(id = onBoardingPage.image),
             ico = painterResource(id = R.drawable.logo),
             contentDescription = "Pager Image",
@@ -197,16 +188,14 @@ fun ImageAndText(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.6f),
+            .fillMaxHeight(0.54f),
     contentAlignment = Alignment.TopCenter,
     ) {
-        val gradient_color = colorScheme.background
+        val gradient_color = colorScheme.surface
         Image(painter =  painter,
             contentDescription = "",
             modifier = Modifier
                 .fillMaxSize()
-                //.padding(bottom = 80.dp)
-                // .align(Alignment.TopCenter)
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
                         colors = listOf(
@@ -240,7 +229,7 @@ fun ImageAndText(
                 text = title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
-                color = colorScheme.onBackground
+                color = colorText
             )
         }
     }
@@ -261,87 +250,105 @@ fun BottomNav(
                 horizontalArrangement = Arrangement.SpaceBetween
     )
     {
-        val skipText = stringResource(R.string.not_now)
-        SkipButton(
+        Row(
             modifier = Modifier
+                .weight(0.4f)
+        )
+        {
+            val skipText = stringResource(R.string.not_now)
+            SkipButton(
+                modifier = Modifier
                     // .fillMaxWidth(1f),
-                .size(
-                    width = 160.dp,
-                    height = 80.dp
-                ),
-            pagerState = pagerState,
-            text = skipText,
-            pagerCount = pagerCount
-        ) {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-
-                    // к предыдущей странице приветствия
-                    if (pagerState.currentPage != pagerCount - 1)
-                        pagerState.scrollToPage(
-                            pagerState.currentPage - 1,
-                            pageOffset = 0f
-                        )
-                    else
-                    {
-                        //  c последней страницы приветствия идём на главный экран БЕЗ ОНБОРДИНГА
-                        //  и сохраняем флаг о том, что приветствие пройдено
-                        welcomeViewModel.saveWelcomeScreenState(completed = true)
-                        navController.navigate(Screen.HomeOnboardingPassed.route)
-                        navController.popBackStack()
-                    }
-
+                    .size(
+                        width = 160.dp,
+                        height = 80.dp
+                    ),
+                pagerState = pagerState,
+                text = skipText,
+                pagerCount = pagerCount
+            ) {
+                // к предыдущей странице приветствия
+                if (pagerState.currentPage != pagerCount - 1)
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            pagerState.scrollToPage(
+                                pagerState.currentPage - 1,
+                                pageOffset = 0f
+                            )
+                            }
                 }
+                else {
+                    //  c последней страницы приветствия идём на главный экран БЕЗ ОНБОРДИНГА
+                    //  и сохраняем флаг о том, что приветствие пройдено
+                    welcomeViewModel.saveWelcomeScreenState(completed = true)
+                    navController.navigate(Screen.Home.route)
+                    navController.popBackStack()
+                }
+
+
+
+
 
             }
         }
-                HorizontalPagerIndicator(
-                    modifier = Modifier
-                        .width(40.dp)
-                        .fillMaxHeight(),
-                    activeColor = colorScheme.primary,
-                    inactiveColor = colorScheme.onSecondaryContainer,
-                    pagerState = pagerState
-                )
-        val  continueText = stringResource(R.string.continue_)
-        ContinueButton(
+        Row(
             modifier = Modifier
-                .size(
-                    width = 160.dp,
-                    height = 80.dp
-                ),
-            pagerState = pagerState,
-            text = continueText,
-            pagerCount = pagerCount
-        ) {
-
-            //  c последней страницы приветствия идё на главный экран С ОНБОРДИНГОМ
-            //  и сохраняем флаг о том, что приветствие пройдено
-                        if (pagerState.currentPage == pagerCount - 1)
-                        {
-                            welcomeViewModel.saveWelcomeScreenState(completed = true)
-                            navController.navigate(Screen.HomeOnboardingPassed.route)
-                            navController.popBackStack()
-                        }
-
-                        // к следующей странице приветствия
-                        else
-                        {
-                            GlobalScope.launch {
-                                withContext(Dispatchers.Main) {
-                                    pagerState.scrollToPage(
-                                        pagerState.currentPage + 1,
-                                        pageOffset = 0f
-                                    )
-                                }
-                            }
-                        }
-
-
-                    }
-
-                }
+                .weight(0.2f)
+        )
+        {
+            HorizontalPagerIndicator(
+                modifier = Modifier
+                    .width(40.dp)
+                    .fillMaxHeight(),
+                activeColor = colorScheme.primary,
+                inactiveColor = colorScheme.onSecondaryContainer,
+                pagerState = pagerState
+            )
         }
+        Row(
+            modifier = Modifier
+               // .weight(0.2f)
+        )
+        {
+            val continueText = stringResource(R.string.continue_)
+            ContinueButton(
+                modifier = Modifier
+                    .size(
+                        width = 160.dp,
+                        height = 80.dp
+                    ),
+                pagerState = pagerState,
+                text = continueText,
+                pagerCount = pagerCount
+            ) {
+
+                //  c последней страницы приветствия идё на главный экран С ОНБОРДИНГОМ
+                //  и сохраняем флаг о том, что приветствие пройдено
+                if (pagerState.currentPage == pagerCount - 1) {
+                    //  онбординг пройден
+                    welcomeViewModel.saveWelcomeScreenState(completed = true)
+                    navController.navigate(Screen.Home.route)
+                    //navController.popBackStack()
+                }
+
+                // к следующей странице приветствия
+                else {
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            pagerState.scrollToPage(
+                                pagerState.currentPage + 1,
+                                pageOffset = 0f
+                            )
+                        }
+                    }
+                }
+
+
+            }
+
+        }
+    }
+}
 
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -382,8 +389,6 @@ fun SkipButton(
                     _text = "Не сейчас"
                 Text(_text)
             }
-
-
         }
     }
 }
