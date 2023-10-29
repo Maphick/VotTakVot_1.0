@@ -106,18 +106,6 @@ fun SearchResultScreen(
                     //onAddedClickListener(workoutItem)
                 }
         }
-            // список найденных тренировок
-
-            //val searchedWorkouts =  generalViewModel.workoutListSearchResult.observeAsState(listOf())
-/*
-            // источник данных для списк тренировок
-            val source: List<WorkoutDataItem> = sourceListTrainsForYouExample
-            // список тренировок
-            val trainList = TrainListViewModel(
-                source
-            )
-
- */
             val searchedWorkouts =  trainList.workoutListGeneral.observeAsState(listOf())
                 //workoutViewModel.workoutList.observeAsState(listOf())
                 // значение по умолчанию - пустая коллекция
@@ -164,7 +152,7 @@ repeat(models.value?.size!!) {
 */
 
 @Composable
-private fun IconCloseButton(
+fun IconCloseButton(
     modifier: Modifier = Modifier,
     iconResId: ImageVector,
     iconResIdPressed: ImageVector,

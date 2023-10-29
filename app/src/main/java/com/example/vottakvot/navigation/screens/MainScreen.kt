@@ -98,8 +98,10 @@ fun NavigationHomeScreen(
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     var showBottomBar by rememberSaveable { mutableStateOf(true) }
     showBottomBar = when (navBackStackEntry?.destination?.route) {
-        Screen.Splash.route -> false // on this screen bottom bar should be hidden
-        Screen.Welcome.route -> false // here too
+        Screen.Splash.route -> false // сплеш
+        Screen.Welcome.route -> false // приветствие
+        Screen.Loader.route -> false // подбор тренировок
+        Screen.Inquirer.route -> false // опрос
         else -> true // in all other cases show bottom bar
     }
 
@@ -118,6 +120,7 @@ fun NavigationHomeScreen(
     }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun navBottomBar(
     navHostController: NavHostController,
@@ -212,13 +215,15 @@ fun ContentScreen(
         isOnboardingPassed = isOnboardingPassed,
         startDestination = startDestination,
         splashScreenContent = { SplashScreen() },
+        loaderScreenContent = { LoaderScreen() },
         welcomeScreenContent = {
             WelcomeScreen(
                 navController = navHostController,
-                welcomeViewModel = welcomeViewModel
+                welcomeViewModel = welcomeViewModel,
+                inquirerViewModel = inquirerViewModel
             ) },
         inquirerScreenContent = { InquirerScreen(
-            context = context,
+            //context = context,
             navController = navHostController,
             inquirerViewModel = inquirerViewModel
         )

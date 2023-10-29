@@ -2,6 +2,7 @@
 
 package com.example.vottakvot.navigation.screens
 
+import android.icu.text.CaseMap.Title
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
@@ -42,7 +45,9 @@ import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.domain.WorkoutDataItem
+import com.example.vottakvot.isOnboardingPassedApp
 import com.example.vottakvot.navigation.navigationLogic.Screen
+import com.example.vottakvot.ui.theme.TrainTypeCard
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.ui.theme.WorkoutCard
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -123,8 +128,121 @@ private  fun TrainsForYou(
                 navigateTo = Screen.SearchResultPopular.route
        )
 
+            // блок типовтренировок
+            TrainTypeBlock(
+                navController = navController,
+                title = stringResource(R.string.train_type)
+            )
+            }
+
         }
     }
+
+@Composable
+fun TrainTypeBlock(
+    navController: NavHostController,
+    navigateFromCharger: String = Screen.SearchResultCharger.route,
+    navigateFromHomeFitness: String = Screen.SearchResultHomeFitness.route,
+    navigateFromWorkFitness: String = Screen.SearchResultWorkFitness.route,
+    navigateFromBeforeBedtime: String = Screen.SearchResultBeforeBedtime.route,
+    title: String = stringResource(R.string.train_type)
+)
+{
+   Column(
+    modifier = Modifier
+    .fillMaxWidth()
+   )
+    {
+        val modifier: Modifier = Modifier
+            .padding(
+                4.dp
+            )
+
+        // блок тренировок для вас
+        // заголовок
+        TitleBlock(
+            text = title,
+            isIconVisible = false
+        )
+       Row(
+           verticalAlignment = Alignment.CenterVertically,
+           horizontalArrangement = Arrangement.SpaceBetween
+       )
+       {
+           TrainTypeCard(
+               modifier = modifier
+                   .fillMaxWidth(0.5f),
+               title = stringResource(R.string.charger),
+               painterResourceId = R.drawable.charger,
+               onLCardClickListener = {
+                   GlobalScope.launch {
+                       withContext(Dispatchers.Main) {
+                           // переходим на страницу поиска тренировок для Вас
+                           navController.navigate(navigateFromCharger)
+                           // к предыдущей странице приветствия
+                       }
+
+                   }
+               }
+           )
+           TrainTypeCard(
+               modifier = modifier
+                   .fillMaxWidth(),
+                   title = stringResource(R.string.home_fitness),
+           painterResourceId = R.drawable.home_fitness,
+               onLCardClickListener = {
+                   GlobalScope.launch {
+                       withContext(Dispatchers.Main) {
+                           // переходим на страницу поиска тренировок для Вас
+                           navController.navigate(navigateFromHomeFitness)
+                           // к предыдущей странице приветствия
+                       }
+
+                   }
+               }
+           )
+       }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        )
+        {
+            TrainTypeCard(
+                modifier = modifier
+                    .fillMaxWidth(0.5f),
+                title = stringResource(R.string.work_fitness),
+                painterResourceId = R.drawable.work_fitness,
+                onLCardClickListener = {
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            // переходим на страницу поиска тренировок для Вас
+                            navController.navigate(navigateFromWorkFitness)
+                            // к предыдущей странице приветствия
+                        }
+
+                    }
+                }
+            )
+            TrainTypeCard(
+                modifier = modifier
+                    .fillMaxWidth(1f),
+                title = stringResource(R.string.before_bedtime),
+                painterResourceId = R.drawable.before_bedtime,
+                onLCardClickListener = {
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            // переходим на страницу поиска тренировок для Вас
+                            navController.navigate(navigateFromBeforeBedtime)
+                            // к предыдущей странице приветствия
+                        }
+
+                    }
+                }
+            )
+
+        }
+
+   }
 }
 
 
@@ -184,6 +302,7 @@ private fun TitleBlock(
         Text(
             text = text,
             fontSize = 30.sp,
+            //fontWeight = FontWeight.Bold,
             color = colorScheme.onBackground,
         )
         if (isIconVisible) {
@@ -242,6 +361,7 @@ private  fun TrainsBlock(
     }
     //  если не пройден - предложить пройти
     else  TrainsBlockWithoutOnBoarding(
+        navController = navController
     )
 }
 
@@ -268,7 +388,11 @@ fun MoreTrainButton(
                     backgroundColor = Color.Transparent
                 )
             ) {
-                Text(text)
+                Text(
+                    text = text,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.primary,
+                )
             }
     }
 }
@@ -300,27 +424,85 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
 }
 
 
-
+// как вышлдит домашнй экран у пользователя,
+// не прошедшего onBoarding
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 private  fun TrainsBlockWithoutOnBoarding(
+    navController: NavHostController
 )
 {
  Text(
      modifier = Modifier
          .fillMaxWidth(1f)
          .padding(
-             top = 20.dp,
-             start = 20.dp,
-             end = 20.dp
+             top = 24.dp,
+             start = 32.dp,
+             end = 32.dp,
+             bottom = 24.dp
          ),
      text = stringResource(R.string.trains_block_without_onboarding),
      color = colorScheme.onBackground,
      fontSize = 16.sp,
-     fontWeight = FontWeight.Medium,
+     //fontWeight = FontWeight.Medium,
      textAlign = TextAlign.Justify,
      lineHeight = 25.sp
  )
+    // кнопка отправлющая снова пройти онбординг
+    TrainSelectionButton(
+        navController = navController,
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .height(80.dp),
+        text = stringResource(R.string.train_selection),
+    ) {
+        // переходим на экран онбординга
+            navController.navigate(Screen.Inquirer.route)
+    }
 }
+
+
+// подбор тренировок в случае, если пользоватеь не прошел онбординг
+@ExperimentalAnimationApi
+@ExperimentalPagerApi
+@Composable
+fun TrainSelectionButton(
+    navController: NavHostController,
+    modifier: Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp,
+                top = 16.dp
+                //bottom = 16.dp
+            ),
+        onClick =
+        {
+            onClick()
+        },
+        shape = CircleShape,
+        //border= BorderStroke(1.dp, Color.Blue),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = colorScheme.secondaryContainer
+        )
+    ) {
+        Text(
+            modifier =  Modifier.align(Alignment.CenterVertically),
+            text = text,
+            fontWeight = FontWeight.Bold,
+            color = colorScheme.onSecondaryContainer,
+            textAlign = TextAlign.Center,  // horizontal center of the text
+        )
+    }
+}
+
 
 @Composable
 private fun IconFilterButton(
@@ -401,4 +583,35 @@ fun HomeScreenWithOnboardingBlackPrev() {
         )
     }
 }
+
+@Preview
+@Composable
+fun TrainTypeBlockLightPrev() {
+    VotTakVotTheme(
+        darkTheme = false)
+    {
+        val context = LocalContext.current
+        val navController = NavHostController(context = context)
+        TrainTypeBlock(
+            navController = navController,
+            title = stringResource(R.string.train_type)
+        )
+    }
+}
+@Preview
+@Composable
+fun TrainTypeBlockBlackPrev() {
+    VotTakVotTheme(
+        darkTheme = true)
+    {
+        val context = LocalContext.current
+        val navController = NavHostController(context = context)
+        TrainTypeBlock(
+            navController = navController,
+            title = stringResource(R.string.train_type)
+        )
+    }
+}
+
+
 

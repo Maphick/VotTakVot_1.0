@@ -5,7 +5,9 @@
     <string name="botton_navigation_item_favourite">Избранное</string>
     <string name="botton_navigation_item_profile">Профиль</string>
     <string name="not_now">Не сейчас</string>
-    <string name="continue_">Продолжить...</string>
+    <string name="continue_">Продолжить</string>
+    <string name="continue_dot">Продолжить...</string>
+    <string name="back">Вернуться</string>
     <string name="vot_tak_vot">ВотТакВот</string>
     <string name="search_result">Результаты поиска</string>
     <string name="full_body">Всё тело</string>
@@ -20,4 +22,13 @@
     Попробуйте установить подключение и попробовать ещё раз - и тогда мы сможем предложить самые
     популярные тренировки!</string>
     <string name="more_trains">Больше тренировок ...</string>
+    <string name="yes_of_cource">Да, конечно!</string>
+    <string name="train_selection">Подобрать тренировки</string>
+    <string name="question_train_type">"Какими типами тренировок "</string>
+    <string name="train_selecting">Подбираем тренировки...</string>
+    <string name="charger">Зарядка</string>
+    <string name="home_fitness">Фитнес дома</string>
+    <string name="work_fitness">На работе</string>
+    <string name="before_bedtime">Перед сном</string>
+    <string name="train_type">Тип тренировки</string>
 </resources>

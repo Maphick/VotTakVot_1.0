@@ -27,9 +27,13 @@ import sourceListPopularExample
 import sourceListSearchResultExample
 import sourceListTrainsForYouExample
 
+// пройден ли онбординг
+var isOnboardingPassedApp = false
+
 @ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
+
 
 
     @OptIn(ExperimentalAnimationApi::class)

@@ -40,10 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
+import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.navigation.navigationLogic.Screen
-import com.example.vottakvot.navigation.navigationLogic.WelcomePage
+import com.example.vottakvot.domain.WelcomePage
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -56,10 +57,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-fun DataGeneration(welcomeViewModel: WelcomeViewModel)
+fun WelcomeDataGeneration(
+    welcomeViewModel: WelcomeViewModel,
+    inquirerViewModel: InquirerViewModel
+)
 {
-    welcomeViewModel.createExamplePageList()
+    welcomeViewModel.createExampleWelcomePageList()
 }
+
 //  экраны приветствия
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -67,14 +72,14 @@ fun DataGeneration(welcomeViewModel: WelcomeViewModel)
 fun WelcomeScreen(
     //context: Context,
     navController: NavHostController,
-    welcomeViewModel: WelcomeViewModel
+    welcomeViewModel: WelcomeViewModel,
+    inquirerViewModel: InquirerViewModel
 ) {
-
-
-
-
     // заполнение моками
-    DataGeneration(welcomeViewModel)
+    WelcomeDataGeneration(
+        welcomeViewModel,
+        inquirerViewModel
+    )
     //  все страницы приветствия
     val pages = welcomeViewModel.getWelcomePagesList()
    // if (pages.size == 0) {
@@ -103,8 +108,8 @@ fun WelcomeScreen(
             state = pagerState,
             verticalAlignment = Alignment.Top,
         ) { position ->
-            PagerScreen(
-                onBoardingPage = pages[position]
+            WelcomePagerScreen(
+                welcomePage = pages[position]
             )
         }
 
@@ -112,8 +117,9 @@ fun WelcomeScreen(
             modifier = Modifier
                 .height(100.dp)
         )
-        BottomNav(
-            welcomeViewModel,
+        WelcomeBottomNav(
+            welcomeViewModel = welcomeViewModel,
+            inquirerViewModel = inquirerViewModel,
             navController = navController,
             pagerState = pagerState,
             pagerCount = pagerCount
@@ -123,7 +129,7 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun PagerScreen(onBoardingPage: WelcomePage) {
+fun WelcomePagerScreen(welcomePage: WelcomePage) {
     Column(
         modifier = Modifier
             .fillMaxWidth(1f)
@@ -133,11 +139,11 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
     ) {
         ImageAndText(
             modifier = Modifier,
-            painter = painterResource(id = onBoardingPage.image),
+            painter = painterResource(id = welcomePage.image),
             ico = painterResource(id = R.drawable.logo),
             contentDescription = "Pager Image",
             title = stringResource(R.string.vot_tak_vot),
-            colorText = onBoardingPage.colorText
+            colorText = welcomePage.colorText
         )
         Spacer(modifier = Modifier
             .width(20.dp)
@@ -149,7 +155,7 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
                     top = 20.dp
                 ),
             color = colorScheme.onBackground,
-            text = onBoardingPage.title,
+            text = welcomePage.title,
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -166,7 +172,7 @@ fun PagerScreen(onBoardingPage: WelcomePage) {
                     start = 40.dp,
                     end = 40.dp
                 ),
-            text = onBoardingPage.description,
+            text = welcomePage.description,
             color = colorScheme.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
@@ -237,9 +243,9 @@ fun ImageAndText(
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
-fun BottomNav(
-    //modifier: Modifier = Modifier,
+fun WelcomeBottomNav(
     welcomeViewModel: WelcomeViewModel,
+    inquirerViewModel:InquirerViewModel,
     navController: NavHostController,
     pagerState: PagerState,
     pagerCount: Int
@@ -252,7 +258,9 @@ fun BottomNav(
     {
         Row(
             modifier = Modifier
-                .weight(0.4f)
+                .weight(0.4f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         )
         {
             val skipText = stringResource(R.string.not_now)
@@ -281,19 +289,17 @@ fun BottomNav(
                     //  c последней страницы приветствия идём на главный экран БЕЗ ОНБОРДИНГА
                     //  и сохраняем флаг о том, что приветствие пройдено
                     welcomeViewModel.saveWelcomeScreenState(completed = true)
+                    //  и сохраняем флаг о том, что онбординг пропущен
+                    inquirerViewModel.saveInquirerState(completed = false)
                     navController.navigate(Screen.Home.route)
-                    navController.popBackStack()
+
+                    //navController.popBackStack()
                 }
-
-
-
-
-
             }
         }
         Row(
             modifier = Modifier
-                .weight(0.2f)
+                .weight(0.1f)
         )
         {
             HorizontalPagerIndicator(
@@ -307,7 +313,9 @@ fun BottomNav(
         }
         Row(
             modifier = Modifier
-               // .weight(0.2f)
+                .weight(0.4f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         )
         {
             val continueText = stringResource(R.string.continue_)
@@ -322,12 +330,12 @@ fun BottomNav(
                 pagerCount = pagerCount
             ) {
 
-                //  c последней страницы приветствия идё на главный экран С ОНБОРДИНГОМ
+                //  c последней страницы приветствия идём на экран с онбордингом
                 //  и сохраняем флаг о том, что приветствие пройдено
                 if (pagerState.currentPage == pagerCount - 1) {
                     //  онбординг пройден
                     welcomeViewModel.saveWelcomeScreenState(completed = true)
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Inquirer.route)
                     //navController.popBackStack()
                 }
 
@@ -342,7 +350,6 @@ fun BottomNav(
                         }
                     }
                 }
-
 
             }
 
@@ -373,9 +380,7 @@ fun SkipButton(
         ) {
             OutlinedButton(
                 modifier = modifier,
-                // colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
                 border = BorderStroke(0.dp, Color.Transparent),
-                // modifier = modifier,
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
                     contentColor = colorScheme.onSecondaryContainer,
@@ -384,10 +389,14 @@ fun SkipButton(
             ) {
                 var _text = text
                 if (pagerState.currentPage != pagerCount  - 1)
-                    _text = "Вернуться"
+                    _text = stringResource(R.string.back)
                 else
-                    _text = "Не сейчас"
-                Text(_text)
+                    _text = stringResource(R.string.not_now)
+                Text(
+                    text = _text,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
+                )
             }
         }
     }
@@ -423,11 +432,14 @@ fun ContinueButton(
             ) {
                 var _text = text
                 if (pagerState.currentPage != pagerCount - 1)
-                    _text = "Продолжить..."
+                    _text = stringResource(R.string.continue_dot)
                 else
-                    _text = "Да, конечно!"
-                Text(_text)
-
+                    _text = stringResource(R.string.yes_of_cource)
+                Text(
+                    text = _text,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
+                )
             }
         }
     }
@@ -445,10 +457,12 @@ fun DarkWelcomeScreenPrev() {
     {
         val context =  LocalContext.current
         var welcomeViewModel = WelcomeViewModel(DataStoreRepository(context))
+        val inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
         WelcomeScreen(
             //conext = context,
             navController = rememberNavController(),
-            welcomeViewModel = welcomeViewModel
+            welcomeViewModel = welcomeViewModel,
+            inquirerViewModel = inquirerViewModel
         )
     }
 }
@@ -462,11 +476,13 @@ fun LightWelcomeScreenPrev() {
     )
     {
         val context =  LocalContext.current
-        var welcomeViewModel = WelcomeViewModel(DataStoreRepository(context))
+        val welcomeViewModel = WelcomeViewModel(DataStoreRepository(context))
+        val inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
         WelcomeScreen(
             //conext = context,
             navController = rememberNavController(),
-            welcomeViewModel = welcomeViewModel
+            welcomeViewModel = welcomeViewModel,
+            inquirerViewModel = inquirerViewModel
         )
     }
 }

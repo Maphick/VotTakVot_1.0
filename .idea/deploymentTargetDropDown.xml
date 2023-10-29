@@ -2,19 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="HomeScreenWithOnboardingWhitePrev">
+      <entry key="DownloadScreenBlackPrev">
+        <State />
+      </entry>
+      <entry key="DownloadScreenWhitePrev">
         <State />
       </entry>
       <entry key="HomeScreenWithOnboardingWhitePrev (1)">
         <State />
       </entry>
-      <entry key="HomeScreenWithoutOnboardingWhitePrev">
+      <entry key="InquirerScreenWhitePrev">
         <State />
       </entry>
-      <entry key="SearchResultScreenBlackPrev">
-        <State />
-      </entry>
-      <entry key="WorkoutCardWhitePrev">
+      <entry key="TrainTypeBlockLightPrev">
         <State />
       </entry>
       <entry key="app">

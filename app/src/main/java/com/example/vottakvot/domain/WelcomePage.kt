@@ -1,10 +1,10 @@
-package com.example.vottakvot.navigation.navigationLogic
+package com.example.vottakvot.domain
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 
 data class WelcomePage(
-    @DrawableRes
+    //@DrawableRes
     val image: Int,
     val title: String,
     val description: String,

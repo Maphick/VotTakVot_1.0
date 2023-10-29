@@ -43,7 +43,5 @@ class SplashViewModel(
             }
             _isLoading.value = false
         }
-2    }
-
-
+   }
 }

@@ -48,7 +48,7 @@ fun WorkoutCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .height(120.dp),
+            .height(140.dp),
         backgroundColor = colorScheme.surface,
         shape = RoundedCornerShape(
             topStart = 16.dp,
@@ -83,7 +83,8 @@ fun WorkoutCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = "${workoutItem.title}",
+                        text = "Сбросить стресс перед сном",
+                        //"${workoutItem.title}",
                         fontSize = 20.sp,
                         color = colorScheme.primary,
                     )
@@ -128,7 +129,7 @@ fun WorkoutCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f),
@@ -187,8 +188,8 @@ fun WorkoutCard(
                         modifier = Modifier
                             .size(60.dp)
                             .padding(
-                                bottom = 8.dp,
-                                end = 8.dp
+                               // bottom = 8.dp,
+                                //end = 8.dp
                             )
                             .fillMaxSize(1f),
                         iconResId = Icons.Sharp.PlayCircleFilled,

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.R
 import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.navigation.navigationLogic.WelcomePage
+import com.example.vottakvot.domain.WelcomePage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -23,6 +23,8 @@ class WelcomeViewModel(
         }
     }
 
+
+
     private var _welcomePagesList: MutableList<WelcomePage> = mutableListOf()
 
     fun getWelcomePagesList(): List<WelcomePage>
@@ -32,13 +34,13 @@ class WelcomeViewModel(
             welcomePagesList = _welcomePagesList
         }
         else {
-            welcomePagesList = this.createExamplePageList()
+            welcomePagesList = this.createExampleWelcomePageList()
             _welcomePagesList = welcomePagesList.toMutableList()
         }
         return welcomePagesList
     }
 
-    fun createExamplePageList() : List<WelcomePage> {
+    fun createExampleWelcomePageList() : List<WelcomePage> {
         val _newWelcomePagesList: MutableList<WelcomePage> = mutableListOf()
         /*
         for(i in 0..5) {

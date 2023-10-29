@@ -10,7 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.isOnboardingPassedApp
 import com.example.vottakvot.navigation.screens.HomeScreen
+import com.example.vottakvot.navigation.screens.LoaderScreen
 import com.example.vottakvot.navigation.screens.SearchResultScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
@@ -28,6 +30,7 @@ fun SetupNavGraph(
     trainListPopular: TrainListViewModel,
     trainListSearched: TrainListViewModel,
     splashScreenContent: @Composable () -> Unit,
+    loaderScreenContent: @Composable () -> Unit,
     inquirerScreenContent: @Composable () -> Unit,
     welcomeScreenContent: @Composable () -> Unit,
     myTrainsContent: @Composable () -> Unit,
@@ -45,12 +48,21 @@ fun SetupNavGraph(
         // сплеш экран
         composable(route = Screen.Splash.route) {
             LaunchedEffect(key1 = null){
-                delay(2.seconds)
+                delay(5.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.Welcome.route)
             }
             splashScreenContent()
          }
+        // сплеш экран
+        composable(route = Screen.Loader.route) {
+            LaunchedEffect(key1 = null){
+                delay(10.seconds)
+                navController.popBackStack()
+                navController.navigate(Screen.Home.route)
+            }
+            loaderScreenContent()
+        }
         // приветственные экраны
         composable(route = Screen.Welcome.route) {
             welcomeScreenContent()
@@ -62,11 +74,21 @@ fun SetupNavGraph(
         }
         // домашний экран после прохождения онбординга
         composable(route = Screen.Home.route) {
+
                 HomeScreen(
                 navController = navController,
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
-                isOnboardingPassed = true
+                isOnboardingPassed = isOnboardingPassedApp
+            )
+        }
+        // домашний экран без онбординга
+        composable(route = Screen.HomeWithoutOnboarding.route) {
+            HomeScreen(
+                navController = navController,
+                trainListForYou = trainListForYou,
+                trainListPopular = trainListPopular,
+                isOnboardingPassed = false
             )
         }
         /*
@@ -97,7 +119,7 @@ fun SetupNavGraph(
             )
             //searchResultForYouContent()
         }
-        // страница "Больше тренировок для Вас"
+        // страница "Больше популярные"
         composable(route = Screen.SearchResultPopular.route) {
             SearchResultScreen(
                 navController = navController,
@@ -107,6 +129,41 @@ fun SetupNavGraph(
             //searchResultForYouContent()
         }
 
+        //----------------------------------------- ТИПЫ ТРЕНИРОВКИ
+        // страница "Уренняя зарядка"
+        composable(route = Screen.SearchResultCharger.route) {
+            SearchResultScreen(
+                navController = navController,
+                title = stringResource(R.string.charger),
+                trainList = trainListForYou
+            )
+            //searchResultForYouContent()
+        }
+        composable(route = Screen.SearchResultHomeFitness.route) {
+            SearchResultScreen(
+                navController = navController,
+                title = stringResource(R.string.home_fitness),
+                trainList = trainListForYou
+            )
+            //searchResultForYouContent()
+        }
+        composable(route = Screen.SearchResultWorkFitness.route) {
+            SearchResultScreen(
+                navController = navController,
+                title = stringResource(R.string.work_fitness),
+                trainList = trainListForYou
+            )
+            //searchResultForYouContent()
+        }
+        composable(route = Screen.SearchResultBeforeBedtime.route) {
+            SearchResultScreen(
+                navController = navController,
+                title = stringResource(R.string.before_bedtime),
+                trainList = trainListForYou
+            )
+            //searchResultForYouContent()
+        }
+        //---------------------------------------------------------
         composable(route = Screen.MyTrains.route) {
             myTrainsContent()
         }

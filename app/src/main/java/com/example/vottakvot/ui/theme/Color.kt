@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 val primary_dark  = Color(0xFFFFB2B6) // selected pager 3A3333
 val tertiary_dark = Color(0xFFFFB2B6)
+val secondary_dark = Color(0xFF9F8C8C)
     //Color(0xFFFFDADB) // not_now_dark
 val dark_dark  = Color(0xFF0F0F0F)
 val background_dark  = Color(0xFF0F0F0F)
@@ -13,6 +14,8 @@ val secondary_container_dark = Color(0xFF7D2935)
 val surface_container_dark = Color(0xFF3A3333) //
 val surfacecontainerhighest = Color(0xFF3A333) //
 val inactiveColorPager  = Color(0xFF3A3333)
+
+val surface_variant_dark = Color(0xFF9F8C8C)
 
 //val on_primary_dark =
 //val on_secondary_dark =
@@ -30,6 +33,8 @@ val on_secondary_container_dark = Color(0xFFFFDADB)
 
 
 val primary_light = Color(0xFFBE0038) // selected pager activeColor
+val secondary_light = Color(0xFFFFB2B6)
+
 val tertiary_light = Color(0xFFFFB2B6)
 val surface_light  = Color(0xFFFFF8F7)
 val surface_variant_light  = Color(0xFFF4DDDD)
