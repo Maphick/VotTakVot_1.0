@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,12 +38,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.example.vottakvot.R
+import com.example.vottakvot.ViewModel.InquirerViewModel
+import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.data.DataStoreRepository
+import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.ui.theme.VotTakVotTheme
+import sourceListTrainsForYouExample
 
 
 // экран подбора тренировок
 @Composable
-fun LoaderScreen() {
+fun LoaderScreen(
+    inquirerViewModel: InquirerViewModel,
+    trainListForYou: TrainListViewModel
+) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -51,6 +60,13 @@ fun LoaderScreen() {
             verticalArrangement = Arrangement.Center
         )
         {
+            // получение списка тренировок с сервера
+            /*getYourTrains(
+                inquirerViewModel = inquirerViewModel,
+                limit = 100,
+                trainListForYou =  trainListForYou
+            )*/
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -106,9 +122,17 @@ fun LoaderScreen() {
     @Composable
     fun DownloadScreenWhitePrev() {
         VotTakVotTheme(
-            darkTheme = false)
+            darkTheme = false
+        )
         {
-            LoaderScreen()
+            val context = LocalContext.current
+            var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
+            val trainListForYou: TrainListViewModel =
+                TrainListViewModel(source = sourceListTrainsForYouExample)
+            LoaderScreen(
+                inquirerViewModel = inquirerViewModel,
+                trainListForYou = trainListForYou
+            )
         }
     }
 
@@ -118,6 +142,13 @@ fun LoaderScreen() {
         VotTakVotTheme(
             darkTheme = true)
         {
-            LoaderScreen()
+            val context =  LocalContext.current
+            var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
+            val trainListForYou: TrainListViewModel =
+                TrainListViewModel(source = sourceListTrainsForYouExample)
+            LoaderScreen(
+                inquirerViewModel = inquirerViewModel,
+                trainListForYou = trainListForYou
+            )
         }
     }

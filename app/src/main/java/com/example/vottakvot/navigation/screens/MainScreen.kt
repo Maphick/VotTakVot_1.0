@@ -102,6 +102,8 @@ fun NavigationHomeScreen(
         Screen.Welcome.route -> false // приветствие
         Screen.Loader.route -> false // подбор тренировок
         Screen.Inquirer.route -> false // опрос
+        Screen.Workout.route -> false // тренировка
+        Screen.Exercise.route -> false // упражнение
         else -> true // in all other cases show bottom bar
     }
 
@@ -215,7 +217,10 @@ fun ContentScreen(
         isOnboardingPassed = isOnboardingPassed,
         startDestination = startDestination,
         splashScreenContent = { SplashScreen() },
-        loaderScreenContent = { LoaderScreen() },
+        loaderScreenContent = { LoaderScreen(
+            inquirerViewModel = inquirerViewModel,
+            trainListForYou = trainListForYou
+        ) },
         welcomeScreenContent = {
             WelcomeScreen(
                 navController = navHostController,
@@ -225,23 +230,12 @@ fun ContentScreen(
         inquirerScreenContent = { InquirerScreen(
             //context = context,
             navController = navHostController,
-            inquirerViewModel = inquirerViewModel
+            inquirerViewModel = inquirerViewModel,
+            trainListForYou = trainListForYou
         )
         },
-        /*
-        homeScreenOnboardingPassed = {HomeScreen(
-            navController = navHostController,
-            trainListForYou = trainListForYou,
-            trainListPopular = trainListPopular,
-            isOnboardingPassed = true
-        )},
-        homeScreenWithoutOnbiarding = {HomeScreen(
-            navController = navHostController,
-            trainListForYou = trainListForYou,
-            trainListPopular = trainListPopular,
-            isOnboardingPassed = false
-        )},
-        */
+
+
         myTrainsContent = { MyTrainsScreen()},
         favouriteContent = { FavouriteScreen()},
         profileContent = { ProfileScreen()},

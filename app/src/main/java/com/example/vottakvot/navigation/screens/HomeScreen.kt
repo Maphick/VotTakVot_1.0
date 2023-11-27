@@ -342,7 +342,8 @@ private  fun TrainsBlock(
         // источник данных для списк тренировок
         TrainsBlockWithOnBoardingAndInternet(
             visibleCount = visibleCount, // кол-во видимых тренировок
-            trainList = trainListViewModel
+            trainList = trainListViewModel,
+            navController = navController
         )
         MoreTrainButton(
             modifier = Modifier
@@ -401,7 +402,8 @@ fun MoreTrainButton(
 @Composable
 private  fun TrainsBlockWithOnBoardingAndInternet (
     visibleCount: Int = 3, // кол-во видимых тренировок
-    trainList : TrainListViewModel
+    trainList : TrainListViewModel,
+    navController: NavHostController
 ) {
     val yourTrains = trainList.workoutListGeneral.observeAsState(listOf())
     for (i in 0..visibleCount - 1) {
@@ -418,6 +420,10 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
             },
             onPlayClickListener = {
                 trainList.changePlayingStatusList(it)
+                // id текущег упражнения
+                trainList.currentWorkoutId = it.id
+                // переход на страницу упражнения
+                navController.navigate(Screen.Workout.route)
             }
         )
     }

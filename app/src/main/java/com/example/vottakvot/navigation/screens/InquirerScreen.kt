@@ -1,6 +1,5 @@
 package com.example.vottakvot.navigation.screens
 
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -28,17 +27,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -51,8 +50,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.InquirerViewModel
+import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.domain.WorkoutDataItem
+import com.example.vottakvot.data.Repository
+import com.example.vottakvot.data.TransormWorkoutEntityToWorkoutDataItem
+import com.example.vottakvot.domain.BodyType
 import com.example.vottakvot.isOnboardingPassedApp
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -60,13 +62,17 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.example.vottakvot.domain.InquirerPage
+import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import sourceListTrainsForYouExample
 
-fun InquirerDataGeneration(inquirerViewModel: InquirerViewModel)
+fun InquirerDataGeneration(
+    inquirerViewModel: InquirerViewModel
+)
 {
     inquirerViewModel.createExampleInquirerPageList()
 }
@@ -78,12 +84,15 @@ fun InquirerDataGeneration(inquirerViewModel: InquirerViewModel)
 fun InquirerScreen(
     //context: Context,
     navController: NavHostController,
-    inquirerViewModel: InquirerViewModel
+    inquirerViewModel: InquirerViewModel,
+    trainListForYou: TrainListViewModel
 ) {
     // заполнение моками
-    InquirerDataGeneration(inquirerViewModel)
+    InquirerDataGeneration(
+        inquirerViewModel
+    )
     //  все страницы опросника
-    val pages = inquirerViewModel.getInquirerPagesList()
+    var pages = inquirerViewModel.getInquirerPagesList()
     val pagerCount = pages.size
     val pagerState = rememberPagerState()
     Column(
@@ -124,6 +133,10 @@ fun InquirerScreen(
                 //onAddedClickListener(workoutItem)
             }
         }
+
+        var index by remember { mutableStateOf(0) }
+        var value by remember { mutableStateOf(false) }
+
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
             //.weight(10f),
@@ -132,13 +145,23 @@ fun InquirerScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             position ->
+
+
+
             InquirerPagerScreen(
-
-                inquirerPage = pages[position],
-                state = false,
+                inquirerViewModel = inquirerViewModel,
+                pageNumber = position,
                 onStateChange = {
-
+                   _index, _value ->
+                    index = _index
+                    value = _value
+                    inquirerViewModel.changeAnswerCheckedValue(
+                        position, index, value
+                    )
                 }
+                //{
+                  //  onStateChange(index, value)
+               // }
             )
         }
 
@@ -148,10 +171,11 @@ fun InquirerScreen(
         )
 
         InquirerBottomNav(
-            inquirerViewModel,
+            inquirerViewModel = inquirerViewModel,
             navController = navController,
             pagerState = pagerState,
-            pagerCount = pagerCount
+            pagerCount = pagerCount,
+            trainListForYou = trainListForYou
         )
     }
 }
@@ -159,15 +183,14 @@ fun InquirerScreen(
 
 @Composable
 fun InquirerPagerScreen(
-    inquirerPage: InquirerPage,
-    state: Boolean,
-    //answersList: OnBoardingAnswersListViewModel,
-    onStateChange: (InquirerPage) -> Unit,
+    inquirerViewModel: InquirerViewModel,
+    pageNumber : Int,
+    onStateChange: (Int, Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth(1f)
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.6f)
             .padding(
                 start = 16.dp,
                 end = 16.dp
@@ -180,6 +203,7 @@ fun InquirerPagerScreen(
             modifier = Modifier
             //  .width(20.dp)
         )
+        val currentPage = inquirerViewModel.getInquirerPagesList()[pageNumber]
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -187,22 +211,18 @@ fun InquirerPagerScreen(
                     horizontal = 0.dp
                 ),
             color = colorScheme.onBackground,
-            text = inquirerPage.question,
+            text = currentPage.question,
             fontSize = 24.sp,
             lineHeight = 30.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-
             )
         Spacer(
             modifier = Modifier
-                .height(100.dp)
+                .height(10.dp)
         )
-        //val answwers =  answersList.workoutListGeneral.observeAsState(listOf())
-        // ответы
-        //for (answer in inquirerPage.answers)
-        for (i in 0..inquirerPage.answers.size - 1) {
-            val answer = inquirerPage.answers[i]
+        for (i in 0..currentPage.answers.size - 1) {
+            val answer =currentPage.answers[i]
             Row(
                 modifier = Modifier
                     .padding(
@@ -211,17 +231,15 @@ fun InquirerPagerScreen(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                var checkedState by remember { mutableStateOf(inquirerPage.isChecked[i]) }
+                var checkedState by remember { mutableStateOf(
+                    currentPage._isCheckedList.value?.get(i) ?: false) }
                 CheckBoxWithTextRippleFullRow(
                     label = answer,
                     state = checkedState,
                     onStateChange = {
-                        checkedState = it
-                        //
-
+                        onStateChange(i, it)
                     }
                 )
-
             }
         }
     }
@@ -234,34 +252,36 @@ fun CheckBoxWithTextRippleFullRow(
     state: Boolean,
     onStateChange: (Boolean) -> Unit
 ) {
+    var checkedState by remember { mutableStateOf(
+        state
+    )
+    }
     // Checkbox with text on right side
     Row(modifier = Modifier
         .fillMaxWidth()
-        .height(20.dp)
+        .height(50.dp)
         .clickable(
             role = Role.Checkbox,
             onClick = {
                 // при клике на строку происходит изменение состояния чекбокса на противоположное
-                onStateChange(!state)
+                onStateChange(state)
             }
         )
         .padding(0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        var checkedState by remember { mutableStateOf(state) }
         Checkbox(
-            checked = state,
+            modifier = Modifier.scale(1.5f),
+            checked = checkedState,
             colors = CheckboxDefaults.colors(
                 checkedColor = colorScheme.primary,
                 uncheckedColor = colorScheme.onBackground,
                 checkmarkColor = colorScheme.surface
 
             ),
-            onCheckedChange =
-            {
-                onStateChange(!state)
-                //onStateChange
-               // checkedState   = !checkedState
+            onCheckedChange = { checked_ ->
+                checkedState = checked_
+                onStateChange(checkedState)
             }
         )
         Spacer(modifier = Modifier.width(0.dp))
@@ -273,9 +293,9 @@ fun CheckBoxWithTextRippleFullRow(
                 ),
             color = colorScheme.onBackground,
             text = label,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             //lineHeight = 30.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Left,
 
             )
@@ -316,8 +336,10 @@ fun InquirerBottomNav(
     inquirerViewModel: InquirerViewModel,
     navController: NavHostController,
     pagerState: PagerState,
-    pagerCount: Int
+    pagerCount: Int,
+    trainListForYou: TrainListViewModel
 ) {
+    val bodyType: BodyType = BodyType.UPPER_BODY
     Row(
         modifier = Modifier
             .fillMaxWidth(1f)
@@ -364,6 +386,20 @@ fun InquirerBottomNav(
             text = stringResource(R.string.continue_),
             pagerCount = pagerCount
         ) {
+            if (pagerState.currentPage == pagerState.pageCount-1) {
+               // val a = inquirerViewModel.ch
+                //inquirerPage
+                var pages = inquirerViewModel.getInquirerPagesList()
+
+                // получение списка тренировок с сервера
+                getYourTrains(
+                    inquirerViewModel = inquirerViewModel,
+                    limit = 100,
+                    trainListForYou =  trainListForYou
+                )
+
+
+            }
 
             //  c последней страницы приветствия идём на главный экран С ОНБОРДИНГОМ
             //  и сохраняем флаг о том, что онбординг пройдено
@@ -390,6 +426,7 @@ fun InquirerBottomNav(
         }
         }
     }
+
 
 
 // кнопка "Вернуться"
@@ -462,7 +499,9 @@ fun NextButton(
             ),
         onClick =
     {
-        onClick()
+        onClick(
+
+        )
     },
         shape = CircleShape,
         //border= BorderStroke(1.dp, Color.Blue),
@@ -492,10 +531,11 @@ fun NextButton(
         {
             val context = LocalContext.current
             var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
-            InquirerScreen(
+            /*InquirerScreen(
                 navController = rememberNavController(),
-                inquirerViewModel = inquirerViewModel
-            )
+                inquirerViewModel = inquirerViewModel,
+                trainListForYou = TrainListViewModel(DataStoreRepository(context)),
+            )*/
         }
     }
 
@@ -508,9 +548,12 @@ fun NextButton(
         {
             val context =  LocalContext.current
             var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
+            val trainListForYou: TrainListViewModel =
+                TrainListViewModel(source = sourceListTrainsForYouExample)
             InquirerScreen(
                 navController = rememberNavController(),
-                inquirerViewModel = inquirerViewModel
+                inquirerViewModel = inquirerViewModel,
+                trainListForYou = trainListForYou
             )
         }
     }

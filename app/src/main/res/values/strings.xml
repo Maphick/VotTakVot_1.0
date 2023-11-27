@@ -5,6 +5,7 @@
     <string name="botton_navigation_item_favourite">Избранное</string>
     <string name="botton_navigation_item_profile">Профиль</string>
     <string name="not_now">Не сейчас</string>
+    <string name="start">Начать </string>
     <string name="continue_">Продолжить</string>
     <string name="continue_dot">Продолжить...</string>
     <string name="back">Вернуться</string>
@@ -31,4 +32,8 @@
     <string name="work_fitness">На работе</string>
     <string name="before_bedtime">Перед сном</string>
     <string name="train_type">Тип тренировки</string>
+    <string name="workout_description">Описание тренировки</string>
+    <string name="workout_contraindications">Противопоказания:</string>
+    <string name="exercises">"Упражнений: "</string>
+    <string name="steps">Порядок выполнения:</string>
 </resources>

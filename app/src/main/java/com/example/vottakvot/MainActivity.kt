@@ -30,6 +30,8 @@ import sourceListTrainsForYouExample
 // пройден ли онбординг
 var isOnboardingPassedApp = false
 
+
+
 @ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
         // вью модель для карточки тренировки
         var workoutViewModel = WorkoutViewModel()
         // список тренировок для Вас
-        val trainListForYou: TrainListViewModel = TrainListViewModel(source = sourceListTrainsForYouExample)
+        var trainListForYou: TrainListViewModel = TrainListViewModel()
         // список популярных тренировок
         val trainListPopular: TrainListViewModel = TrainListViewModel(source = sourceListPopularExample)
         //  список тренировок для результатов поиска

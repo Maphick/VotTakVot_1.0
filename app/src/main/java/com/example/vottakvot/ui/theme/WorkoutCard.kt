@@ -83,8 +83,7 @@ fun WorkoutCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = "Сбросить стресс перед сном",
-                        //"${workoutItem.title}",
+                        text = "${workoutItem.title}",
                         fontSize = 20.sp,
                         color = colorScheme.primary,
                     )
@@ -137,46 +136,11 @@ fun WorkoutCard(
                 verticalAlignment = Alignment.CenterVertically
             )
             {
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.Top
-                    )
-                {
-                    InfoIconWithText(
-                        modifier = Modifier
-                            .padding(
-                                //top = 16.dp
-                            ),
-                        iconResId = Icons.Outlined.AccessTime,
-                        text = workoutItem.time.toString() + "  мин."
-                    )
-                    Spacer(modifier = Modifier.width(24.dp))
-                    InfoImageWithText(
-                        modifier = Modifier
-                            .padding(
-                                //top = 8.dp
-                            ),
-                        painterResourceId = when(workoutItem.bodyType)
-                        {
-                            BodyType.FULL_BODY ->  R.drawable.body
-                            BodyType.UPPER_BODY ->  R.drawable.upper
-                            BodyType.BOTTOM_BODY ->  R.drawable.lower
-                            BodyType.ABD ->  R.drawable.abs
-                            else -> R.drawable.body
-                        },
-
-                        text = when(workoutItem.bodyType)
-                        {
-                            BodyType.FULL_BODY -> stringResource(R.string.full_body)
-                            BodyType.UPPER_BODY ->  stringResource(R.string.upper_body)
-                            BodyType.BOTTOM_BODY -> stringResource(R.string.botttom_body)
-                            BodyType.ABD ->  stringResource(R.string.abd)
-                            else -> stringResource(R.string.full_body)
-                        }
-                    )
-                }
+                // иконки времени и части тела
+                TimeAndBodyPart(
+                    time = workoutItem.time,
+                    bodyType = workoutItem.bodyType
+                )
                 Row(
                     modifier = Modifier,
                        // .size(60.dp),
@@ -204,7 +168,56 @@ fun WorkoutCard(
     }
 }
 
+@Composable
+fun TimeAndBodyPart(
+    //workoutItem: WorkoutDataItem,
+    time: Int = 1,
+    bodyType : BodyType = BodyType.FULL_BODY,
+    modifier: Modifier = Modifier
+        .fillMaxWidth(0.7f)
+)
+{
+    Row (
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.Top
+    )
+    {
+        InfoIconWithText(
+            modifier = Modifier
+                .padding(
+                    //top = 16.dp
+                ),
+            iconResId = Icons.Outlined.AccessTime,
+            text = time.toString() + "  мин."
+            //workoutItem.time.toString() + "  мин."
+        )
+        Spacer(modifier = Modifier.width(24.dp))
+        InfoImageWithText(
+            modifier = Modifier
+                .padding(
+                    //top = 8.dp
+                ),
+            painterResourceId = when(bodyType)
+            {
+                BodyType.FULL_BODY ->  R.drawable.body
+                BodyType.UPPER_BODY ->  R.drawable.upper
+                BodyType.BOTTOM_BODY ->  R.drawable.lower
+                BodyType.ABD ->  R.drawable.abs
+                else -> R.drawable.body
+            },
 
+            text = when(bodyType)
+            {
+                BodyType.FULL_BODY -> stringResource(R.string.full_body)
+                BodyType.UPPER_BODY ->  stringResource(R.string.upper_body)
+                BodyType.BOTTOM_BODY -> stringResource(R.string.botttom_body)
+                BodyType.ABD ->  stringResource(R.string.abd)
+                else -> stringResource(R.string.full_body)
+            }
+        )
+    }
+}
 @Composable
 fun InfoImageWithText(
     modifier: Modifier = Modifier,
@@ -259,14 +272,14 @@ fun InfoIconWithText(
         ,
         imageVector = iconResId,
         contentDescription = null,
-        tint = colorScheme.onSurface
+        tint = colorScheme.onSecondaryContainer
     )
 }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = modifier,
             text = text,
-            color = colorScheme.onSurface
+            color = colorScheme.onBackground
         )
     }
 }

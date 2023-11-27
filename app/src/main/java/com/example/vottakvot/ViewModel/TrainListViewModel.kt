@@ -3,23 +3,47 @@ package com.example.vottakvot.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.vottakvot.domain.ExerciseDataItem
 import com.example.vottakvot.domain.StatisticItem
 import com.example.vottakvot.domain.WorkoutDataItem
 
 // общая вью модель для всех списков тренировок
 class TrainListViewModel(
-    private val source: List<WorkoutDataItem>
+    private val source: List<WorkoutDataItem> = listOf()
 )
     : ViewModel() {
 
 
 
 
+
     //----------------------------------------------------------ОБЩАЯ МОДЕЛЬ СПИСКА ТРЕНИРОВОК
     // список тренировок
-    private var  _workoutListGeneral = MutableLiveData<List<WorkoutDataItem>>(source)
+    private val  _workoutListGeneral = MutableLiveData<List<WorkoutDataItem>>(source)
+
     val workoutListGeneral: LiveData<List<WorkoutDataItem>> = _workoutListGeneral
 
+    // выбранная тренировка
+    var currentWorkoutId = 0
+    // выбранное упражнение
+    var currentExerciseId = 0
+
+    fun setNewSource(new_source: List<WorkoutDataItem>) {
+        _workoutListGeneral.value = new_source
+    }
+
+
+    fun findWorkoutById(id: Int): WorkoutDataItem {
+        val modifiedList = _workoutListGeneral .value?.toMutableList() ?: mutableListOf()
+        var item =  modifiedList.find{it.id == id}
+        return item!!
+    }
+
+    fun findExerciseById(idWorkout: Int, idExercise: Int): ExerciseDataItem {
+        val workout = findWorkoutById(idWorkout)
+        var item =  workout.exersises.find{it.id == idExercise}
+        return item!!
+    }
 
     /*
     public fun getItemByIndex(model:WorkoutDataItem, index: Int): WorkoutDataItem
@@ -47,7 +71,7 @@ class TrainListViewModel(
     // получить
     public fun makeWorkoutList(source: List<WorkoutDataItem>)
     {
-        _workoutListGeneral = MutableLiveData<List<WorkoutDataItem>>(source)
+        _workoutListGeneral.value = source
     }
     public fun changeLikedStatusList(model: WorkoutDataItem)
     {

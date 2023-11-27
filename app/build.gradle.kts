@@ -85,4 +85,12 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-core-android:1.5.4")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    // Internet
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
+    // GSON
+    implementation("com.google.code.gson:gson:2.8.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+
 }

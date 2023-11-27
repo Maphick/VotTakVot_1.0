@@ -11,9 +11,11 @@ import androidx.navigation.compose.composable
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.isOnboardingPassedApp
+import com.example.vottakvot.navigation.screens.ExerciseScreen
 import com.example.vottakvot.navigation.screens.HomeScreen
 import com.example.vottakvot.navigation.screens.LoaderScreen
 import com.example.vottakvot.navigation.screens.SearchResultScreen
+import com.example.vottakvot.navigation.screens.WorkoutScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -33,6 +35,7 @@ fun SetupNavGraph(
     loaderScreenContent: @Composable () -> Unit,
     inquirerScreenContent: @Composable () -> Unit,
     welcomeScreenContent: @Composable () -> Unit,
+
     myTrainsContent: @Composable () -> Unit,
     favouriteContent: @Composable () -> Unit,
     profileContent: @Composable () -> Unit,
@@ -48,7 +51,7 @@ fun SetupNavGraph(
         // сплеш экран
         composable(route = Screen.Splash.route) {
             LaunchedEffect(key1 = null){
-                delay(5.seconds)
+                delay(2.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.Welcome.route)
             }
@@ -57,7 +60,7 @@ fun SetupNavGraph(
         // сплеш экран
         composable(route = Screen.Loader.route) {
             LaunchedEffect(key1 = null){
-                delay(10.seconds)
+                delay(2.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
             }
@@ -82,6 +85,19 @@ fun SetupNavGraph(
                 isOnboardingPassed = isOnboardingPassedApp
             )
         }
+        composable(route = Screen.Exercise.route) {
+            ExerciseScreen(
+                navController = navController,
+                trainList = trainListForYou
+            )
+        }
+        composable(route = Screen.Workout.route) {
+            WorkoutScreen(
+                navController = navController,
+                trainList = trainListForYou
+            )
+        }
+
         // домашний экран без онбординга
         composable(route = Screen.HomeWithoutOnboarding.route) {
             HomeScreen(
