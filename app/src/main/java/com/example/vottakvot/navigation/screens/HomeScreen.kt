@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
@@ -68,7 +70,8 @@ fun HomeScreen(
     navController: NavHostController,
     trainListForYou: TrainListViewModel,
     trainListPopular: TrainListViewModel,
-    isOnboardingPassed: Boolean = false
+    isOnboardingPassed: Boolean = false,
+    isTrainListGets: MutableLiveData<Boolean>
 ) {
     LazyColumn(
         modifier = Modifier
@@ -81,7 +84,8 @@ fun HomeScreen(
                 navController = navController,
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
-                isOnboardingPassed = isOnboardingPassed
+                isOnboardingPassed = isOnboardingPassed,
+                isTrainListGets = isTrainListGets
             )
         }
     }
@@ -93,7 +97,8 @@ private  fun TrainsForYou(
     navController: NavHostController,
     trainListForYou: TrainListViewModel,
     trainListPopular: TrainListViewModel,
-    isOnboardingPassed: Boolean // пройден ли онбординг
+    isOnboardingPassed: Boolean, // пройден ли онбординг
+    isTrainListGets: MutableLiveData<Boolean>
 )
 {
     Box(
@@ -106,26 +111,31 @@ private  fun TrainsForYou(
             // блок тренировок для вас
             TitleAndTrainListBlock(
                 navController = navController,
+                isTrainListGets = isTrainListGets,
                 text = stringResource(R.string.workouts_for_you),
+                textInstedTrainList = stringResource(R.string.trains_block_without_onboarding),
                 isIconVisible = true,
                 iconResId = Icons.Outlined.Tune,
                 visibleCount = 3,
                 isInternetAccess = true, //  есть ли доступ в интерне
                 isOnboardingPassed = isOnboardingPassed, // пройден ли онбординг
                 trainListViewModel = trainListForYou,
-                navigateTo = Screen.SearchResultForYou.route
+                navigateTo = Screen.SearchResultForYou.route,
+                withButton = true
          )
             // блок популярных тренировок
             TitleAndTrainListBlock(
                 navController = navController,
+                isTrainListGets = isTrainListGets,
                 text = stringResource(R.string.popular),
+                textInstedTrainList = stringResource(R.string.trains_block_without_internet),
                 isIconVisible = false,
                 iconResId = Icons.Outlined.Tune,
                 visibleCount = 3,
                 isInternetAccess = true, //  есть ли доступ в интерне
                 isOnboardingPassed = true, // пройден ли онбординг
                 trainListViewModel = trainListPopular,
-                navigateTo = Screen.SearchResultPopular.route
+                navigateTo = Screen.SearchResultPopular.route,
        )
 
             // блок типовтренировок
@@ -161,6 +171,7 @@ fun TrainTypeBlock(
         // блок тренировок для вас
         // заголовок
         TitleBlock(
+            navController = navController,
             text = title,
             isIconVisible = false
         )
@@ -249,19 +260,23 @@ fun TrainTypeBlock(
 @Composable
 private fun TitleAndTrainListBlock(
     navController: NavHostController,
+    isTrainListGets: MutableLiveData<Boolean>,
     text: String = stringResource(R.string.workouts_for_you),
+    textInstedTrainList: String = stringResource(R.string.trains_block_without_onboarding),
     isIconVisible: Boolean = false,
     iconResId: ImageVector = Icons.Outlined.Tune,
     visibleCount: Int = 3,
     isInternetAccess: Boolean = true, //  есть ли доступ в интерне
     isOnboardingPassed: Boolean = true, // пройден ли онбординг
     trainListViewModel: TrainListViewModel,
-    navigateTo: String
+    navigateTo: String,
+    withButton: Boolean = false
     )
 {
         // блок тренировок для вас
         // заголовок
         TitleBlock(
+            navController = navController,
             text = text,
             isIconVisible = isIconVisible,
             iconResId =  iconResId
@@ -269,11 +284,15 @@ private fun TitleAndTrainListBlock(
        // список найденных тренировок для вас
         TrainsBlock(
             navController = navController,
+            //  есть ли доступ в интерне
+            isInternetAccess = isTrainListGets,
+            // пройден ли онбординг
+            isOnboardingPassed  = isOnboardingPassed,
+            textInstedTrainList = textInstedTrainList,
             visibleCount = visibleCount,
-            isInternetAccess = isInternetAccess, //  есть ли доступ в интерне
-            isOnboardingPassed  = isOnboardingPassed, // пройден ли онбординг
             trainListViewModel = trainListViewModel,
-            navigateTo = navigateTo
+            navigateTo = navigateTo,
+            withButton = withButton
         )
 }
 
@@ -283,6 +302,7 @@ private fun TitleAndTrainListBlock(
 // заголовок
 @Composable
 private fun TitleBlock(
+    navController: NavHostController,
     text: String = stringResource(R.string.workouts_for_you),
     isIconVisible: Boolean = false,
     iconResId: ImageVector = Icons.Outlined.Tune
@@ -307,6 +327,7 @@ private fun TitleBlock(
         )
         if (isIconVisible) {
             IconFilterButton(
+                navController = navController,
                 modifier = Modifier
                     .size(
                         35.dp
@@ -330,15 +351,22 @@ private fun TitleBlock(
 @Composable
 private  fun TrainsBlock(
     navController: NavHostController,
-    visibleCount: Int = 3,
-    isInternetAccess: Boolean = true, //  есть ли доступ в интерне
+    isInternetAccess: MutableLiveData<Boolean>,//  есть ли доступ в интерне
     isOnboardingPassed: Boolean = true, // пройден ли онбординг
+    textInstedTrainList: String,
+    visibleCount: Int = 3,
     trainListViewModel : TrainListViewModel,
-    navigateTo: String = Screen.SearchResultForYou.route // куда переходим с этой страницы
+    navigateTo: String = Screen.SearchResultForYou.route, // куда переходим с этой страницы,
+    withButton: Boolean = false
 )
 {
+    val u = trainListViewModel.workoutListGeneral.value?.size != 0
+    isInternetAccess.postValue(u)
     //  если онбординг пройден - отображать "Тренировки для Вас"
-    if (isOnboardingPassed && isInternetAccess) {
+    val notNullList = trainListViewModel.workoutListGeneral.value?.size != 0
+    //if (isOnboardingPassed && notNullList) {
+    if (notNullList) {
+        //(isInternetAccess.value == true)) {
         // источник данных для списк тренировок
         TrainsBlockWithOnBoardingAndInternet(
             visibleCount = visibleCount, // кол-во видимых тренировок
@@ -362,7 +390,9 @@ private  fun TrainsBlock(
     }
     //  если не пройден - предложить пройти
     else  TrainsBlockWithoutOnBoarding(
-        navController = navController
+        navController = navController,
+        text = textInstedTrainList,
+        withButton = withButton
     )
 }
 
@@ -411,6 +441,13 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
         WorkoutCard(
             //workoutViewModel = workoutViewModel,
             workoutItem = workoutItem,
+            // клик по карточке
+            onCardClickListener = {
+                // id текущег упражнения
+                trainList.currentWorkoutId = it.id
+                // переход на страницу упражнения
+                navController.navigate(Screen.Workout.route)
+            },
             // слушатели клика
             onAddedClickListener = {
                 trainList.changeAddedStatusList(it)
@@ -420,10 +457,7 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
             },
             onPlayClickListener = {
                 trainList.changePlayingStatusList(it)
-                // id текущег упражнения
-                trainList.currentWorkoutId = it.id
-                // переход на страницу упражнения
-                navController.navigate(Screen.Workout.route)
+
             }
         )
     }
@@ -434,8 +468,10 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
 // не прошедшего onBoarding
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
-private  fun TrainsBlockWithoutOnBoarding(
-    navController: NavHostController
+fun TrainsBlockWithoutOnBoarding(
+    navController: NavHostController,
+    text: String = stringResource(R.string.trains_block_without_internet),
+    withButton: Boolean = false
 )
 {
  Text(
@@ -447,25 +483,29 @@ private  fun TrainsBlockWithoutOnBoarding(
              end = 32.dp,
              bottom = 24.dp
          ),
-     text = stringResource(R.string.trains_block_without_onboarding),
+     text = text,
      color = colorScheme.onBackground,
      fontSize = 16.sp,
      //fontWeight = FontWeight.Medium,
      textAlign = TextAlign.Justify,
      lineHeight = 25.sp
  )
-    // кнопка отправлющая снова пройти онбординг
-    TrainSelectionButton(
-        navController = navController,
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .height(80.dp),
-        text = stringResource(R.string.train_selection),
-    ) {
-        // переходим на экран онбординга
+    if (withButton) {
+        // кнопка отправлющая снова пройти онбординг
+        TrainSelectionButton(
+            navController = navController,
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .height(80.dp),
+            text = stringResource(R.string.train_selection),
+        ) {
+            // переходим на экран онбординга
             navController.navigate(Screen.Inquirer.route)
+        }
     }
 }
+
+
 
 
 // подбор тренировок в случае, если пользоватеь не прошел онбординг
@@ -512,6 +552,7 @@ fun TrainSelectionButton(
 
 @Composable
 private fun IconFilterButton(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     iconResId: ImageVector,
     iconResIdPressed: ImageVector,
@@ -523,15 +564,20 @@ private fun IconFilterButton(
             .fillMaxWidth()
             .padding(
                 end = 8.dp
-            )
-            .clickable {
-                onItemClickListener()
-            },
+            ),
+           // .clickable {
+               // onItemClickListener()
+           // },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
         Icon(
-            modifier = modifier,
+            modifier = modifier
+                .clip(CircleShape)
+                .clickable {
+                    navController.navigate(Screen.Filter.route,)
+                }
+            ,
             imageVector = if (isChanged) {
                 iconResIdPressed
             } else {
@@ -548,6 +594,7 @@ private fun IconFilterButton(
 }
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -561,10 +608,12 @@ fun HomeScreenWithOnboardingWhitePrev() {
     val trainListPopular: TrainListViewModel =
         TrainListViewModel(source = sourceListPopularExample)
     val navController = NavHostController(context = context)
+        val isTrainListGets0: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     HomeScreen(
         navController = navController,
         trainListForYou = trainListForYou,
-        trainListPopular = trainListPopular
+        trainListPopular = trainListPopular,
+        isTrainListGets = isTrainListGets0
     )
     }
 }
@@ -582,10 +631,12 @@ fun HomeScreenWithOnboardingBlackPrev() {
         val trainListPopular: TrainListViewModel =
             TrainListViewModel(source = sourceListPopularExample)
         val navController = NavHostController(context = context)
+        val isTrainListGets0: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
         HomeScreen(
             navController = navController,
             trainListForYou = trainListForYou,
-            trainListPopular = trainListPopular
+            trainListPopular = trainListPopular,
+            isTrainListGets = isTrainListGets0
         )
     }
 }

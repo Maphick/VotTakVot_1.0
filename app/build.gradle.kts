@@ -93,4 +93,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
 
+    // OkHttp Logging
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -56,7 +57,8 @@ fun MainScreen(
     workoutViewModel: WorkoutViewModel,
     trainListForYou: TrainListViewModel,
     trainListPopular: TrainListViewModel,
-    trainListSearched: TrainListViewModel
+    trainListSearched: TrainListViewModel,
+    isTrainListGets: MutableLiveData<Boolean>
 ) {
     // State of bottomBar, set state to false, if current page route is "car_details"
     val bottomBarState = rememberSaveable { (mutableStateOf(false)) }
@@ -65,7 +67,9 @@ fun MainScreen(
     val startDestination = splashViewModel.startDestination.value
         //Screen.Splash.route
     // пройден ли онбординг
-    val isOnboardingPassed = true
+    val isOnboardingPassed = splashViewModel.isOnBoardingCompleted.value
+    val isWelcomePassed = splashViewModel.isWelcomeCompleted.value
+        //true
     NavigationHomeScreen(
         navHostController = navHostController,
         screenContent = { ContentScreen(
@@ -80,7 +84,8 @@ fun MainScreen(
             workoutViewModel = workoutViewModel,
             trainListForYou = trainListForYou,
             trainListPopular = trainListPopular,
-            trainListSearched = trainListSearched
+            trainListSearched = trainListSearched,
+            isTrainListGets = isTrainListGets
         ) }
     )
 }
@@ -101,6 +106,7 @@ fun NavigationHomeScreen(
         Screen.Splash.route -> false // сплеш
         Screen.Welcome.route -> false // приветствие
         Screen.Loader.route -> false // подбор тренировок
+        Screen.FindWorkouts.route -> false // подбор тренировок
         Screen.Inquirer.route -> false // опрос
         Screen.Workout.route -> false // тренировка
         Screen.Exercise.route -> false // упражнение
@@ -205,7 +211,8 @@ fun ContentScreen(
     workoutViewModel: WorkoutViewModel,
     trainListForYou: TrainListViewModel,
     trainListPopular: TrainListViewModel,
-    trainListSearched: TrainListViewModel
+    trainListSearched: TrainListViewModel,
+    isTrainListGets: MutableLiveData<Boolean>
 ) {
     //val navHostController = rememberNavController()
    // val screen = Screen.HomeOnboardingPassed.route
@@ -219,7 +226,9 @@ fun ContentScreen(
         splashScreenContent = { SplashScreen() },
         loaderScreenContent = { LoaderScreen(
             inquirerViewModel = inquirerViewModel,
-            trainListForYou = trainListForYou
+            trainYoursList = trainListForYou,
+            trainPopularList = trainListPopular,
+            keyWord = "__"
         ) },
         welcomeScreenContent = {
             WelcomeScreen(
@@ -231,7 +240,8 @@ fun ContentScreen(
             //context = context,
             navController = navHostController,
             inquirerViewModel = inquirerViewModel,
-            trainListForYou = trainListForYou
+            trainListForYou = trainListForYou,
+            isTrainListGets = isTrainListGets
         )
         },
 
@@ -239,31 +249,13 @@ fun ContentScreen(
         myTrainsContent = { MyTrainsScreen()},
         favouriteContent = { FavouriteScreen()},
         profileContent = { ProfileScreen()},
-
+        splashViewModel = splashViewModel,
+        inquirerViewModel = inquirerViewModel,
         trainListForYou = trainListForYou,
         trainListPopular = trainListPopular,
-        trainListSearched = trainListSearched
+        trainListSearched = trainListSearched,
+        isTrainListGets = isTrainListGets
     )
 }
-
-
-        /*
-        searchResultContent = {
-            SearchResultScreen(
-                navController = navHostController,
-                title =stringResource(R.string.search_result),
-                trainList = trainListSearched
-            )
-        },
-
-        // после нажатия на кнопку "Больше тренировок"
-        searchResultForYouContent = {
-            SearchResultScreen(
-                navController = navHostController,
-                title = stringResource(R.string.workouts_for_you),
-                trainList = trainListForYou
-            )
-        }
-        */
 
 

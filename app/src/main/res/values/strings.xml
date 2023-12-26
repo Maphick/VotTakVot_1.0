@@ -11,9 +11,9 @@
     <string name="back">Вернуться</string>
     <string name="vot_tak_vot">ВотТакВот</string>
     <string name="search_result">Результаты поиска</string>
-    <string name="full_body">Всё тело</string>
-    <string name="botttom_body">Низ тела</string>
-    <string name="upper_body">Верх тела</string>
+    <string name="full_body">Все тело</string>
+    <string name="botttom_body">Нижняя часть </string>
+    <string name="upper_body">Верхняя часть</string>
     <string name="abd">Пресс</string>
     <string name="workouts_for_you">Тренировки для Вас</string>
     <string name="popular">Популярные</string>
@@ -36,4 +36,12 @@
     <string name="workout_contraindications">Противопоказания:</string>
     <string name="exercises">"Упражнений: "</string>
     <string name="steps">Порядок выполнения:</string>
+    <string name="find_workouts">Найти тренировки</string>
+    <string name="workout_type">Тип тренировки:</string>
+    <string name="find_by_name">Найти по названию...</string>
+    <string name="type_train">Тип тренировки:</string>
+    <string name="muscle_groups">Группы мышц:</string>
+    <string name="clear">Очистить</string>
+    <string name="all_variants">Все</string>
+
 </resources>

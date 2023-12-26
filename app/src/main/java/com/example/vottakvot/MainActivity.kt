@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
@@ -29,7 +30,8 @@ import sourceListTrainsForYouExample
 
 // пройден ли онбординг
 var isOnboardingPassedApp = false
-
+// получен ли список тренировок
+var getYourTrainsSuccessed = false
 
 
 @ExperimentalPagerApi
@@ -59,10 +61,11 @@ class MainActivity : ComponentActivity() {
         // список тренировок для Вас
         var trainListForYou: TrainListViewModel = TrainListViewModel()
         // список популярных тренировок
-        val trainListPopular: TrainListViewModel = TrainListViewModel(source = sourceListPopularExample)
+        val trainListPopular: TrainListViewModel = TrainListViewModel()//source = sourceListPopularExample)
         //  список тренировок для результатов поиска
         val trainListSearched: TrainListViewModel = TrainListViewModel(source = sourceListSearchResultExample)
 
+        val isTrainListGets: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
 
         setContent {
             VotTakVotTheme {
@@ -88,7 +91,8 @@ class MainActivity : ComponentActivity() {
                         workoutViewModel = workoutViewModel,
                         trainListForYou = trainListForYou,
                         trainListPopular = trainListPopular,
-                        trainListSearched = trainListSearched
+                        trainListSearched = trainListSearched,
+                        isTrainListGets = isTrainListGets
                     )
                 }
             }

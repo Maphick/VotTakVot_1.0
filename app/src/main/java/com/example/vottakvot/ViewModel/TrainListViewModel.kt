@@ -29,7 +29,7 @@ class TrainListViewModel(
     var currentExerciseId = 0
 
     fun setNewSource(new_source: List<WorkoutDataItem>) {
-        _workoutListGeneral.value = new_source
+        _workoutListGeneral.postValue(new_source)
     }
 
 
@@ -71,7 +71,7 @@ class TrainListViewModel(
     // получить
     public fun makeWorkoutList(source: List<WorkoutDataItem>)
     {
-        _workoutListGeneral.value = source
+        _workoutListGeneral.postValue(source)
     }
     public fun changeLikedStatusList(model: WorkoutDataItem)
     {
@@ -137,7 +137,7 @@ class TrainListViewModel(
             else
                 it
         }
-        workoutList.value = modifiedList
+        workoutList.postValue(modifiedList)
     }
 
     fun changeAddedStatus(model:WorkoutDataItem, workoutList:MutableLiveData<List<WorkoutDataItem>>) {
@@ -149,7 +149,7 @@ class TrainListViewModel(
             else
                 it
         }
-        workoutList.value = modifiedList
+        workoutList.postValue(modifiedList)
     }
     fun changePlayingStatus(model:WorkoutDataItem, workoutList:MutableLiveData<List<WorkoutDataItem>>) {
         val modifiedList = workoutList.value?.toMutableList() ?: mutableListOf()
@@ -160,7 +160,7 @@ class TrainListViewModel(
             else
                 it
         }
-        workoutList.value = modifiedList
+        workoutList.postValue(modifiedList)
     }
 
     fun updateCount(workoutItem: WorkoutDataItem, item: StatisticItem) {
@@ -171,6 +171,6 @@ class TrainListViewModel(
     fun remove(workoutItem: WorkoutDataItem) {
         val oldPWorkouts =  _workoutListGeneral.value?.toMutableList() ?: mutableListOf()
         oldPWorkouts.remove(workoutItem)
-        _workoutListGeneral.value = oldPWorkouts
+        _workoutListGeneral.postValue(oldPWorkouts)
     }
 }

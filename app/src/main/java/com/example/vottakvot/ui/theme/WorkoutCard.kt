@@ -1,5 +1,6 @@
 package com.example.vottakvot.ui.theme
 
+import android.widget.ExpandableListView.OnChildClickListener
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import sourceListTrainsForYouExample
 @Composable
 fun WorkoutCard(
     workoutItem: WorkoutDataItem,
+    onCardClickListener: (WorkoutDataItem) -> Unit,
     onPlayClickListener: (WorkoutDataItem) -> Unit,
     onAddedClickListener: (WorkoutDataItem) -> Unit,
     onLikeClickListener: (WorkoutDataItem) -> Unit,
@@ -46,6 +48,9 @@ fun WorkoutCard(
     // карточка тренировки
     Card(
         modifier = Modifier
+            .clickable {
+                    onCardClickListener(workoutItem)
+            }
             .fillMaxWidth()
             .padding(8.dp)
             .height(140.dp),
@@ -285,7 +290,7 @@ fun InfoIconWithText(
 }
 
 @Composable
-private fun IcoButton(
+fun IcoButton(
     modifier: Modifier = Modifier,
     iconResId: ImageVector,
     iconResIdPressed: ImageVector,
@@ -336,6 +341,9 @@ fun WorkoutCardWhitePrev() {
         WorkoutCard(
             //workoutViewModel = workoutViewModel,
             workoutItem = workoutItem,
+            onCardClickListener = {
+
+            },
             // слушатели клика
             onAddedClickListener = {
 
@@ -344,7 +352,9 @@ fun WorkoutCardWhitePrev() {
                 trainList.changeLikedStatusList(it)
                 //generalViewModel.changeLikedStatusListSearchResult(it)
             },
-            onPlayClickListener = {}
+            onPlayClickListener = {
+                //trainList.changePlayingStatus()
+            }
         )
     }
 }
@@ -365,6 +375,9 @@ fun WorkoutCardBlackPrev() {
         WorkoutCard(
             //workoutViewModel = workoutViewModel,
             workoutItem = workoutItem,
+            onCardClickListener = {
+
+            },
             // слушатели клика
             onAddedClickListener = {
 

@@ -1,5 +1,7 @@
 package com.example.vottakvot.navigation.screens
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,14 +45,21 @@ import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.ui.theme.VotTakVotTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import sourceListTrainsForYouExample
 
 
 // экран подбора тренировок
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LoaderScreen(
     inquirerViewModel: InquirerViewModel,
-    trainListForYou: TrainListViewModel
+    trainYoursList: TrainListViewModel,
+    trainPopularList: TrainListViewModel,
+    keyWord: String,
+
 ) {
         Column (
             modifier = Modifier
@@ -115,6 +124,35 @@ fun LoaderScreen(
                     }
                 }
         }
+        try {
+
+            val myCoroutineScope = CoroutineScope(Dispatchers.IO)
+            myCoroutineScope.launch{
+
+
+
+                FindYoursWorkouts(
+                    inquirerViewModel = inquirerViewModel,
+                    trainListSearched = trainYoursList,
+                    //keyWord = inquirerViewModel.keyWord.value
+                )
+
+              FindPopularWorkouts(
+                  trainListPopular = trainPopularList,
+              )
+
+        }
+            /*var getSuccessed = getYourTrains(
+                inquirerViewModel = inquirerViewModel,
+                limit = 100,
+                trainListForYou =  trainListForYou
+            )*/
+
+        }
+        catch (e:Exception)
+        {
+            e.message?.let { Log.d("TRAIN_LIST_LOADING", it) }
+        }
     }
 
 
@@ -129,9 +167,13 @@ fun LoaderScreen(
             var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
             val trainListForYou: TrainListViewModel =
                 TrainListViewModel(source = sourceListTrainsForYouExample)
+            val Popular: TrainListViewModel =
+                TrainListViewModel(source = sourceListTrainsForYouExample)
             LoaderScreen(
                 inquirerViewModel = inquirerViewModel,
-                trainListForYou = trainListForYou
+                trainYoursList =   trainListForYou,
+                trainPopularList = Popular ,
+                keyWord = "Все тело"
             )
         }
     }
@@ -142,13 +184,17 @@ fun LoaderScreen(
         VotTakVotTheme(
             darkTheme = true)
         {
-            val context =  LocalContext.current
+            val context = LocalContext.current
             var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
             val trainListForYou: TrainListViewModel =
                 TrainListViewModel(source = sourceListTrainsForYouExample)
+            val Popular: TrainListViewModel =
+                TrainListViewModel(source = sourceListTrainsForYouExample)
             LoaderScreen(
                 inquirerViewModel = inquirerViewModel,
-                trainListForYou = trainListForYou
+                trainYoursList =   trainListForYou,
+                trainPopularList = Popular ,
+                keyWord = "Все тело"
             )
         }
     }

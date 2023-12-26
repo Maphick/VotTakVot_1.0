@@ -14,8 +14,8 @@ import kotlin.random.Random
 
 
 public val sourceListAnswersQuestionTrainTypeExample = mutableListOf<OnBoardingAnswerDataItem>().apply {
-    val answerItem_0 = OnBoardingAnswerDataItem(id = 0, question = "Какими типами тренировок"  +
-            "Вы бы хотели заниматься чаще?", questionId = 0, answer = "Утренняя зарядка", 
+    val answerItem_0 = OnBoardingAnswerDataItem(id = 0, question =
+    "Какими типами тренировок Вы бы хотели заниматься чаще?", questionId = 0, answer = "Утренняя зарядка",
         isOn = false)
     add(answerItem_0)
     val answerItem_1 = OnBoardingAnswerDataItem(id = 1, question = "Какими типами тренировок " +

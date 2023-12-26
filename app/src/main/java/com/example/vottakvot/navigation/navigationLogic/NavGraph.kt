@@ -1,17 +1,24 @@
 package com.example.vottakvot.navigation.navigationLogic
 
 import android.content.Context
+import android.window.SplashScreenView
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.vottakvot.R
+import com.example.vottakvot.ViewModel.InquirerViewModel
+import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.isOnboardingPassedApp
 import com.example.vottakvot.navigation.screens.ExerciseScreen
+import com.example.vottakvot.navigation.screens.FilterScreen
 import com.example.vottakvot.navigation.screens.HomeScreen
 import com.example.vottakvot.navigation.screens.LoaderScreen
 import com.example.vottakvot.navigation.screens.SearchResultScreen
@@ -27,7 +34,10 @@ fun SetupNavGraph(
     context: Context,
     navController: NavHostController,
     isOnboardingPassed: Boolean,
+    isTrainListGets: MutableLiveData<Boolean>,
     startDestination: String,
+    splashViewModel: SplashViewModel,
+    inquirerViewModel: InquirerViewModel,
     trainListForYou: TrainListViewModel,
     trainListPopular: TrainListViewModel,
     trainListSearched: TrainListViewModel,
@@ -35,14 +45,9 @@ fun SetupNavGraph(
     loaderScreenContent: @Composable () -> Unit,
     inquirerScreenContent: @Composable () -> Unit,
     welcomeScreenContent: @Composable () -> Unit,
-
     myTrainsContent: @Composable () -> Unit,
     favouriteContent: @Composable () -> Unit,
     profileContent: @Composable () -> Unit,
-    //homeScreenOnboardingPassed: @Composable () -> Unit,
-    //homeScreenWithoutOnbiarding: @Composable () -> Unit,
-    //searchResultContent: @Composable () -> Unit,
-    //searchResultForYouContent: @Composable () -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -59,10 +64,18 @@ fun SetupNavGraph(
          }
         // сплеш экран
         composable(route = Screen.Loader.route) {
-            LaunchedEffect(key1 = null){
+            LaunchedEffect(key1 = null) {
                 delay(2.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
+            }
+            loaderScreenContent()
+        }
+        composable(route = Screen.FindWorkouts.route) {
+            LaunchedEffect(key1 = null){
+                delay(2.seconds)
+                navController.popBackStack()
+                navController.navigate(Screen.SearchResult.route)
             }
             loaderScreenContent()
         }
@@ -75,14 +88,15 @@ fun SetupNavGraph(
             inquirerScreenContent()
             // InquirerScreen(context = context , navController = navController, inquirerViewModel = inquirerViewModel)
         }
+        val isOnboarding = splashViewModel.isOnBoardingCompleted.value
         // домашний экран после прохождения онбординга
         composable(route = Screen.Home.route) {
-
                 HomeScreen(
                 navController = navController,
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
-                isOnboardingPassed = isOnboardingPassedApp
+                isOnboardingPassed = isOnboarding,
+                    isTrainListGets = isTrainListGets
             )
         }
         composable(route = Screen.Exercise.route) {
@@ -104,7 +118,8 @@ fun SetupNavGraph(
                 navController = navController,
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
-                isOnboardingPassed = false
+                isOnboardingPassed = false,
+                isTrainListGets = isTrainListGets
             )
         }
         /*
@@ -117,12 +132,24 @@ fun SetupNavGraph(
             homeScreenWithoutOnbiarding()
         }
         */
+
+        composable(route = Screen.Filter.route) {
+            FilterScreen(
+                navController = navController,
+                title = stringResource(R.string.find_workouts),
+                trainList = trainListForYou,
+                //trainListSearched,
+                inquirerViewModel = inquirerViewModel //InquirerViewModel(DataStoreRepository(context))
+            )
+            //searchResultContent()
+        }
         // страница с результатами поиска
         composable(route = Screen.SearchResult.route) {
             SearchResultScreen(
                 navController = navController,
                 title = stringResource(R.string.search_result),
-                trainList = trainListSearched
+                trainList = trainListForYou
+                //trainListSearched
             )
             //searchResultContent()
         }

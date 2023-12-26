@@ -7,7 +7,6 @@ data class ExerciseDataItem (
     var title: String = "Здоровая спина",
     var time: Int = 7,
     var bodyType: BodyType = BodyType.FULL_BODY,
-    //var body_part: String = "Всё тело",
     var type: Int = 0,
     var approaches: Int = 1, // число подходов
     var repetitions: Int = 10,// количество повторений

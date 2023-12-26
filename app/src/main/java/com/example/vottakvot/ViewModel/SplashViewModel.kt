@@ -20,10 +20,21 @@ class SplashViewModel(
     private val _startDestination: MutableState<String> = mutableStateOf(Screen.Splash.route)
     val startDestination: State<String> = _startDestination
 
+    private var _isOnBoardingCompleted: MutableState<Boolean> = mutableStateOf(false)
+    var isOnBoardingCompleted: State<Boolean> = _isOnBoardingCompleted
+
+    private var _isWelcomeCompleted: MutableState<Boolean> = mutableStateOf(false)
+    var isWelcomeCompleted: State<Boolean> = _isWelcomeCompleted
+
     init {
         viewModelScope.launch {
             repository.readOnBoardingState().collect { onBoardingCompleted ->
+
                 repository.readWelcomeState().collect {welcomeCompleted ->
+
+                    _isOnBoardingCompleted.value = onBoardingCompleted
+                    _isWelcomeCompleted.value = welcomeCompleted
+
                     // если приветствие не пройдено
                    if (!welcomeCompleted) {
                        // проходим приветствие

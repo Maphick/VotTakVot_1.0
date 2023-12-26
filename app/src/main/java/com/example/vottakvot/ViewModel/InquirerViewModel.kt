@@ -3,19 +3,49 @@ package com.example.vottakvot.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.domain.InquirerPage
+import com.example.vottakvot.domain.WorkoutDataItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class InquirerViewModel (
     private val repository: DataStoreRepository
 ) : ViewModel() {
 
+
+    private val  _keyWord = MutableLiveData<String>()
+    val keyWord : LiveData<String> = _keyWord
+    fun setKeyWord(kW: String) {
+        _keyWord.postValue(kW)
+    }
+
+    public fun getKeyWord(): String {
+        return _keyWord.value.toString()
+    }
+    // выбранный ти тренировки
+    private val  _selectedWorkoutType = MutableLiveData<String>()
+
+    val selectedWorkoutType: LiveData<String> = _selectedWorkoutType
+
+    fun setSelectedWorkoutType(workoutType : String)
+    {
+        _selectedWorkoutType.postValue(workoutType)
+    }
+
+    // выбранная группа мышц
+    private val  _selectedMuscleGroups = MutableLiveData<String>("Все")
+
+    var selectedMuscleGroups: LiveData<String> = _selectedMuscleGroups
+
     // сохранение в базу флага, был ли пройден онбординг
     fun saveInquirerState(completed: Boolean) {
         // запуск корутины в потоке ввода-вывода, чтобы распараллелить работу с базой
-        // viewModelScope.launch(Dispatchers.IO) {
-        //     repository.saveOnBoardingState(completed)
+         viewModelScope.launch(Dispatchers.IO) {
+             repository.saveOnBoardingState(completed)
+    }
     }
 
 
@@ -27,7 +57,7 @@ class InquirerViewModel (
 
    // val inquirerPagesList: LiveData<List<InquirerPage>> = _inquirerPagesList
 
-
+//!!!!!!!!!!! Cannot invoke setValue on a background thread from Coroutine
     fun changeAnswerCheckedValue(pageNumber: Int, answerNumber: Int, value: Boolean)
     {
         //val modifiedList = _inquirerPagesList //.value?.toMutableList() ?: mutableListOf()
@@ -35,8 +65,12 @@ class InquirerViewModel (
         {
             if(i == pageNumber) { //  нужная страница
                 val modifiedCheckedList = _inquirerPagesList[i]._isCheckedList.value?.toMutableList()  ?: mutableListOf(false, false)
+                for (j in 0..modifiedCheckedList.size-1)
+                {
+                    modifiedCheckedList[j] = false
+                }
                 modifiedCheckedList[answerNumber] = value // нужный вариант ответа
-                _inquirerPagesList[i]._isCheckedList.value = modifiedCheckedList
+                _inquirerPagesList[i]._isCheckedList.postValue(modifiedCheckedList)
                 //page._isCheckedList.value = modifiedCheckedList
             }
         }
@@ -68,10 +102,10 @@ class InquirerViewModel (
                 "Расслабление перед сном"
             ),
             _isCheckedList = MutableLiveData<List<Boolean>>(listOf(
+                true,
                 false,
-                true,
-                true,
-                true)
+                false,
+                false)
             ),
         )
         val inquirerPage_1 = InquirerPage(
@@ -85,10 +119,10 @@ class InquirerViewModel (
                 "Всё тело"
             ),
             _isCheckedList = MutableLiveData<List<Boolean>>(listOf(
+                true,
                 false,
-                true,
-                true,
-                true)
+                false,
+                false)
             ),
         )
         _newinquIrerPagesList.add(inquirerPage_0)

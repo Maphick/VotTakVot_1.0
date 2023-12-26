@@ -1,5 +1,7 @@
 package com.example.vottakvot.navigation.screens
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -17,14 +19,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
 import androidx.compose.material.rememberSwipeableState
@@ -38,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -46,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
@@ -62,6 +70,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.example.vottakvot.domain.InquirerPage
+import com.example.vottakvot.getYourTrainsSuccessed
 import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +94,8 @@ fun InquirerScreen(
     //context: Context,
     navController: NavHostController,
     inquirerViewModel: InquirerViewModel,
-    trainListForYou: TrainListViewModel
+    trainListForYou: TrainListViewModel,
+    isTrainListGets: MutableLiveData<Boolean>
 ) {
     // заполнение моками
     InquirerDataGeneration(
@@ -175,7 +185,8 @@ fun InquirerScreen(
             navController = navController,
             pagerState = pagerState,
             pagerCount = pagerCount,
-            trainListForYou = trainListForYou
+            trainListForYou = trainListForYou,
+            isTrainListGets = isTrainListGets
         )
     }
 }
@@ -221,6 +232,15 @@ fun InquirerPagerScreen(
             modifier = Modifier
                 .height(10.dp)
         )
+
+        val radioOptions = currentPage.answers
+
+        val (selectedOption: String, onOptionSelected: (String) -> Unit) = remember {
+            mutableStateOf(
+                radioOptions[0]
+            )
+        }
+
         for (i in 0..currentPage.answers.size - 1) {
             val answer =currentPage.answers[i]
             Row(
@@ -235,27 +255,39 @@ fun InquirerPagerScreen(
                     currentPage._isCheckedList.value?.get(i) ?: false) }
                 CheckBoxWithTextRippleFullRow(
                     label = answer,
-                    state = checkedState,
-                    onStateChange = {
+                    state = selectedOption == answer,
+                    onStateChange =
+                    {
+                        onOptionSelected
                         onStateChange(i, it)
-                    }
+                    },
+                    onSelectOption = onOptionSelected
                 )
             }
         }
     }
 }
 
+@Composable
+fun CheckboxResource(isSelected: Boolean): ImageVector {
+    return if (isSelected) {
+        Icons.Default.Check
+    } else {
+        Icons.Default.Cancel
+    }
+}
 
 @Composable
 fun CheckBoxWithTextRippleFullRow(
     label: String,
     state: Boolean,
-    onStateChange: (Boolean) -> Unit
+    onStateChange: (Boolean) -> Unit,
+    onSelectOption: (String) -> Unit
 ) {
     var checkedState by remember { mutableStateOf(
         state
-    )
-    }
+    )}
+
     // Checkbox with text on right side
     Row(modifier = Modifier
         .fillMaxWidth()
@@ -263,6 +295,7 @@ fun CheckBoxWithTextRippleFullRow(
         .clickable(
             role = Role.Checkbox,
             onClick = {
+                onSelectOption(label)
                 // при клике на строку происходит изменение состояния чекбокса на противоположное
                 onStateChange(state)
             }
@@ -272,7 +305,7 @@ fun CheckBoxWithTextRippleFullRow(
     ) {
         Checkbox(
             modifier = Modifier.scale(1.5f),
-            checked = checkedState,
+            checked = state,//checkedState,
             colors = CheckboxDefaults.colors(
                 checkedColor = colorScheme.primary,
                 uncheckedColor = colorScheme.onBackground,
@@ -282,6 +315,7 @@ fun CheckBoxWithTextRippleFullRow(
             onCheckedChange = { checked_ ->
                 checkedState = checked_
                 onStateChange(checkedState)
+                onSelectOption(label)
             }
         )
         Spacer(modifier = Modifier.width(0.dp))
@@ -294,41 +328,12 @@ fun CheckBoxWithTextRippleFullRow(
             color = colorScheme.onBackground,
             text = label,
             fontSize = 20.sp,
-            //lineHeight = 30.sp,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Left,
-
             )
-
     }
 }
 
-
-@Composable
-fun CheckboxInRowWithText() {
-    val context = LocalContext.current
-    var checkedState by remember { mutableStateOf(false) }
-    Surface {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    Toast
-                        .makeText(context, "Row clicked", Toast.LENGTH_SHORT)
-                        .show()
-                    checkedState = !checkedState
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(checked = checkedState, onCheckedChange = {
-                Toast.makeText(context, "Checkbox check", Toast.LENGTH_SHORT).show()
-                checkedState = it
-            }
-            )
-            Text(text = "Clicking this Row will toggle checkbox")
-        }
-    }
-}
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
@@ -337,7 +342,8 @@ fun InquirerBottomNav(
     navController: NavHostController,
     pagerState: PagerState,
     pagerCount: Int,
-    trainListForYou: TrainListViewModel
+    trainListForYou: TrainListViewModel,
+    isTrainListGets: MutableLiveData<Boolean>
 ) {
     val bodyType: BodyType = BodyType.UPPER_BODY
     Row(
@@ -374,6 +380,7 @@ fun InquirerBottomNav(
                     inquirerViewModel.saveInquirerState(completed = true)
                     // онбоардинг пройден
                     isOnboardingPassedApp = true
+                    isTrainListGets.value = true
                     navController.navigate(Screen.Home.route)
                     //navController.popBackStack()
                 }
@@ -391,12 +398,7 @@ fun InquirerBottomNav(
                 //inquirerPage
                 var pages = inquirerViewModel.getInquirerPagesList()
 
-                // получение списка тренировок с сервера
-                getYourTrains(
-                    inquirerViewModel = inquirerViewModel,
-                    limit = 100,
-                    trainListForYou =  trainListForYou
-                )
+
 
 
             }
@@ -404,13 +406,30 @@ fun InquirerBottomNav(
             //  c последней страницы приветствия идём на главный экран С ОНБОРДИНГОМ
             //  и сохраняем флаг о том, что онбординг пройдено
             if (pagerState.currentPage == pagerCount - 1) {
-                //  онбординг пройден
-                inquirerViewModel.saveInquirerState(completed = true)
-                // onBoarding пройден
-                isOnboardingPassedApp = true;
-                //navController.navigate(Screen.Home.route)
-                navController.navigate(Screen.Loader.route)
-                //navController.popBackStack()
+
+
+                        // получен ли список тренировок
+                        // получение списка тренировок с сервера
+                       /* var getSuccessed = getYourTrains(
+                            inquirerViewModel = inquirerViewModel,
+                            limit = 100,
+                            trainListForYou =  trainListForYou
+                        )
+                        */
+
+                        //  онбординг пройден
+                        inquirerViewModel.saveInquirerState(completed = true)
+                        // onBoarding пройден
+                        isOnboardingPassedApp = true;
+                        // подлучен ли список тренировок
+                        //getYourTrainsSuccessed = getSuccessed
+
+                        Log.d("LOADER", "go to loader")
+                        navController.navigate(Screen.Loader.route)
+                        Log.d("LOADER", "after loader")
+
+
+
             }
             // к следующей странице приветствия
             else {
@@ -547,13 +566,15 @@ fun NextButton(
             darkTheme = true)
         {
             val context =  LocalContext.current
-            var inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
+            val inquirerViewModel = InquirerViewModel(DataStoreRepository(context))
             val trainListForYou: TrainListViewModel =
                 TrainListViewModel(source = sourceListTrainsForYouExample)
+            val isTrainListGets0: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
             InquirerScreen(
                 navController = rememberNavController(),
                 inquirerViewModel = inquirerViewModel,
-                trainListForYou = trainListForYou
+                trainListForYou = trainListForYou,
+                isTrainListGets = isTrainListGets0
             )
         }
     }

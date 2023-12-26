@@ -5,10 +5,23 @@
       <entry key="ExerciseCardBlackPrev">
         <State />
       </entry>
-      <entry key="HomeScreenWithOnboardingWhitePrev (1)">
-        <State />
+      <entry key="FilterBlockWhitePrev">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_7_Pro_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2023-12-15T20:14:19.298478Z" />
+        </State>
       </entry>
-      <entry key="TrainTypeBlockLightPrev">
+      <entry key="HomeScreenWithOnboardingWhitePrev (1)">
         <State />
       </entry>
       <entry key="WorkoutScreenScreenBlackPrev">

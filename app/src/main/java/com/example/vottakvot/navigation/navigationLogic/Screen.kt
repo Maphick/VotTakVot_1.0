@@ -5,6 +5,7 @@ sealed class  Screen(
 ) {
     object Splash : Screen(route = ROUTE_SPLASH_SCREEN)
     object Loader : Screen(route = ROUTE_LOADER_SCREEN)
+    object FindWorkouts : Screen(route = ROUTE_FIND_WORKOUTS_SCREEN)
     object Welcome : Screen(route = ROUTE_WELCOME_SCREEN)
     object Inquirer : Screen(route = ROUTE_INQUIRER_SCREEN)
 
@@ -15,6 +16,7 @@ sealed class  Screen(
     //object HomeOnboardingPassed : Screen(route = ROUTE_HOME_WITH_ONBOARDING_SCREEN)
 
     object HomeWithoutOnboarding : Screen(route = ROUTE_HOME_WITHOUT_ONBOARDING_SCREEN)
+    object Filter : Screen(route = ROUTE_FILTER_SCREEN)
     object SearchResult : Screen(route = ROUTE_SEARCH_RESULT_SCREEN)
 
     object SearchResultForYou : Screen(route = ROUTE_SEARCH_RESULT_FOR_YOU_SCREEN)
@@ -34,6 +36,7 @@ sealed class  Screen(
     private companion object {
         const val ROUTE_SPLASH_SCREEN = "splash_screen"
         const val ROUTE_LOADER_SCREEN = "loader_screen"
+        const val ROUTE_FIND_WORKOUTS_SCREEN = "find_workouts_screen"
         const val ROUTE_WELCOME_SCREEN = "welcome_screen"
         const val ROUTE_INQUIRER_SCREEN = "inquirer_screen"
         const val ROUTE_HOME_SCREEN = "home_screen"
@@ -41,6 +44,7 @@ sealed class  Screen(
         const val ROUTE_WORKOUT_SCREEN = "workout_screen"
         //const val ROUTE_HOME_WITH_ONBOARDING_SCREEN = "home_with_onboarding_screen"
         const val ROUTE_HOME_WITHOUT_ONBOARDING_SCREEN = "home_with_onboarding_screen"
+        const val ROUTE_FILTER_SCREEN = "filter_screen"
         const val ROUTE_SEARCH_RESULT_SCREEN = "search_result_screen"
         const val ROUTE_SEARCH_RESULT_FOR_YOU_SCREEN = "search_result_for_you_screen"
         const val ROUTE_SEARCH_RESULT_POPULAR_SCREEN = "search_result_popular_screen"

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -115,15 +116,25 @@ fun WelcomeScreen(
 
         Spacer(
             modifier = Modifier
-                .height(100.dp)
+                .height(0.dp)
         )
-        WelcomeBottomNav(
-            welcomeViewModel = welcomeViewModel,
-            inquirerViewModel = inquirerViewModel,
-            navController = navController,
-            pagerState = pagerState,
-            pagerCount = pagerCount
+        Column(
+            modifier = Modifier
+                //.background(Color.Yellow)
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
         )
+        {
+            WelcomeBottomNav(
+                welcomeViewModel = welcomeViewModel,
+                inquirerViewModel = inquirerViewModel,
+                navController = navController,
+                pagerState = pagerState,
+                pagerCount = pagerCount
+            )
+        }
 
     }
 }
@@ -168,9 +179,9 @@ fun WelcomePagerScreen(welcomePage: WelcomePage) {
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .padding(
-                    top = 20.dp,
-                    start = 40.dp,
-                    end = 40.dp
+                    top = 50.dp,
+                    start = 50.dp,
+                    end = 50.dp
                 ),
             text = welcomePage.description,
             color = colorScheme.onBackground,
@@ -251,26 +262,26 @@ fun WelcomeBottomNav(
     pagerCount: Int
 ) {
     Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween
     )
     {
         Row(
             modifier = Modifier
                 .weight(0.4f),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Start
         )
         {
             val skipText = stringResource(R.string.not_now)
             SkipButton(
-                modifier = Modifier
+                modifier = Modifier,
                     // .fillMaxWidth(1f),
-                    .size(
+                    /*.size(
                         width = 160.dp,
                         height = 80.dp
-                    ),
+                    ),*/
                 pagerState = pagerState,
                 text = skipText,
                 pagerCount = pagerCount
@@ -300,12 +311,16 @@ fun WelcomeBottomNav(
         Row(
             modifier = Modifier
                 .weight(0.1f)
+
         )
         {
             HorizontalPagerIndicator(
                 modifier = Modifier
-                    .width(40.dp)
-                    .fillMaxHeight(),
+                    .padding(
+                        bottom = 20.dp
+                    )
+                    .width(50.dp),
+                    //.fillMaxHeight(),
                 activeColor = colorScheme.primary,
                 inactiveColor = colorScheme.onSecondaryContainer,
                 pagerState = pagerState
@@ -314,17 +329,19 @@ fun WelcomeBottomNav(
         Row(
             modifier = Modifier
                 .weight(0.4f),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.End
         )
         {
             val continueText = stringResource(R.string.continue_)
             ContinueButton(
-                modifier = Modifier
-                    .size(
+                modifier = Modifier ,
+                    //.width = 160.dp,
+                    /*.size(
                         width = 160.dp,
                         height = 80.dp
                     ),
+                     */
                 pagerState = pagerState,
                 text = continueText,
                 pagerCount = pagerCount
@@ -370,12 +387,12 @@ fun SkipButton(
 
     Row(
         verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         //AnimatedVisibility
         AnimatedVisibility(
-            modifier = modifier.
-            fillMaxHeight(),
+            //modifier = modifier,
+            //fillMaxHeight(),
             visible = pagerState.currentPage > 0
         ) {
             OutlinedButton(

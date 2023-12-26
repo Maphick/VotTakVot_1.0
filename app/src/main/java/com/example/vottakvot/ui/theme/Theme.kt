@@ -28,12 +28,16 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = surface_variant_dark,
     secondaryContainer = secondary_container_dark,
     onPrimary = Color.Black,
-    onSecondary = Color.Red,
+    onSecondary = on_secondary_dark,
     onSecondaryContainer = on_secondary_container_dark,
     onTertiary = Color.White,
     onBackground = on_background_dark,
     onSurface = on_surface_dark,
-    onSurfaceVariant = on_surface_variant_dark
+    onSurfaceVariant = on_surface_variant_dark,
+    onError = on_error_dark,
+    primaryContainer = primary_container_dark,
+    inversePrimary = inverse_primary_dark,
+    inverseSurface = inverse_surface_dark
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -42,15 +46,21 @@ private val LightColorScheme = lightColorScheme(
     tertiary = tertiary_light,
     background =  background_light,
     surface = surface_light,
+    surfaceTint = surface_container_low_light,
     surfaceVariant = surface_variant_light,
     secondaryContainer = secondary_container_light,
     onPrimary = Color.White,
-    onSecondary = Color.Red,
+    onSecondary = on_secondary_light,
     onSecondaryContainer = on_secondary_container_light,
     onTertiary = Color.Black,
     onBackground = on_background_light,
     onSurface = on_surface_light,
-    onSurfaceVariant = on_surface_variant_light
+    onSurfaceVariant = on_surface_variant_light,
+    onError = on_error_light,
+    primaryContainer = primary_container_light,
+    inversePrimary = inverse_primary_light,
+    inverseSurface = inverse_surface_light
+
 )
 @SuppressLint("SuspiciousIndentation")
 @Composable

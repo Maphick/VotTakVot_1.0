@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.reflect.Type
 
 
@@ -17,13 +18,13 @@ import java.lang.reflect.Type
 // Gson Android Kotlin Tutorial - Parse Generic Lists from JSON & Introduction
 
 class Repository {
-    val BASE_URL = "https://exercisedb.p.rapidapi.com/exercises/"
+    val BASE_URL = "https://exercisedb.p.rapidapi.com/exercises"
     //bodyPart/back?limit=10"
 
     lateinit var worcoutListEntity: List<WorcoutListEntity.ExerciseEntity>
 
-    public fun makeBodyTypeRequest(bodyPart: BodyType, limit: Int) {
-        var url = BASE_URL + "bodyPart/"
+    public fun makeBodyTypeRequest(bodyPart: BodyType, limit: Int): Boolean {
+        var url = BASE_URL + "/bodyPart/"
         when (bodyPart) {
             BodyType.UPPER_BODY -> url += "upper%20arms"
             BodyType.BOTTOM_BODY -> url += "upper%20legs"
@@ -34,26 +35,46 @@ class Repository {
         }
         url += "?limit=" + limit
 
-        makeRequest(url)
+        return makeRequest(url)
+    }
+
+    public fun makeAllWorkoutsRequest(limit: Int): Boolean {
+        var url = BASE_URL + "?limit=" + limit
+        return makeRequest(url)
     }
 
 
 
 
-
-    public fun makeRequest(url: String) {
+    public fun makeRequest(url: String): Boolean {
         val SDK_INT = Build.VERSION.SDK_INT
         if (SDK_INT > 8) {
             val policy = ThreadPolicy.Builder()
                 .permitAll().build()
             StrictMode.setThreadPolicy(policy)
         }
-        val okHttpClient = OkHttpClient()
-        val parsedResponse = parseResponse(okHttpClient.newCall(
-            createRequest(url))
-            .execute()
-        )
-        println(parsedResponse)
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .build()
+
+        try {
+            val parsedResponse = parseResponse(
+                okHttpClient.newCall(
+                    createRequest(url)
+                )
+                    .execute()
+            )
+            println(parsedResponse)
+            return true
+        } catch (e: Exception) {
+            val a = e.message
+            println(e.message)
+            return false
+        }
+
     }
 
 
@@ -61,7 +82,9 @@ class Repository {
         return Request.Builder()
             .url(url)
             .get()
-            .addHeader("X-RapidAPI-Key", "6929bc99b9mshdb1a50796fb5502p111639jsn62b0b1df3969")
+            .addHeader("X-RapidAPI-Key", "568e635a7fmsh455f805266f27cdp16734fjsn3917f09b41c7")
+                // "568e635a7fmsh455f805266f27cdp16734fjsn3917f09b41c7"
+                //"6929bc99b9mshdb1a50796fb5502p111639jsn62b0b1df3969")
             .addHeader("X-RapidAPI-Host", "exercisedb.p.rapidapi.com")
             .build()
     }

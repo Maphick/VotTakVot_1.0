@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -47,8 +48,11 @@ import sourceListSearchResultExample
 fun SearchResultScreen(
     navController: NavHostController,
     title: String,
-    trainList: TrainListViewModel
+    trainList: TrainListViewModel,
 ) {
+    val listSize = trainList.workoutListGeneral.value?.size
+    val isInternet: Boolean = (listSize!! > 0)
+
     Column(
         modifier = androidx.compose.ui.Modifier
             .fillMaxWidth()
@@ -60,122 +64,127 @@ fun SearchResultScreen(
                 .fillMaxWidth()
                 .height(80.dp)
                 .padding(
-                    start = 8.dp
+                    start = 16.dp
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         )
         {
-                Text(
-                    text = title,
-                    fontSize = 30.sp,
-                    color = colorScheme.onBackground,
-                )
-                IconCloseButton(
-                    modifier = Modifier
-                        .size(
-                            35.dp
-                        )
-                        .padding(
-                            top = 0.dp
-                        ),
-                    iconResId = Icons.Outlined.PlaylistAdd,
-                    iconResIdPressed = Icons.Outlined.Close,
-                    isChanged = true
-                )
-                {
-                    // закрыть окно с поиском
-                    navController.popBackStack()
-                    //onAddedClickListener(workoutItem)
-                }
+            Text(
+                text = title,
+                fontSize = 30.sp,
+                color = colorScheme.onBackground,
+            )
+            IconCloseButton(
+                modifier = Modifier
+                    .size(
+                        35.dp
+                    )
+                    .padding(
+                        top = 0.dp
+                    ),
+                iconResId = Icons.Outlined.PlaylistAdd,
+                iconResIdPressed = Icons.Outlined.Close,
+                isChanged = true
+            )
+            {
+                // закрыть окно с поиском
+                navController.popBackStack()
+                //onAddedClickListener(workoutItem)
+            }
         }
-            val searchedWorkouts =  trainList.workoutListGeneral.observeAsState(listOf())
-                //workoutViewModel.workoutList.observeAsState(listOf())
-                // значение по умолчанию - пустая коллекция
+        if (isInternet) {
+            val searchedWorkouts = trainList.workoutListGeneral.observeAsState(listOf())
+            //workoutViewModel.workoutList.observeAsState(listOf())
+            // значение по умолчанию - пустая коллекция
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorScheme.background),
             ) {
                 items(searchedWorkouts.value)
-                    {
+                {
                     // this - LazyItemScope
                     // it - workoutItem
                         it ->
-                        val workoutItem = it
-                        WorkoutCard(
-                            //workoutViewModel = workoutViewModel,
-                            workoutItem = workoutItem,
-                            // слушатели клика
-                            onAddedClickListener = {
-                                trainList.changeAddedStatusList(it)
-                                //generalViewModel.changeAddedStatusListSearchResult(it)
-                            },
-                            onLikeClickListener = {
-                                trainList.changeLikedStatusList(it)
-                                //generalViewModel.changeLikedStatusListSearchResult(it)
-                            },
-                            onPlayClickListener = {
-                                trainList.changePlayingStatusList(it)
-                                // id текущег упражнения
-                                trainList.currentWorkoutId = it.id
-                                // переход на страницу упражнения
-                                navController.navigate(Screen.Workout.route)
-                                //generalViewModel.changePlayingtatusListSearchResult(it)
-                            }
-                        )
-                    }
+                    val workoutItem = it
+                    WorkoutCard(
+                        //workoutViewModel = workoutViewModel,
+                        workoutItem = workoutItem,
+                        onCardClickListener = {
+                            // id текущег упражнения
+                            trainList.currentWorkoutId = it.id
+                            // переход на страницу упражнения
+                            navController.navigate(Screen.Workout.route)
+                            //generalViewModel.changePlayingtatusListSearchResult(it)
+                        },
+                        // слушатели клика
+                        onAddedClickListener = {
+                            trainList.changeAddedStatusList(it)
+                            //generalViewModel.changeAddedStatusListSearchResult(it)
+                        },
+                        onLikeClickListener = {
+                            trainList.changeLikedStatusList(it)
+                            //generalViewModel.changeLikedStatusListSearchResult(it)
+                        },
+                        onPlayClickListener = {
+                            trainList.changePlayingStatusList(it)
+                        }
+                    )
+                }
 
             }
         }
-    }
-
-/*
-repeat(models.value?.size!!) {
-    item {
-
-    }
-}
-*/
-
-@Composable
-fun IconCloseButton(
-    modifier: Modifier = Modifier,
-    iconResId: ImageVector,
-    iconResIdPressed: ImageVector,
-    isChanged: Boolean,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.End,
-    onItemClickListener: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                end = 8.dp
-            )
-            .clickable {
-            onItemClickListener(
-            )
-        },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = horizontalArrangement
-    ) {
-        Icon(
-            modifier = modifier,
-            imageVector = if (isChanged) {
-                iconResIdPressed
-            } else {
-                iconResId
-            },
-            contentDescription = null,
-            tint = if (isChanged) {
-                colorScheme.onSurfaceVariant
-            } else {
-                colorScheme.onSurface
-            }
+        //  если не пройден - предложить пройти
+        else TrainsBlockWithoutOnBoarding(
+            navController = navController,
+            text = stringResource(R.string.trains_block_without_internet),
+            withButton = false
         )
     }
 }
+
+
+    @Composable
+    fun IconCloseButton(
+        modifier: Modifier = Modifier,
+        iconResId: ImageVector,
+        iconResIdPressed: ImageVector,
+        isChanged: Boolean,
+        horizontalArrangement: Arrangement.Horizontal = Arrangement.End,
+        onItemClickListener: () -> Unit
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    end = 8.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = horizontalArrangement
+        ) {
+            Icon(
+                modifier = modifier
+                    .clickable {
+                        onItemClickListener(
+                        ) }
+                    .clip(CircleShape)
+                ,
+                imageVector = if (isChanged) {
+                    iconResIdPressed
+                } else {
+                    iconResId
+                },
+                contentDescription = null,
+                tint = if (isChanged) {
+                    colorScheme.onSurfaceVariant
+                } else {
+                    colorScheme.onSurface
+                }
+            )
+        }
+    }
+
 
 /*
 @OptIn(ExperimentalMaterial3Api::class)
