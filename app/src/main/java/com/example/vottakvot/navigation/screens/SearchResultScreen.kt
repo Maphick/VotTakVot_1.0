@@ -19,7 +19,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,18 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.navigation.navigationLogic.Screen
-import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.ui.theme.WorkoutCard
-import sourceListSearchResultExample
 
 
 // ЭКРАН С РЕЗУЛЬТАТАМИ ПОИСКА
@@ -93,7 +88,10 @@ fun SearchResultScreen(
                 //onAddedClickListener(workoutItem)
             }
         }
-        if (isInternet) {
+        val yourTrains = trainList
+            ._workoutListGeneral
+            .observeAsState(listOf())
+        if (yourTrains.value != null) {
             val searchedWorkouts = trainList.workoutListGeneral.observeAsState(listOf())
             //workoutViewModel.workoutList.observeAsState(listOf())
             // значение по умолчанию - пустая коллекция
@@ -254,6 +252,8 @@ fun SearchResult(
 }
 */
 
+
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -293,4 +293,4 @@ fun SearchResultScreenBlackPrev() {
         )
     }
 }
-
+*/

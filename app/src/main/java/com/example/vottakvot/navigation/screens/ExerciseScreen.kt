@@ -6,21 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,20 +25,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
-import com.example.vottakvot.domain.ExerciseDataItem
-import com.example.vottakvot.domain.WorkoutDataItem
-import com.example.vottakvot.navigation.navigationLogic.Screen
-import com.example.vottakvot.ui.theme.ExerciseCard
+import com.example.vottakvot.database.BodyType
+import com.example.vottakvot.database.ExerciseDataItem
 import com.example.vottakvot.ui.theme.TimeAndBodyPart
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.utils.HeaderBlock
 import com.example.vottakvot.utils.TextBlock
-import sourceListPopularExample
-import sourceListTrainsForYouExample
 
 
 @Composable
 fun ExerciseScreen(
+    typeList: Int = 0,
     navController: NavHostController,
     trainList: TrainListViewModel,
     ) {
@@ -88,7 +80,7 @@ fun ExerciseScreen(
                         navController = navController,
                         exerciseItem = exerciseItem
                     )
-                    for (i in 0..exerciseItem.instructions.size-1) {
+                    for (i in 0..exerciseItem.instructionList.instructions.size-1) {
                     Row(
                         modifier = Modifier
                             //.height(30.dp)
@@ -98,7 +90,7 @@ fun ExerciseScreen(
                             )
                     )
                     {
-                        val instruction = exerciseItem.instructions[i]
+                        val instruction = exerciseItem.instructionList.instructions[i]
                         Text(
                             text = i.toString(),
                             fontWeight = FontWeight.Normal,
@@ -143,7 +135,7 @@ fun  LazyColumnExerciseItem(
     exerciseItem: ExerciseDataItem
 )
 {
-    val instructionsCount = exerciseItem.instructions.size
+    val instructionsCount = exerciseItem.instructionList.instructions.size
     Image(
         painter = painterResource(id = R.drawable.exercise),
         contentDescription = "Exercise Screen",
@@ -160,11 +152,20 @@ fun  LazyColumnExerciseItem(
             textColor = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(16.dp))
+        val bodyType =  when (exerciseItem.bodyType) {
+            "Пресс" ->  BodyType.ABD
+            "Верхняя часть" ->  BodyType.UPPER_BODY
+            "Нижняя часть" ->  BodyType.BOTTOM_BODY
+            "Все тело" ->  BodyType.FULL_BODY
+            else -> {
+                BodyType.FULL_BODY
+            }
+        }
         TimeAndBodyPart(
             modifier = Modifier
                 .fillMaxWidth(1f),
             time = exerciseItem.time,
-            bodyType = exerciseItem.bodyType,
+            bodyType = bodyType,
         )
         Spacer(modifier = Modifier.height(24.dp))
         TextBlock(
@@ -190,6 +191,8 @@ fun ExerciseScreenWhitePrev() {
     }
 }
 
+
+/*
 @Preview
 @Composable
 fun ExerciseScreenBlackPrev() {
@@ -198,7 +201,10 @@ fun ExerciseScreenBlackPrev() {
     {
         val context = LocalContext.current
         val trainListForYou: TrainListViewModel =
-            TrainListViewModel(source = sourceListTrainsForYouExample)
+            TrainListViewModel(
+                source = sourceListTrainsForYouExample,
+                db
+            )
         val trainListPopular: TrainListViewModel =
             TrainListViewModel(source = sourceListPopularExample)
         val navController = NavHostController(context = context)
@@ -208,3 +214,4 @@ fun ExerciseScreenBlackPrev() {
         )
     }
 }
+*/

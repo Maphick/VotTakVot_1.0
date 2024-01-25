@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -14,19 +13,19 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.ViewModel.WorkoutViewModel
 import com.example.vottakvot.data.DataStoreRepository
+import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.navigation.screens.MainScreen
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
-import sourceListPopularExample
-import sourceListSearchResultExample
-import sourceListTrainsForYouExample
 
 // пройден ли онбординг
 var isOnboardingPassedApp = false
@@ -59,13 +58,32 @@ class MainActivity : ComponentActivity() {
         // вью модель для карточки тренировки
         var workoutViewModel = WorkoutViewModel()
         // список тренировок для Вас
-        var trainListForYou: TrainListViewModel = TrainListViewModel()
+        //var trainListForYou: TrainListViewModel = TrainListViewModel()
         // список популярных тренировок
-        val trainListPopular: TrainListViewModel = TrainListViewModel()//source = sourceListPopularExample)
+        //val trainListPopular: TrainListViewModel = TrainListViewModel()//source = sourceListPopularExample)
         //  список тренировок для результатов поиска
-        val trainListSearched: TrainListViewModel = TrainListViewModel(source = sourceListSearchResultExample)
+        //val trainListSearched: TrainListViewModel = TrainListViewModel(source = sourceListSearchResultExample)
 
         val isTrainListGets: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+
+        // список тренировок для Вас
+        var trainListForYou = ViewModelProvider(this).get(TrainListViewModel::class.java)
+
+        // список популярных тренировок
+        //val trainListPopular = ViewModelProvider(this).get(TrainListViewModel::class.java)
+
+        //  список моих тренировок
+        //val trainListMy = ViewModelProvider(this).get(TrainListViewModel::class.java)
+
+        //  список избранных тренировок
+        //val trainListFavourite = ViewModelProvider(this).get(TrainListViewModel::class.java)
+
+        //  список тренировок для результатов поиска
+        val trainListSearched = ViewModelProvider(this).get(TrainListViewModel::class.java)
+
+
+        val workoutListPopular =  MutableLiveData<List<WorkoutDataItem>>()
+
 
         setContent {
             VotTakVotTheme {
@@ -90,8 +108,8 @@ class MainActivity : ComponentActivity() {
                         inquirerViewModel = inquirerViewModel,
                         workoutViewModel = workoutViewModel,
                         trainListForYou = trainListForYou,
-                        trainListPopular = trainListPopular,
-                        trainListSearched = trainListSearched,
+                        trainListPopular = workoutListPopular,
+                        //trainListSearched = trainListSearched,
                         isTrainListGets = isTrainListGets
                     )
                 }

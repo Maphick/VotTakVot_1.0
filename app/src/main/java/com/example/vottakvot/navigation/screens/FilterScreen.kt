@@ -1,5 +1,6 @@
 package com.example.vottakvot.navigation.screens
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
@@ -44,18 +44,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.data.DataStoreRepository
+import com.example.vottakvot.database.WorkoutDataItem
+import com.example.vottakvot.internet.deleteUOldTrains
 import com.example.vottakvot.internet.getAllTrains
 import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.ui.theme.IcoButton
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
-import sourceListSearchResultExample
 
 
 //  Экран с фильтрами
@@ -96,7 +99,7 @@ fun FilterScreen(
         }
         filterName = stringResource(R.string.muscle_groups)
         filterValues = pages[1].answers
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         MuscleGroupsBlock(
             filterName = filterName,
             filterValues = filterValues,
@@ -107,23 +110,30 @@ fun FilterScreen(
             inquirerViewModel.setSelectedWorkoutType(it)
             keyWord = it
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        //Spacer(modifier = Modifier.height(20.dp))
         SearchWorkoutsButton(
+            trainList = trainList,
+            inquirerViewModel = inquirerViewModel,
             text = stringResource(R.string.find_workouts)
         )
         {
             inquirerViewModel.setKeyWord(keyWord)
+            // удалить старые результат из БД
+            // добавить новые
+
             // переход на страницу с результатами
             navController.navigate(Screen.FindWorkouts.route)
 
 
 
+
+        }
+
         }
     }
-}
 
 
-
+/*
 fun FindWorkouts(
     inquirerViewModel: InquirerViewModel,
     trainListForYou: TrainListViewModel
@@ -135,11 +145,13 @@ fun FindWorkouts(
         trainListSearched =  trainListForYou
     )
 }
+*/
 
 
+// получить список тренировок для Вас
 fun FindYoursWorkouts(
     inquirerViewModel: InquirerViewModel,
-    trainListSearched: TrainListViewModel,
+    trainListForYou: TrainListViewModel,
     //keyWord: String
 )
 {
@@ -147,19 +159,20 @@ fun FindYoursWorkouts(
         getYourTrains(
         inquirerViewModel = inquirerViewModel,
         limit = 100,
-        trainListSearched =  trainListSearched,
-       // keyWord = it
+            trainList = trainListForYou
     )
    // }
 }
 
+
+// получить список популярных тренировок
 fun FindPopularWorkouts(
-    trainListPopular: TrainListViewModel
+    trainPopularList: MutableLiveData<List<WorkoutDataItem>>
 )
 {
     var getSuccessed = getAllTrains(
-        limit = 1000,
-        trainListPopular = trainListPopular
+        limit = 10,
+        trainPopularList = trainPopularList
     )
 }
 
@@ -606,6 +619,8 @@ fun SearchStringButton(
 fun SearchWorkoutsButton(
     //navController: NavHostController,
     //modifier: Modifier,
+    trainList: TrainListViewModel,
+    inquirerViewModel: InquirerViewModel,
     text: String,
     onClick: () -> Unit
 ) {
@@ -622,6 +637,23 @@ fun SearchWorkoutsButton(
             ),
         onClick =
         {
+            Log.d("SEARCH", "Find Yours Workouts")
+            // поиск тренировок "для Вас" после прохождения онбординга
+            //if ((trainList.workoutListGeneral.value == null) || (trainList.workoutListGeneral.value?.size == 0)) {
+                //if (trainYoursListv.workoutListGeneral.value?.size == 0) {
+
+                // удаление старых тренировок из БД
+                deleteUOldTrains(
+                    trainList = trainList
+                )
+
+                // поиск новых тренировок
+                FindYoursWorkouts(
+                    inquirerViewModel = inquirerViewModel,
+                    trainListForYou = trainList,
+                    //keyWord = inquirerViewModel.keyWord.value
+                )
+           // }
             onClick()
         },
         shape = CircleShape,
@@ -698,6 +730,8 @@ fun FilterBlockWhitePrev() {
     }
 }
 
+
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -719,8 +753,9 @@ fun FilterScreenWhitePrev() {
         )
     }
 }
+*/
 
-
+/*
 @Preview
 @Composable
 fun FilterScreenBlackPrev() {
@@ -740,4 +775,5 @@ fun FilterScreenBlackPrev() {
         )
     }
 }
+*/
 

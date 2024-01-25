@@ -2,7 +2,6 @@ package com.example.vottakvot.ViewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.vottakvot.domain.WorkoutDataItem
 
 class ConfigViewModel {
 

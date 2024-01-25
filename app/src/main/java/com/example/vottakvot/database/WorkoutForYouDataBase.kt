@@ -1,6 +1,13 @@
-package com.example.vottakvot.domain
+package com.example.vottakvot.database
 
-data class WorkoutDataItem(
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
+
+
+@Entity(tableName = "workout_U_table")
+data class WorkoutUDataItem(
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     var title: String = "Здоровая спина",
     var time: Int = 7,
@@ -11,13 +18,11 @@ data class WorkoutDataItem(
     var isPlaying: Boolean = false,
     var description: String = "Тренировка “Здоровая спина” помогает укрепить мышцы спины, снять напряжение и боль в области спины.",
     var contraindications: String = "Данная тренировка противопоказана беременным.",
-    var exersises: MutableList<ExerciseDataItem> = mutableListOf( ExerciseDataItem(), ExerciseDataItem(), ExerciseDataItem(), ExerciseDataItem())
+    //@Ignore
+    //var exersises: MutableList<ExerciseDataItem> = mutableListOf(ExerciseDataItem())
 ) {
 
 }
 
 
 
-enum class BodyType {
-    FULL_BODY, UPPER_BODY,  BOTTOM_BODY, ABD
-}

@@ -1,21 +1,16 @@
 package com.example.vottakvot.internet
 
 import android.annotation.SuppressLint
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.example.vottakvot.R
+import androidx.lifecycle.MutableLiveData
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.data.Repository
 import com.example.vottakvot.data.TransormWorkoutEntityToWorkoutDataItem
-import com.example.vottakvot.domain.BodyType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.vottakvot.database.BodyType
+import com.example.vottakvot.database.WorkoutDataItem
 
+/*
 @SuppressLint("SuspiciousIndentation")
 fun getYourTrains_(
     inquirerViewModel: InquirerViewModel,
@@ -63,24 +58,58 @@ fun getYourTrains_(
     return isInternetOn
 
 }
+*/
 
-
-// получить список тренировок по ключевому слову
+// получить список тренировок для Вас по ключевому слову
 @SuppressLint("SuspiciousIndentation")
 fun getYourTrains(
     inquirerViewModel: InquirerViewModel,
     limit: Int = 100,
-    trainListSearched: TrainListViewModel,
+    trainList: TrainListViewModel
     //keyWord: String
 ) : Boolean
+{
+    val bodytype = getBodyType(
+        inquirerViewModel
+    )
+    val isInternetOn = getUTrains(
+        limit = limit,
+        bodyType = bodytype,
+        trainList = trainList
+    )
+    return isInternetOn
+}
+
+
+
+// получить список популярных тренировок
+@SuppressLint("SuspiciousIndentation")
+fun getPopularTrains(
+    limit: Int = 100,
+    trainListPopular: MutableLiveData<List<WorkoutDataItem>>,
+) : Boolean
+{
+    val isInternetOn = getAllTrains(
+        limit = limit,
+        trainPopularList = trainListPopular
+    )
+    return isInternetOn
+}
+
+// получить список тренировок по ключевому слову
+@SuppressLint("SuspiciousIndentation")
+fun getBodyType(
+    inquirerViewModel: InquirerViewModel,
+    //limit: Int = 100,
+    //trainListSearched: MutableLiveData<List<WorkoutDataItem>>,
+    //keyWord: String
+) : BodyType
 {
     // часть тела по результатам опроса
     var bodyType: BodyType
     val keyWord: String? = inquirerViewModel.keyWord.value
     if (keyWord == null)
     {
-
-
        val checkedBodyType = inquirerViewModel.getInquirerPagesList()[1]._isCheckedList.value
         val a = checkedBodyType?.get(1)
 
@@ -113,58 +142,100 @@ fun getYourTrains(
             "Все тело" -> bodyType = BodyType.FULL_BODY
             else -> {
                 bodyType = BodyType.FULL_BODY
-                return getAllTrains(
-                    limit = 10,
-                    trainListPopular = trainListSearched
-                )
-
             }
-
+            }
             //bodyType = BodyType.FULL_BODY
         }
-    }
+
+    return bodyType
+
+
 
     // запрос к внешнему API
-    val repo = Repository()
+   /* val repo = Repository()
     val isInternetOn = repo.makeBodyTypeRequest(bodyType, limit)
-
-    //GlobalScope.launch {
-       // withContext(Dispatchers.IO) {
 
             if (isInternetOn) {
                 val workoutEntities = repo.worcoutListEntity
                 val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
                 val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
                 // список тренировок для Вас
-                trainListSearched.setNewSource(new_source = sourceListFromServer)
+               // trainListSearched.insertWorkoutList(sourceListFromServer)
+                    //.setNewSource(new_source = sourceListFromServer)
                 //trainListForYou = TrainListViewModel(source = sourceListFromServer)
             }
-       // }
-  //  }
-    return isInternetOn
+    */
+
+    //return isInternetOn
 }
 
-// получить список всех тренировок
+
+
+fun deleteUOldTrains(
+    trainList: TrainListViewModel
+)
+{
+    trainList.removeOldWorkouts()
+      //  .insertWorkoutWithExercise(sourceListFromServer)
+}
+
+
+
+// получить список тренировок для Вас
 @SuppressLint("SuspiciousIndentation")
-fun getAllTrains(
+fun getUTrains(
     limit: Int = 10,
-    trainListPopular: TrainListViewModel,
+    bodyType: BodyType,
+    trainList: TrainListViewModel
 ) : Boolean
 {
     // запрос к внешнему API
     val repo = Repository()
-    val isInternetOn = repo.makeAllWorkoutsRequest(limit)
-
+    val isInternetOn = repo.makeBodyTypeRequest(bodyType, limit)
     if (isInternetOn) {
         val workoutEntities = repo.worcoutListEntity
         val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
         val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
         // список тренировок для Вас
-        trainListPopular.setNewSource(new_source = sourceListFromServer)
-        //trainListForYou = TrainListViewModel(source = sourceListFromServer)
+        //trainList.insertWorkoutList(sourceListFromServer)
+        trainList.insertWorkoutWithExercise(sourceListFromServer)
     }
-    // }
-    //  }
     return isInternetOn
+}
+
+// запрос к внешнему API
+/* val repo = Repository()
+ val isInternetOn = repo.makeBodyTypeRequest(bodyType, limit)
+
+         if (isInternetOn) {
+             val workoutEntities = repo.worcoutListEntity
+             val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
+             val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
+             // список тренировок для Вас
+            // trainListSearched.insertWorkoutList(sourceListFromServer)
+                 //.setNewSource(new_source = sourceListFromServer)
+             //trainListForYou = TrainListViewModel(source = sourceListFromServer)
+         }
+         ;
+ */
+
+// получить список всех тренировок
+@SuppressLint("SuspiciousIndentation")
+fun getAllTrains(
+ limit: Int = 10,
+ trainPopularList: MutableLiveData<List<WorkoutDataItem>>
+) : Boolean
+{
+ // запрос к внешнему API
+ val repo = Repository()
+ val isInternetOn = repo.makeAllWorkoutsRequest(limit)
+ if (isInternetOn) {
+     val workoutEntities = repo.worcoutListEntity
+     val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
+     val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
+     // список всех тренировок
+     trainPopularList.postValue(sourceListFromServer)
+ }
+ return isInternetOn
 }
 

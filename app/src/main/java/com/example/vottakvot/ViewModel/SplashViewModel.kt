@@ -38,7 +38,8 @@ class SplashViewModel(
                     // если приветствие не пройдено
                    if (!welcomeCompleted) {
                        // проходим приветствие
-                       _startDestination.value = Screen.Splash.route
+                       _startDestination.value = Screen.Welcome.route
+                           //Screen.Splash.route
                    }
                    // иначе если онбординг не пройден
                    else if (!onBoardingCompleted)

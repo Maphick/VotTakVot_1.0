@@ -3,7 +3,7 @@ package com.example.vottakvot.data
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import com.example.vottakvot.domain.BodyType
+import com.example.vottakvot.database.BodyType
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -17,8 +17,12 @@ import java.lang.reflect.Type
 // https://www.youtube.com/watch?v=8zPkbV4INGA
 // Gson Android Kotlin Tutorial - Parse Generic Lists from JSON & Introduction
 
+
 class Repository {
     val BASE_URL = "https://exercisedb.p.rapidapi.com/exercises"
+    val X_RapidAPI_Key = "1e2a994b1amshca6105b44e649b1p1193cbjsn68a76ceb1446"
+        //"89869e62a7msh8aae2e413f008cap11c8c6jsn17ad74ef16d0"
+    val X_RapidAPI_Host = "exercisedb.p.rapidapi.com"
     //bodyPart/back?limit=10"
 
     lateinit var worcoutListEntity: List<WorcoutListEntity.ExerciseEntity>
@@ -82,10 +86,10 @@ class Repository {
         return Request.Builder()
             .url(url)
             .get()
-            .addHeader("X-RapidAPI-Key", "568e635a7fmsh455f805266f27cdp16734fjsn3917f09b41c7")
+            .addHeader("X-RapidAPI-Key", X_RapidAPI_Key)
                 // "568e635a7fmsh455f805266f27cdp16734fjsn3917f09b41c7"
                 //"6929bc99b9mshdb1a50796fb5502p111639jsn62b0b1df3969")
-            .addHeader("X-RapidAPI-Host", "exercisedb.p.rapidapi.com")
+            .addHeader("X-RapidAPI-Host", X_RapidAPI_Host)
             .build()
     }
 

@@ -1,6 +1,5 @@
 package com.example.vottakvot.ui.theme
 
-import android.widget.ExpandableListView.OnChildClickListener
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.PlaylistAdd
@@ -29,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
-import com.example.vottakvot.domain.BodyType
-import com.example.vottakvot.domain.WorkoutDataItem
+import com.example.vottakvot.database.BodyType
+import com.example.vottakvot.database.WorkoutDataItem
 import sourceListTrainsForYouExample
 
 @Composable
@@ -141,10 +139,20 @@ fun WorkoutCard(
                 verticalAlignment = Alignment.CenterVertically
             )
             {
+                val bodyType =  when (workoutItem.bodyType) {
+                    "ABD" ->  BodyType.ABD
+                    "UPPER_BODY" ->  BodyType.UPPER_BODY
+                    "BOTTOM_BODY" ->  BodyType.BOTTOM_BODY
+                    "FULL_BODY" ->  BodyType.FULL_BODY
+                    else -> {
+                         BodyType.FULL_BODY
+                    }
+                }
                 // иконки времени и части тела
                 TimeAndBodyPart(
                     time = workoutItem.time,
-                    bodyType = workoutItem.bodyType
+                    bodyType = bodyType
+                    //bodyType
                 )
                 Row(
                     modifier = Modifier,
@@ -322,6 +330,8 @@ fun IcoButton(
     }
 }
 
+
+/*
 @Preview
 @Composable
 fun WorkoutCardWhitePrev() {
@@ -358,7 +368,9 @@ fun WorkoutCardWhitePrev() {
         )
     }
 }
+*/
 
+/*
 @Preview
 @Composable
 fun WorkoutCardBlackPrev() {
@@ -390,4 +402,4 @@ fun WorkoutCardBlackPrev() {
         )
     }
 }
-
+*/

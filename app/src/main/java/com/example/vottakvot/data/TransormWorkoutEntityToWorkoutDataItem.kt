@@ -1,13 +1,9 @@
 package com.example.vottakvot.data
 
-import com.example.vottakvot.domain.BodyType
-import com.example.vottakvot.domain.ExerciseDataItem
-import com.example.vottakvot.domain.WorkoutDataItem
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
-import java.util.Arrays
+import com.example.vottakvot.database.BodyType
+import com.example.vottakvot.database.ExerciseDataItem
+import com.example.vottakvot.database.InstructionList
+import com.example.vottakvot.database.WorkoutDataItem
 import kotlin.random.Random
 
 
@@ -41,24 +37,26 @@ class TransormWorkoutEntityToWorkoutDataItem(
                     }
 
 
-            val exercise = exercise?.let {
-                exercise?.id?.let { it1 ->
+            val _exercise =
                     ExerciseDataItem(
-                        id = it1.toInt(),
-                        title = it.name,
+                        id = exercise.id.toInt(),
+                        title = exercise.name,
                         time = Random.nextInt(1, 3),
-                        bodyType = bodyType,
+                        bodyType = bodyType.toString(),
                         type = Random.nextInt(0,3),
                         approaches = Random.nextInt(2,4),
                         repetitions = Random.nextInt(8,20),
-                        url = it.gifUrl,
-                        instructions = it.instructions.toMutableList(),
+                        url = exercise.gifUrl,
+                        instructionList = InstructionList(),
+                       // instructions =
+                        //it.instructions
                     )
-                }
-            }
+            _exercise.instructionList.instructions =  exercise.instructions
 
-            if (exercise != null) {
-                sourceListTrainsForYouFromServer.add(exercise)
+            if (_exercise != null) {
+                sourceListTrainsForYouFromServer.add(
+                    _exercise
+                )
             }
 
         }
@@ -78,12 +76,17 @@ class TransormWorkoutEntityToWorkoutDataItem(
             // кол-во тренировок в упражнении
             val exCount = Random.nextInt(4,10)
             var exList = mutableListOf<ExerciseDataItem>()
+                //MutableLiveData(listOf<ExerciseDataItem>())
+                //mutableListOf<ExerciseDataItem>()
+                //MutableLiveData<List<ExerciseDataItem>>()
+                //mutableListOf<ExerciseDataItem>()
             if(i+exCount > allExerciseCount -1)
                 break
             var sumTime = 0
             // формирование списка упражнений
             for (j in (i..i+exCount-1)) {
                 val ex = exercises[j]
+                ex.workoutId = exercises[i].id
                 sumTime += ex.time
                 exList.add(ex)
             }
@@ -94,8 +97,11 @@ class TransormWorkoutEntityToWorkoutDataItem(
                 time = sumTime,
                 bodyType = exercises[i].bodyType,
                 type = exercises[i].type,
-                exersises = exList
+                exerciseList = mutableListOf<ExerciseDataItem>()
+               // exerciseList = exList,
+               // exersises = exList
             )
+            workout.exerciseList = exList
             workoutListFromExerciseList.add(workout)
             i += exCount + 1
         }

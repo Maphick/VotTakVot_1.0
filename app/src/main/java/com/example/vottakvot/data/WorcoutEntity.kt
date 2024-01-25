@@ -14,7 +14,7 @@ class WorcoutListEntity {
         val name: String,
         val target: String,
         val secondaryMuscles: List<String>,
-        val instructions: List<String>
+        var instructions: List<String>
     )
     {
         override fun toString() = "$id $name $bodyPart"

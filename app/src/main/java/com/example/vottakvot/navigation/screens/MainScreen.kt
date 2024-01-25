@@ -1,8 +1,6 @@
 package com.example.vottakvot.navigation.screens
 
 import android.annotation.SuppressLint
-import android.app.FragmentManager
-import android.app.FragmentManager.BackStackEntry
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -18,7 +16,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,17 +26,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.ViewModel.WelcomeViewModel
 import com.example.vottakvot.ViewModel.WorkoutViewModel
+import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.navigation.navigationLogic.BottomNavigationItem
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.navigation.navigationLogic.SetupNavGraph
@@ -56,8 +54,8 @@ fun MainScreen(
     inquirerViewModel: InquirerViewModel,
     workoutViewModel: WorkoutViewModel,
     trainListForYou: TrainListViewModel,
-    trainListPopular: TrainListViewModel,
-    trainListSearched: TrainListViewModel,
+    trainListPopular: MutableLiveData<List<WorkoutDataItem>>,
+    //trainListSearched: TrainListSearchedViewModel,
     isTrainListGets: MutableLiveData<Boolean>
 ) {
     // State of bottomBar, set state to false, if current page route is "car_details"
@@ -84,7 +82,7 @@ fun MainScreen(
             workoutViewModel = workoutViewModel,
             trainListForYou = trainListForYou,
             trainListPopular = trainListPopular,
-            trainListSearched = trainListSearched,
+            //trainListSearched = trainListSearched,
             isTrainListGets = isTrainListGets
         ) }
     )
@@ -112,7 +110,6 @@ fun NavigationHomeScreen(
         Screen.Exercise.route -> false // упражнение
         else -> true // in all other cases show bottom bar
     }
-
     Scaffold(
         // показывать ли нижнюю навигацию на этой странице
         bottomBar = {
@@ -210,8 +207,7 @@ fun ContentScreen(
     inquirerViewModel: InquirerViewModel,
     workoutViewModel: WorkoutViewModel,
     trainListForYou: TrainListViewModel,
-    trainListPopular: TrainListViewModel,
-    trainListSearched: TrainListViewModel,
+    trainListPopular: MutableLiveData<List<WorkoutDataItem>>,
     isTrainListGets: MutableLiveData<Boolean>
 ) {
     //val navHostController = rememberNavController()
@@ -219,15 +215,14 @@ fun ContentScreen(
     //val screen =  Screen.Splash.route
     //val isOnboardingPassed: Boolean = true
     SetupNavGraph(
-        context = context,
         navController = navHostController,
-        isOnboardingPassed = isOnboardingPassed,
         startDestination = startDestination,
         splashScreenContent = { SplashScreen() },
         loaderScreenContent = { LoaderScreen(
             inquirerViewModel = inquirerViewModel,
             trainYoursList = trainListForYou,
             trainPopularList = trainListPopular,
+            //trainListPopular,
             keyWord = "__"
         ) },
         welcomeScreenContent = {
@@ -246,15 +241,16 @@ fun ContentScreen(
         },
 
 
-        myTrainsContent = { MyTrainsScreen()},
+        myTrainsContent = { MyTrainsScreen(
+            navController = navHostController,
+            trainList = trainListForYou
+        )},
         favouriteContent = { FavouriteScreen()},
         profileContent = { ProfileScreen()},
         splashViewModel = splashViewModel,
         inquirerViewModel = inquirerViewModel,
         trainListForYou = trainListForYou,
-        trainListPopular = trainListPopular,
-        trainListSearched = trainListSearched,
-        isTrainListGets = isTrainListGets
+        trainListPopular = trainListPopular
     )
 }
 

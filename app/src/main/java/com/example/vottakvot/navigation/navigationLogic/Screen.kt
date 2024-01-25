@@ -10,10 +10,8 @@ sealed class  Screen(
     object Inquirer : Screen(route = ROUTE_INQUIRER_SCREEN)
 
     object Home : Screen(route = ROUTE_HOME_SCREEN)
-    object Exercise : Screen(route = ROUTE_EXERCISE_SCREEN)
+    object Exercise  : Screen(route = ROUTE_EXERCISE_SCREEN)
     object Workout : Screen(route = ROUTE_WORKOUT_SCREEN)
-
-    //object HomeOnboardingPassed : Screen(route = ROUTE_HOME_WITH_ONBOARDING_SCREEN)
 
     object HomeWithoutOnboarding : Screen(route = ROUTE_HOME_WITHOUT_ONBOARDING_SCREEN)
     object Filter : Screen(route = ROUTE_FILTER_SCREEN)
@@ -42,7 +40,6 @@ sealed class  Screen(
         const val ROUTE_HOME_SCREEN = "home_screen"
         const val ROUTE_EXERCISE_SCREEN = "exercise_screen"
         const val ROUTE_WORKOUT_SCREEN = "workout_screen"
-        //const val ROUTE_HOME_WITH_ONBOARDING_SCREEN = "home_with_onboarding_screen"
         const val ROUTE_HOME_WITHOUT_ONBOARDING_SCREEN = "home_with_onboarding_screen"
         const val ROUTE_FILTER_SCREEN = "filter_screen"
         const val ROUTE_SEARCH_RESULT_SCREEN = "search_result_screen"

@@ -97,13 +97,16 @@ fun WelcomeScreen(
 
     Column(
         modifier = Modifier
+           // .background(Color.Blue)
             .fillMaxSize()
             .background(colorScheme.surface),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalPager(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                //.background(Color.Red)
+                .fillMaxWidth(),
                 //.weight(10f),
             count = pagerCount,
             state = pagerState,
@@ -113,14 +116,13 @@ fun WelcomeScreen(
                 welcomePage = pages[position]
             )
         }
-
         Spacer(
             modifier = Modifier
                 .height(0.dp)
         )
         Column(
             modifier = Modifier
-                //.background(Color.Yellow)
+                //.background(Color.Green)
                 .fillMaxWidth()
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom,
@@ -135,8 +137,8 @@ fun WelcomeScreen(
                 pagerCount = pagerCount
             )
         }
-
     }
+
 }
 
 @Composable
@@ -146,18 +148,28 @@ fun WelcomePagerScreen(welcomePage: WelcomePage) {
             .fillMaxWidth(1f)
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Top
     ) {
-        ImageAndText(
-            modifier = Modifier,
-            painter = painterResource(id = welcomePage.image),
-            ico = painterResource(id = R.drawable.logo),
-            contentDescription = "Pager Image",
-            title = stringResource(R.string.vot_tak_vot),
-            colorText = welcomePage.colorText
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .fillMaxHeight(0.5f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Top
         )
-        Spacer(modifier = Modifier
-            .width(20.dp)
+        {
+            ImageAndText(
+                modifier = Modifier,
+                painter = painterResource(id = welcomePage.image),
+                ico = painterResource(id = R.drawable.logo),
+                contentDescription = "Pager Image",
+                title = stringResource(R.string.vot_tak_vot),
+                colorText = welcomePage.colorText
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .width(0.dp)
         )
         Text(
             modifier = Modifier
@@ -171,15 +183,16 @@ fun WelcomePagerScreen(welcomePage: WelcomePage) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
 
-        )
-        Spacer(modifier = Modifier
-            .height(0.dp)
+            )
+        Spacer(
+            modifier = Modifier
+                .height(0.dp)
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .padding(
-                    top = 50.dp,
+                    top = 20.dp,
                     start = 50.dp,
                     end = 50.dp
                 ),
@@ -189,9 +202,11 @@ fun WelcomePagerScreen(welcomePage: WelcomePage) {
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Justify,
             lineHeight = 25.sp
+
         )
     }
 }
+
 
 @Composable
 fun ImageAndText(
@@ -204,15 +219,19 @@ fun ImageAndText(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.54f),
+
+            .fillMaxWidth(),
+            //.fillMaxHeight(0.7f),
     contentAlignment = Alignment.TopCenter,
     ) {
         val gradient_color = colorScheme.surface
         Image(painter =  painter,
             contentDescription = "",
             modifier = Modifier
+                //.background(Color.Yellow)
                 .fillMaxSize()
+                //.width(800.dp)
+                //.fillMaxWidth()
                 .drawWithCache {
                     val gradient = Brush.verticalGradient(
                         colors = listOf(

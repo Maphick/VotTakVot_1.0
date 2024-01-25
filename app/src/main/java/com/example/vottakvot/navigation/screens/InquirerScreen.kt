@@ -1,8 +1,6 @@
 package com.example.vottakvot.navigation.screens
 
-import android.content.ContentValues.TAG
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
@@ -19,21 +17,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlaylistAdd
-import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
@@ -45,39 +39,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
-import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.data.Repository
-import com.example.vottakvot.data.TransormWorkoutEntityToWorkoutDataItem
-import com.example.vottakvot.domain.BodyType
+import com.example.vottakvot.database.BodyType
 import com.example.vottakvot.isOnboardingPassedApp
-import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.example.vottakvot.domain.InquirerPage
-import com.example.vottakvot.getYourTrainsSuccessed
-import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import sourceListTrainsForYouExample
 
 fun InquirerDataGeneration(
     inquirerViewModel: InquirerViewModel
@@ -425,6 +408,16 @@ fun InquirerBottomNav(
                         //getYourTrainsSuccessed = getSuccessed
 
                         Log.d("LOADER", "go to loader")
+                        Log.d("SEARCH", "Find Yours Workouts")
+                        // поиск тренировок "для Вас" после прохождения онбординга
+                        if ((trainListForYou.workoutListGeneral.value == null) || (trainListForYou.workoutListGeneral.value?.size == 0)) {
+                            //if (trainYoursListv.workoutListGeneral.value?.size == 0) {
+                            FindYoursWorkouts(
+                                inquirerViewModel = inquirerViewModel,
+                                trainListForYou = trainListForYou,
+                                //keyWord = inquirerViewModel.keyWord.value
+                            )
+                        }
                         navController.navigate(Screen.Loader.route)
                         Log.d("LOADER", "after loader")
 
@@ -540,6 +533,7 @@ fun NextButton(
 }
 
 
+/*
     @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
     @Preview
     @Composable
@@ -578,3 +572,4 @@ fun NextButton(
             )
         }
     }
+*/

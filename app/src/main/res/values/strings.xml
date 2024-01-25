@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VotTakVot</string>
     <string name="botton_navigation_item_main">Главная</string>
-    <string name="botton_navigation_item_my_workouts">Мои тренирвки</string>
+    <string name="botton_navigation_item_my_workouts">Тренирвки</string>
     <string name="botton_navigation_item_favourite">Избранное</string>
     <string name="botton_navigation_item_profile">Профиль</string>
     <string name="not_now">Не сейчас</string>
@@ -16,6 +16,7 @@
     <string name="upper_body">Верхняя часть</string>
     <string name="abd">Пресс</string>
     <string name="workouts_for_you">Тренировки для Вас</string>
+    <string name="workouts_my">Мои тренировки</string>
     <string name="popular">Популярные</string>
     <string name="trains_block_without_onboarding">Если Вы хотите подобрать свой индивидуальный
         план тренировок, то предлагаем Вам пройти небольшой опрос и ответить на вопросы."</string>

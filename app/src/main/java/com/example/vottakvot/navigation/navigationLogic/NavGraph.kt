@@ -1,7 +1,6 @@
 package com.example.vottakvot.navigation.navigationLogic
 
 import android.content.Context
-import android.window.SplashScreenView
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,12 +14,10 @@ import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
-import com.example.vottakvot.data.DataStoreRepository
-import com.example.vottakvot.isOnboardingPassedApp
+import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.navigation.screens.ExerciseScreen
 import com.example.vottakvot.navigation.screens.FilterScreen
 import com.example.vottakvot.navigation.screens.HomeScreen
-import com.example.vottakvot.navigation.screens.LoaderScreen
 import com.example.vottakvot.navigation.screens.SearchResultScreen
 import com.example.vottakvot.navigation.screens.WorkoutScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -31,16 +28,12 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalPagerApi
 @Composable
 fun SetupNavGraph(
-    context: Context,
     navController: NavHostController,
-    isOnboardingPassed: Boolean,
-    isTrainListGets: MutableLiveData<Boolean>,
     startDestination: String,
     splashViewModel: SplashViewModel,
     inquirerViewModel: InquirerViewModel,
     trainListForYou: TrainListViewModel,
-    trainListPopular: TrainListViewModel,
-    trainListSearched: TrainListViewModel,
+    trainListPopular: MutableLiveData<List<WorkoutDataItem>>,
     splashScreenContent: @Composable () -> Unit,
     loaderScreenContent: @Composable () -> Unit,
     inquirerScreenContent: @Composable () -> Unit,
@@ -56,16 +49,17 @@ fun SetupNavGraph(
         // сплеш экран
         composable(route = Screen.Splash.route) {
             LaunchedEffect(key1 = null){
-                delay(2.seconds)
+                delay(5.seconds)
                 navController.popBackStack()
-                navController.navigate(Screen.Welcome.route)
+                navController.navigate(startDestination)
+                    //Screen.Welcome.route)
             }
             splashScreenContent()
          }
         // сплеш экран
         composable(route = Screen.Loader.route) {
             LaunchedEffect(key1 = null) {
-                delay(2.seconds)
+                delay(5.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
             }
@@ -73,7 +67,7 @@ fun SetupNavGraph(
         }
         composable(route = Screen.FindWorkouts.route) {
             LaunchedEffect(key1 = null){
-                delay(2.seconds)
+                delay(5.seconds)
                 navController.popBackStack()
                 navController.navigate(Screen.SearchResult.route)
             }
@@ -96,7 +90,6 @@ fun SetupNavGraph(
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
                 isOnboardingPassed = isOnboarding,
-                    isTrainListGets = isTrainListGets
             )
         }
         composable(route = Screen.Exercise.route) {
@@ -111,7 +104,6 @@ fun SetupNavGraph(
                 trainList = trainListForYou
             )
         }
-
         // домашний экран без онбординга
         composable(route = Screen.HomeWithoutOnboarding.route) {
             HomeScreen(
@@ -119,7 +111,7 @@ fun SetupNavGraph(
                 trainListForYou = trainListForYou,
                 trainListPopular = trainListPopular,
                 isOnboardingPassed = false,
-                isTrainListGets = isTrainListGets
+                //isTrainListGets = isTrainListGets
             )
         }
         /*
@@ -167,7 +159,8 @@ fun SetupNavGraph(
             SearchResultScreen(
                 navController = navController,
                 title = stringResource(R.string.popular),
-                trainList = trainListPopular
+                trainList = trainListForYou
+                //trainListPopular
             )
             //searchResultForYouContent()
         }

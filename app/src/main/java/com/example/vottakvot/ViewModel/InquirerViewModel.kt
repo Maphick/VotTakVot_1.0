@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.domain.InquirerPage
-import com.example.vottakvot.domain.WorkoutDataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
