@@ -5,12 +5,12 @@ VotTakVot - приложение для коротких спортивных т
 
 
 
-<img src ="/./screenshots/8.jpeg" width=200> 
-<img src ="/./screenshots/7.jpeg" width=200> 
-<img src ="/./screenshots/6.jpeg" width=200> 
-<img src ="/./screenshots/0.jpeg" width=200> 
-<img src ="/./screenshots/1.jpeg" width=200> 
-<img src ="/./screenshots/2.jpeg" width=200> 
-<img src ="/./screenshots/3.jpeg" width=200> 
-<img src ="/./screenshots/4.jpeg" width=200> 
-<img src ="/./screenshots/5.jpeg" width=200> 
+<img src ="/./screenshorts/8.jpeg" width=200> 
+<img src ="/./screenshorts/7.jpeg" width=200> 
+<img src ="/./screenshorts/6.jpeg" width=200> 
+<img src ="/./screenshorts/0.jpeg" width=200> 
+<img src ="/./screenshorts/1.jpeg" width=200> 
+<img src ="/./screenshorts/2.jpeg" width=200> 
+<img src ="/./screenshorts/3.jpeg" width=200> 
+<img src ="/./screenshorts/4.jpeg" width=200> 
+<img src ="/./screenshorts/5.jpeg" width=200> 
