@@ -2,6 +2,11 @@ VotTakVot - приложение для коротких спортивных т
 
 <br><br><br>
 | Tutorial                                                                                                                                                                                                                     | Preview                                               |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| <h3>1-1 Column, Row, Box, Modifiers</h3><br/>Create Row that adds elements in horizontal order, and Column that adds elements in vertical order.<br><br> • Column<br>• Row<br>• Box<br>• Modifier<br>                        | <img src ="/./screenshots/tutorial1_1.jpg" width=200> |
+|                                                                                                                                                                                                                              |                                                       |
+| <h3>1-2 Surface, Shape, Clickable</h3><br/>Create and modify Surface to draw background for Composables, add click action to any composable. Set weight or offset modifiers.<br><br> • Surface<br>• Shape<br>• Clickable<br> | <img src ="/./screenshots/tutorial1_2.jpg" width=200> |
+|                                                                                                                                                                                                                              |                                                       |
 
 
 
