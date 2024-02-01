@@ -50,7 +50,7 @@ fun SetupNavGraph(
         // сплеш экран
         composable(route = Screen.Splash.route) {
             LaunchedEffect(key1 = null){
-                delay(5.seconds)
+                delay(35.seconds)
                 navController.popBackStack()
                 navController.navigate(startDestination)
                     //Screen.Welcome.route)
