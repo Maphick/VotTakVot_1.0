@@ -3,6 +3,7 @@ package com.example.vottakvot.data
 import com.example.vottakvot.database.BodyType
 import com.example.vottakvot.database.ExerciseDataItem
 import com.example.vottakvot.database.InstructionList
+import com.example.vottakvot.database.RepetitionList
 import com.example.vottakvot.database.WorkoutDataItem
 import kotlin.random.Random
 
@@ -37,15 +38,17 @@ class TransormWorkoutEntityToWorkoutDataItem(
                     }
 
 
+            val approaches = Random.nextInt(2,4)
             val _exercise =
                     ExerciseDataItem(
                         id = exercise.id.toInt(),
+                        //exerciseId = exercise.id.toInt(),
                         title = exercise.name,
                         time = Random.nextInt(1, 3),
                         bodyType = bodyType.toString(),
                         type = Random.nextInt(0,3),
-                        approaches = Random.nextInt(2,4),
-                        repetitions = Random.nextInt(8,20),
+                        approaches = approaches,
+                        repetitions = makeRepetitions(approaches),
                         url = exercise.gifUrl,
                         instructionList = InstructionList(),
                        // instructions =
@@ -61,6 +64,24 @@ class TransormWorkoutEntityToWorkoutDataItem(
 
         }
         return sourceListTrainsForYouFromServer
+    }
+
+
+    // генерация количества повторений по числу подходов
+    fun makeRepetitions
+                (approaches: Int,
+                 lowerLimit: Int = 8,
+                 upperLimit: Int = 20
+    ):RepetitionList
+    {
+        var repetitions: RepetitionList = RepetitionList()
+        repetitions.repetitions.clear()
+        //= mutableListOf()
+        for (i in 0..approaches-1)
+        {
+            repetitions.repetitions.add(Random.nextInt(lowerLimit,upperLimit))
+        }
+        return repetitions as RepetitionList
     }
 
 
@@ -86,6 +107,7 @@ class TransormWorkoutEntityToWorkoutDataItem(
             // формирование списка упражнений
             for (j in (i..i+exCount-1)) {
                 val ex = exercises[j]
+                ex.id = exercises[j].id
                 ex.workoutId = exercises[i].id
                 sumTime += ex.time
                 exList.add(ex)
@@ -93,6 +115,7 @@ class TransormWorkoutEntityToWorkoutDataItem(
 
             val workout = WorkoutDataItem(
                 id = exercises[i].id,
+                //workoutId = exercises[i].id,
                 title = exercises[i].title,
                 time = sumTime,
                 bodyType = exercises[i].bodyType,
@@ -103,7 +126,7 @@ class TransormWorkoutEntityToWorkoutDataItem(
             )
             workout.exerciseList = exList
             workoutListFromExerciseList.add(workout)
-            i += exCount + 1
+            i += exCount
         }
         return workoutListFromExerciseList
     }

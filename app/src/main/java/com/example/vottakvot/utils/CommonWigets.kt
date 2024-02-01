@@ -25,7 +25,6 @@ import androidx.navigation.NavHostController
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.navigation.screens.IconCloseButton
 import com.example.vottakvot.ui.theme.VotTakVotTheme
-import sourceListTrainsForYouExample
 
 
 @Composable
@@ -59,7 +58,9 @@ fun TextBlock(
 @Composable
 fun HeaderBlock(
     text: String = "Тренировка",
-    navController: NavHostController
+    navController: NavHostController,
+    isVisibleAddTrain: Boolean = false, // видно ли кнопку  "Добавить в мои"
+    addTrainToMy: () -> Unit
 )
 {
     Box(
@@ -102,21 +103,25 @@ fun HeaderBlock(
             //fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
         )
-        IconCloseButton(
-            modifier = Modifier
-                .size(
-                    35.dp
-                )
-                .padding(
-                    // top = 16.dp,
-                    //start = 8.dp
-                ),
-            iconResId = Icons.Outlined.PlaylistAdd,
-            iconResIdPressed = Icons.Outlined.PlaylistAdd,
-            isChanged = true
-        )
-        {
-            navController.popBackStack()
+        // если видно кнопку  "Добавить в Мои"
+        if (isVisibleAddTrain) {
+            IconCloseButton(
+                modifier = Modifier
+                    .size(
+                        35.dp
+                    )
+                    .padding(
+                        // top = 16.dp,
+                        //start = 8.dp
+                    ),
+                iconResId = Icons.Outlined.PlaylistAdd,
+                iconResIdPressed = Icons.Outlined.PlaylistAdd,
+                isChanged = true
+            )
+            {
+                addTrainToMy()
+                //navController.popBackStack()
+            }
         }
     }
 }

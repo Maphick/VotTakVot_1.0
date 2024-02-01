@@ -1,6 +1,7 @@
 package com.example.vottakvot.internet
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.vottakvot.ViewModel.InquirerViewModel
@@ -89,11 +90,13 @@ fun getPopularTrains(
     trainListPopular: MutableLiveData<List<WorkoutDataItem>>,
 ) : Boolean
 {
-    val isInternetOn = getAllTrains(
+
+   /* val isInternetOn = getAllTrains(
         limit = limit,
         trainPopularList = trainListPopular
-    )
-    return isInternetOn
+    )*/
+    return true
+    //isInternetOn
 }
 
 // получить список тренировок по ключевому слову
@@ -198,6 +201,11 @@ fun getUTrains(
         val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
         // список тренировок для Вас
         //trainList.insertWorkoutList(sourceListFromServer)
+        // удалить старын тренировки
+        deleteUOldTrains(
+            trainList = trainList
+        )
+        // добавить новые тренировки
         trainList.insertWorkoutWithExercise(sourceListFromServer)
     }
     return isInternetOn
@@ -223,19 +231,20 @@ fun getUTrains(
 @SuppressLint("SuspiciousIndentation")
 fun getAllTrains(
  limit: Int = 10,
- trainPopularList: MutableLiveData<List<WorkoutDataItem>>
+ trainPopularList: MutableLiveData<List<WorkoutDataItem>>,
 ) : Boolean
 {
- // запрос к внешнему API
- val repo = Repository()
- val isInternetOn = repo.makeAllWorkoutsRequest(limit)
- if (isInternetOn) {
-     val workoutEntities = repo.worcoutListEntity
-     val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
-     val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
-     // список всех тренировок
-     trainPopularList.postValue(sourceListFromServer)
- }
+    var isInternetOn = false
+    val repo = Repository()
+        isInternetOn = repo.makeAllWorkoutsRequest(limit)
+    // получен ответ
+    if (isInternetOn) {
+            val workoutEntities = repo.worcoutListEntity
+            val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)
+            val sourceListFromServer = transformation.getSourceListTrainsForYouFromServer()
+            // список всех тренировок
+            trainPopularList.postValue(sourceListFromServer)
+    }
  return isInternetOn
 }
 

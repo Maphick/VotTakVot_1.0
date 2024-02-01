@@ -2,6 +2,7 @@ package com.example.vottakvot.ui.theme
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,23 +14,27 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.PlaylistAdd
 import androidx.compose.material.icons.sharp.PlayCircleFilled
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.BodyType
 import com.example.vottakvot.database.WorkoutDataItem
-import sourceListTrainsForYouExample
 
 @Composable
 fun WorkoutCard(
@@ -50,7 +55,10 @@ fun WorkoutCard(
                     onCardClickListener(workoutItem)
             }
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(
+               vertical =  4.dp,
+                horizontal = 8.dp
+            )
             .height(140.dp),
         backgroundColor = colorScheme.surface,
         shape = RoundedCornerShape(
@@ -62,11 +70,15 @@ fun WorkoutCard(
         border = BorderStroke(1.dp, colorScheme.onBackground)
     ) {
         Column(
-            modifier = Modifier.padding(
-                top = 16.dp,
-                bottom = 16.dp,
-                start = 16.dp,
-                end = 16.dp
+            modifier = Modifier
+                //.background(Color.Gray)
+                .fillMaxSize()
+                .padding(
+                    horizontal = 16.dp
+                //top = 16.dp,
+                //bottom = 16.dp,
+                //start = 16.dp,
+                //end = 16.dp
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -81,6 +93,7 @@ fun WorkoutCard(
             {
                 Row(
                     modifier = Modifier
+                        //.background(Color.Green)
                         .fillMaxWidth(0.75f),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.Top
@@ -94,6 +107,7 @@ fun WorkoutCard(
                 Spacer(modifier = Modifier.fillMaxWidth(0.1f))
                 Row(
                     modifier = Modifier
+                        //.background(Color.Yellow)
                         .fillMaxWidth(1f),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.Top
@@ -117,6 +131,7 @@ fun WorkoutCard(
                     // добавление тренировки в избранное
                     IcoButton(
                         modifier = Modifier
+                            //.background(Color.Blue)
                             .size(35.dp)
                             .padding(
                                 //top = 8.dp
@@ -134,6 +149,7 @@ fun WorkoutCard(
             Spacer(modifier = Modifier.height(5.dp))
             Row(
                 modifier = Modifier
+                    //.background(Color.Red)
                     .fillMaxWidth(1f),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -171,7 +187,8 @@ fun WorkoutCard(
                             .fillMaxSize(1f),
                         iconResId = Icons.Sharp.PlayCircleFilled,
                         iconResIdPressed = Icons.Sharp.PlayCircleFilled,
-                        isChanged = workoutItem.isPlaying
+                        isChanged = workoutItem.isPlaying,
+                        iconColor = colorScheme.primary
                     ) {
                         onPlayClickListener(workoutItem)
                     }
@@ -187,7 +204,8 @@ fun TimeAndBodyPart(
     time: Int = 1,
     bodyType : BodyType = BodyType.FULL_BODY,
     modifier: Modifier = Modifier
-        .fillMaxWidth(0.7f)
+        .fillMaxWidth(0.7f),
+    isBodyPartVisible: Boolean = true
 )
 {
     Row (
@@ -205,30 +223,31 @@ fun TimeAndBodyPart(
             text = time.toString() + "  мин."
             //workoutItem.time.toString() + "  мин."
         )
-        Spacer(modifier = Modifier.width(24.dp))
-        InfoImageWithText(
-            modifier = Modifier
-                .padding(
-                    //top = 8.dp
-                ),
-            painterResourceId = when(bodyType)
-            {
-                BodyType.FULL_BODY ->  R.drawable.body
-                BodyType.UPPER_BODY ->  R.drawable.upper
-                BodyType.BOTTOM_BODY ->  R.drawable.lower
-                BodyType.ABD ->  R.drawable.abs
-                else -> R.drawable.body
-            },
+        // показывть ли часть тела
+        if (isBodyPartVisible) {
+            Spacer(modifier = Modifier.width(24.dp))
+            InfoImageWithText(
+                modifier = Modifier
+                    .padding(
+                        //top = 8.dp
+                    ),
+                painterResourceId = when (bodyType) {
+                    BodyType.FULL_BODY -> R.drawable.body
+                    BodyType.UPPER_BODY -> R.drawable.upper
+                    BodyType.BOTTOM_BODY -> R.drawable.lower
+                    BodyType.ABD -> R.drawable.abs
+                    else -> R.drawable.body
+                },
 
-            text = when(bodyType)
-            {
-                BodyType.FULL_BODY -> stringResource(R.string.full_body)
-                BodyType.UPPER_BODY ->  stringResource(R.string.upper_body)
-                BodyType.BOTTOM_BODY -> stringResource(R.string.botttom_body)
-                BodyType.ABD ->  stringResource(R.string.abd)
-                else -> stringResource(R.string.full_body)
-            }
-        )
+                text = when (bodyType) {
+                    BodyType.FULL_BODY -> stringResource(R.string.full_body)
+                    BodyType.UPPER_BODY -> stringResource(R.string.upper_body)
+                    BodyType.BOTTOM_BODY -> stringResource(R.string.botttom_body)
+                    BodyType.ABD -> stringResource(R.string.abd)
+                    else -> stringResource(R.string.full_body)
+                }
+            )
+        }
     }
 }
 @Composable
@@ -268,7 +287,12 @@ fun InfoImageWithText(
 fun InfoIconWithText(
     modifier: Modifier = Modifier,
     iconResId: ImageVector,
+    iconSize: Dp =25.dp,
     text: String,
+    colorIcon: Color = colorScheme.onSecondaryContainer,
+    colorText: Color = MaterialTheme.colorScheme.onBackground,
+    fontSize: TextUnit = 20.sp,
+    isBold: Boolean = false
 
 ) {
     Row(
@@ -280,19 +304,23 @@ fun InfoIconWithText(
 ) {
     Icon(
         modifier = modifier
-            .size(25.dp)
-           // .padding()
+            .size(iconSize)
         ,
         imageVector = iconResId,
         contentDescription = null,
-        tint = colorScheme.onSecondaryContainer
+        tint = colorIcon
     )
 }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             modifier = modifier,
             text = text,
-            color = colorScheme.onBackground
+            color = colorText,
+            fontSize = fontSize,
+            fontWeight = if (isBold)
+                FontWeight.Bold
+            else
+                FontWeight.Normal
         )
     }
 }
@@ -303,6 +331,7 @@ fun IcoButton(
     iconResId: ImageVector,
     iconResIdPressed: ImageVector,
     isChanged: Boolean,
+    iconColor:Color = colorScheme.onSurfaceVariant,
     onItemClickListener: () -> Unit
 ) {
     Row(
@@ -311,7 +340,8 @@ fun IcoButton(
             .clickable {
                 onItemClickListener()
             },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Icon(
             modifier = modifier,
@@ -321,11 +351,12 @@ fun IcoButton(
                 iconResId
             },
             contentDescription = null,
-            tint = if (isChanged) {
+            tint = iconColor
+            /*if (isChanged) {
                 colorScheme.primary
                     } else {
                 colorScheme.onSurfaceVariant
-                    }
+                    }*/
         )
     }
 }

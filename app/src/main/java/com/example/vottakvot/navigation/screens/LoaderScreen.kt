@@ -18,10 +18,12 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.WorkoutDataItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -55,6 +58,10 @@ fun LoaderScreen(
     keyWord: String,
 
     ) {
+    val scope = rememberCoroutineScope()
+    var isResponse by remember {
+        mutableStateOf(false)
+    }
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -121,9 +128,9 @@ fun LoaderScreen(
         try {
 
             val myCoroutineScope = CoroutineScope(Dispatchers.IO)
-            myCoroutineScope.launch{
+            myCoroutineScope.launch {
 
-               /* val yourTrains = trainYoursList
+                /* val yourTrains = trainYoursList
                     ._workoutListGeneral
                     .observeAsState(listOf())
 
@@ -137,22 +144,44 @@ fun LoaderScreen(
                */
 
                 //val yourTrains = trainList.workoutListGeneral.observeAsState(listOf())
-                if ((trainYoursList.workoutListGeneral.value == null) || (trainYoursList.workoutListGeneral.value?.size == 0)) {
-                //if (trainYoursListv.workoutListGeneral.value?.size == 0) {
-                    FindYoursWorkouts(
-                        inquirerViewModel = inquirerViewModel,
-                        trainListForYou = trainYoursList,
-                        //keyWord = inquirerViewModel.keyWord.value
-                    )
+
+
+                scope.launch {
+                    if (!isResponse) {
+                        if ((trainYoursList.workoutListGeneral.value == null) || (trainYoursList.workoutListGeneral.value?.size == 0)) {
+                            //if (trainYoursListv.workoutListGeneral.value?.size == 0) {
+                            FindYoursWorkouts(
+                                inquirerViewModel = inquirerViewModel,
+                                trainListForYou = trainYoursList,
+                                //keyWord = inquirerViewModel.keyWord.value
+                            )
+                        }
+                        FindPopularWorkouts(
+                            trainPopularList = trainPopularList
+                        )
+                        isResponse = true
+                    }
                 }
 
+            }
+                /*
+                // запрос отправлен
+                var isResponseSend = mutableStateOf(false)
+                // ответ получен
+                var isAnswerGet = mutableStateOf(false)
+
+                FindPopularWorkouts(
+                    isResponseSend = isResponseSend,
+                    isAnswerGet = isAnswerGet,
+                    trainPopularList = trainPopularList
+                )
+                delay(100)
+
+*/
 
 
 
-                FindPopularWorkouts(trainPopularList = trainPopularList)
 
-
-                }
 
             /*var getSuccessed = getYourTrains(
                 inquirerViewModel = inquirerViewModel,
@@ -165,7 +194,10 @@ fun LoaderScreen(
         {
             e.message?.let { Log.d("TRAIN_LIST_LOADING", it) }
         }
-    }
+
+}
+
+
 
 
 /*

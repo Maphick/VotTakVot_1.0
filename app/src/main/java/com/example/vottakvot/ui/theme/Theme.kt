@@ -37,7 +37,8 @@ private val DarkColorScheme = darkColorScheme(
     onError = on_error_dark,
     primaryContainer = primary_container_dark,
     inversePrimary = inverse_primary_dark,
-    inverseSurface = inverse_surface_dark
+    inverseSurface = inverse_surface_dark,
+    errorContainer = error_container_dark
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -59,7 +60,8 @@ private val LightColorScheme = lightColorScheme(
     onError = on_error_light,
     primaryContainer = primary_container_light,
     inversePrimary = inverse_primary_light,
-    inverseSurface = inverse_surface_light
+    inverseSurface = inverse_surface_light,
+    errorContainer = error_container_light
 
 )
 @SuppressLint("SuspiciousIndentation")

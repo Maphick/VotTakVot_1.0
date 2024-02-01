@@ -10,8 +10,9 @@ import com.google.gson.Gson
 
 @Entity(tableName = "workout_table")
 data class WorkoutDataItem(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var id: Int = 0,
+    //var workoutId: Int = 0,
     var title: String = "Здоровая спина",
     var time: Int = 7,
     var bodyType: String = BodyType.FULL_BODY.toString(),
@@ -73,9 +74,12 @@ class InstructionListConverters{
     fun convertJSONStringToInstructionList(jsonString: String): InstructionList = Gson().fromJson(jsonString,InstructionList::class.java)
 }
 
-
-
-
+class RepetitionListConverters{
+    @TypeConverter
+    fun convertRepetitionListToJSONString(repetitionList: RepetitionList): String = Gson().toJson(repetitionList)
+    @TypeConverter
+    fun convertJSONStringToRepetitionList(jsonString: String):RepetitionList = Gson().fromJson(jsonString,RepetitionList::class.java)
+}
 
 
 enum class BodyType {

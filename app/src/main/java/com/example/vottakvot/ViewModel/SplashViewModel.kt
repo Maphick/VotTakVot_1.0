@@ -50,7 +50,7 @@ class SplashViewModel(
                    }
                    // иначе идем на домашний экран
                    else
-                       _startDestination.value = Screen.Home.route
+                       _startDestination.value = Screen.Loader.route
                 }
             }
             _isLoading.value = false

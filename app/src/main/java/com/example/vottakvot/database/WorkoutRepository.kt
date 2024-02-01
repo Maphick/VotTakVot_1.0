@@ -7,19 +7,31 @@ import androidx.room.Transaction
 import com.example.vottakvot.domain.Exercise
 import com.example.vottakvot.domain.Workout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class WorkoutRepository(private val workoutDao: WorkoutDao) {
-    fun getAllItems(): LiveData<List<WorkoutDataItem>> {
+    fun getAllItems(): Flow<List<WorkoutDataItem>> {
+        /*val items = userDao.getAllusers().value!!.size
+        if (items == 0) {
+            this.insertUser(
+                UserDataItem(
+                    id = 0,
+                    name = "DEMO"
+                )
+            )
+        }*/
         return workoutDao.getAllWorkouts()
     }
 
-    fun getAllExercises(): LiveData<List<ExerciseDataItem>> {
+    fun getAllExercises(): Flow<List<ExerciseDataItem>> {
         return workoutDao.getAllExercises()
     }
 
-    fun getExerciseListByWorkoutId(id: Int): LiveData<List<ExerciseDataItem>> {
+    fun getExerciseListByWorkoutId(id: Int): Flow<List<ExerciseDataItem>> {
+        //withContext(Dispatchers.IO) {
         return workoutDao.getExerciseListByWorkoutId(id)
+        //}
     }
 
     suspend fun insertWorkout(workout: WorkoutDataItem) {
@@ -28,6 +40,7 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         }
     }
 
+    //@Insert
     suspend fun insertExercise(exercise: ExerciseDataItem) {
         withContext(Dispatchers.IO) {
             workoutDao.insertExercise(exercise)
@@ -41,6 +54,8 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
             val exerciseList = workout.exerciseList
             //.map { it.copy(userId = workout.id) }
             for (exercise in exerciseList) {
+                // вставка тренировок с новым id
+                exercise.workoutId = workout.id
                 insertExercise(exercise)
             }
             //insertExerciseList(exercises)

@@ -17,10 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.ExerciseDataItem
 import com.example.vottakvot.utils.TextBlock
-import sourceListTrainsForYouExample
 
 @Composable
 fun ExerciseCard(
@@ -34,7 +34,7 @@ fun ExerciseCard(
                top = 8.dp,
                 bottom = 8.dp
             )
-            .height(50.dp),
+            .height(70.dp),
 
     ) {
         Row(
@@ -50,19 +50,14 @@ fun ExerciseCard(
         )
         {
             Image(
-                painter = painterResource(id = exersiceItem.img),
+                painter = painterResource(id = R.drawable.ex),
+                //exersiceItem.img),
                 contentDescription = "Workout Screen",
-                modifier = Modifier,
-                //   .size(
-                //      50.dp
-                //   )
-                // .fillMaxWidth(0.5f)
-                //.height(150.dp)
-
-                // .fillMaxWidth(1.2f)
+                modifier = Modifier
             )
             Column(
                 modifier = Modifier
+                    .height(150.dp)
                     .padding(
                         start = 8.dp),
             )
@@ -79,8 +74,8 @@ fun ExerciseCard(
                 TextBlock(
                     modifier = Modifier,
                     // .padding(8.dp),
-                    text = exersiceItem.approaches.toString() + " подхода | " +
-                            exersiceItem.repetitions.toString() + " повторений",
+                    text = exersiceItem.approaches.toString() + " подхода" ,
+                           // + exersiceItem.repetitions.toString() + " повторений",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
                     textColor = colorScheme.onBackground

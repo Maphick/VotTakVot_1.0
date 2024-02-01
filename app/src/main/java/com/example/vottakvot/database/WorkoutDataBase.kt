@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 //ExerciseListConverters::class,
-@TypeConverters(value = [ InstructionListConverters::class])
+@TypeConverters(value = [ InstructionListConverters::class, RepetitionListConverters::class])
 @Database(entities = [ExerciseDataItem::class, WorkoutDataItem::class], version =1, exportSchema = false)
 abstract class WorkoutDataBase: RoomDatabase() {
 

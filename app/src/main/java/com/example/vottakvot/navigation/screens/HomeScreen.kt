@@ -2,6 +2,7 @@
 
 package com.example.vottakvot.navigation.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -27,7 +28,11 @@ import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,12 +55,14 @@ import com.example.vottakvot.ui.theme.WorkoutCard
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // домашний экран после прохождения онбординга
 // домашний экран
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -65,6 +72,32 @@ fun HomeScreen(
     isOnboardingPassed: Boolean = false,
     //isTrainListGets: MutableLiveData<Boolean>
 ) {
+    // запрос отправлен
+    var isResponseSend = mutableStateOf(false)
+
+    // запрос отправлен
+    var isResponse by remember {
+        mutableStateOf(false)
+    }
+    // ответ получен
+    var isAnswerGet = mutableStateOf(false)
+
+    // загрузка популярных тренировок
+    if ((trainListPopular == null) || (trainListPopular.value?.size ?: 0  == 0))
+    {
+
+
+        if (!isResponse) {
+            FindPopularWorkouts(
+                trainPopularList = trainListPopular
+            )
+            isResponse = true
+        }
+        //delay(100)
+
+
+
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -516,7 +549,7 @@ private  fun TrainsBlock(
 {
 
     val yourTrains = trainListViewModel
-        ._workoutListGeneral
+        .workoutListGeneral
         .observeAsState(listOf())
 
     val yourExercises = trainListViewModel
@@ -613,8 +646,9 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
     navController: NavHostController
 ) {
     val yourTrains = trainList
-        ._workoutListGeneral
+        .workoutListGeneral
         .observeAsState(listOf())
+
 
 
     //val yourTrains = trainList.workoutListGeneral.observeAsState(listOf())
@@ -627,27 +661,47 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
                 workoutItem = workoutItem,
                 // клик по карточке
                 onCardClickListener = {
+
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            trainList.currentWorkoutId = it.id
+                            navController.navigate(Screen.Workout.route)
+                        }
+
+                    }
+
                     // id текущег упражнения
-                    trainList.currentWorkoutId = it.id
+
                     // переход на страницу упражнения
                      /*WorkoutScreen(
                        navController = navController ,
                          trainList = trainList
                     )*/
-                    navController.navigate(Screen.Workout.route)
-                    /*when (typeList) {
-                        0 -> navController.navigate(Screen.WorkoutForU.route)
-                        1 -> navController.navigate(Screen.WorkoutPopular.route)
-                        else -> navController.navigate(Screen.WorkoutForU.route)
-                    }*/
+
 
                 },
-                // слушатели клика
+                // при добавлении в мои тренировки
                 onAddedClickListener = {
-                    trainList.changeAddedStatusList(it)
+                    // если тренировки нет в списке моих тренировок
+                    if (!it.isAddedToMyTrainList) {
+                        // добавляем в мои тренировки как новую тренировку
+                        it.id += 3000
+                        it.isAddedToMyTrainList = true
+                        trainList.insertOneWorkoutWithExercise(it)
+                        // добавить упражнения к этой тренировке
+                    }
+                    else
+                    {
+                        trainList.changeAddedStatusList(it)
+                    }
+
+
+
+                    //trainList.changeAddedStatusList(it)
                     //trainListMy.changeAddedStatusList(it)
                 },
                 onLikeClickListener = {
+                    //it.isAddedToFavourite= true
                     trainList.changeLikedStatusList(it)
                     //trainListFavourite.changeLikedStatusList(it)
                 },
@@ -671,8 +725,7 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
     //val yourTrains = trainListPopular //trainList.workoutListGeneral.observeAsState(listOf())
     if (trainListPopular.value == null)
         return
-    val minCount = trainListPopular.value!!.size
-       // Math.min(yourTrains.value.size, visibleCount)
+    val minCount = Math.min(trainListPopular.value!!.size, visibleCount)
     if (minCount >= 1) {
         for (i in 0..minCount - 1) {
             var workoutItem = trainListPopular.value?.get(i)
@@ -699,10 +752,12 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
                     },
                     // слушатели клика
                     onAddedClickListener = {
+                        //it.isAddedToMyTrainList = true
                         trainListForYou.changeAddedStatusList(it)
                         //trainListMy.changeAddedStatusList(it)
                     },
                     onLikeClickListener = {
+                        //it.isAddedToFavourite = true
                         trainListForYou.changeLikedStatusList(it)
                         //trainListFavourite.changeLikedStatusList(it)
                     },

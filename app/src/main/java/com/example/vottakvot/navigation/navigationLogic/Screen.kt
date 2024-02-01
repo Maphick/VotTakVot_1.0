@@ -28,6 +28,8 @@ sealed class  Screen(
 
     //-------------------------------------------
     object MyTrains : Screen(route = ROUTE_MY_TRAINS_SCREEN)
+    object EditOneTrain : Screen(route = ROUTE_EDIT_ONE_TRAIN_SCREEN)
+
     object Favourite : Screen(route = ROUTE_FAVOURITE_SCREEN)
     object Profile : Screen(route = PROFILE_SCREEN)
 
@@ -53,6 +55,7 @@ sealed class  Screen(
         //-------------------------------
 
         const val ROUTE_MY_TRAINS_SCREEN = "my_trains_screen"
+        const val ROUTE_EDIT_ONE_TRAIN_SCREEN = "edit_one_train_screen"
         const val ROUTE_FAVOURITE_SCREEN = "favourite_screen"
         const val PROFILE_SCREEN = "profile_screen"
     }

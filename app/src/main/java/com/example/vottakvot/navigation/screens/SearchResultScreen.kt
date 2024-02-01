@@ -89,7 +89,7 @@ fun SearchResultScreen(
             }
         }
         val yourTrains = trainList
-            ._workoutListGeneral
+            .workoutListGeneral
             .observeAsState(listOf())
         if (yourTrains.value != null) {
             val searchedWorkouts = trainList.workoutListGeneral.observeAsState(listOf())
@@ -118,15 +118,17 @@ fun SearchResultScreen(
                         },
                         // слушатели клика
                         onAddedClickListener = {
+                            //it.isAddedToMyTrainList = true
                             trainList.changeAddedStatusList(it)
                             //generalViewModel.changeAddedStatusListSearchResult(it)
                         },
                         onLikeClickListener = {
+                            //it.isAddedToFavourite = true
                             trainList.changeLikedStatusList(it)
                             //generalViewModel.changeLikedStatusListSearchResult(it)
                         },
                         onPlayClickListener = {
-                            trainList.changePlayingStatusList(it)
+                            //trainList.changePlayingStatusList(it)
                         }
                     )
                 }

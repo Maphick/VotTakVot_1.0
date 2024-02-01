@@ -245,6 +245,12 @@ fun ContentScreen(
             navController = navHostController,
             trainList = trainListForYou
         )},
+        editOneTrainsContent = {
+            EditOneWorkoutScreen(
+                navController = navHostController,
+                trainList = trainListForYou
+            )
+        },
         favouriteContent = { FavouriteScreen()},
         profileContent = { ProfileScreen()},
         splashViewModel = splashViewModel,

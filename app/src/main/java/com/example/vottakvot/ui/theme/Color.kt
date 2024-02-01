@@ -28,6 +28,7 @@ val inverse_primary_dark = Color(0xFFF2E5E5)
 val inverse_surface_dark= Color(0xFF9F8C8C)
 val on_secondary_container_dark = Color(0xFFFFDADB)
 val on_secondary_dark = Color(0xFF410002)
+val error_container_dark = Color(0xFFD7C1C2)
 
 //val surface_dark =
 //val on_primary_dark =
@@ -47,7 +48,9 @@ val surface_container_low_light  = Color(0xFFFEF1F0)
 val surface_container_highest_light  = Color(0xFFECE0DF) //background_light
 val on_error_dark = Color(0xFF857373)
 
-val surface_variant_light  = Color(0xFFF4DDDD)
+val error_container_light = Color(0xFFD7C1C2)
+
+val surface_variant_light  = Color(0xFFD7C1C2)
 
     //Color(0xFF40000E)
     //Color.Red

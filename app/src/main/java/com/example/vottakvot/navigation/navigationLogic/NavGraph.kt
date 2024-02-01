@@ -39,6 +39,7 @@ fun SetupNavGraph(
     inquirerScreenContent: @Composable () -> Unit,
     welcomeScreenContent: @Composable () -> Unit,
     myTrainsContent: @Composable () -> Unit,
+    editOneTrainsContent: @Composable () -> Unit,
     favouriteContent: @Composable () -> Unit,
     profileContent: @Composable () -> Unit,
 ) {
@@ -101,7 +102,8 @@ fun SetupNavGraph(
         composable(route = Screen.Workout.route) {
             WorkoutScreen(
                 navController = navController,
-                trainList = trainListForYou
+                trainList = trainListForYou,
+                workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
             )
         }
         // домашний экран без онбординга
@@ -114,17 +116,6 @@ fun SetupNavGraph(
                 //isTrainListGets = isTrainListGets
             )
         }
-        /*
-        // домашний экран после прохождения онбординга
-        composable(route = Screen.HomeOnboardingPassed.route) {
-            homeScreenOnboardingPassed()
-        }
-        // домашний экран бех онбординга
-        composable(route = Screen.HomeWithoutOnboarding.route) {
-            homeScreenWithoutOnbiarding()
-        }
-        */
-
         composable(route = Screen.Filter.route) {
             FilterScreen(
                 navController = navController,
@@ -202,6 +193,10 @@ fun SetupNavGraph(
         //---------------------------------------------------------
         composable(route = Screen.MyTrains.route) {
             myTrainsContent()
+        }
+        // редактирование тренировки
+        composable(route = Screen.EditOneTrain.route) {
+            editOneTrainsContent()
         }
         composable(route = Screen.Favourite.route) {
             favouriteContent()

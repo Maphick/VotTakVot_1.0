@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.example.vottakvot.R
@@ -52,7 +52,6 @@ import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.data.DataStoreRepository
 import com.example.vottakvot.database.WorkoutDataItem
-import com.example.vottakvot.internet.deleteUOldTrains
 import com.example.vottakvot.internet.getAllTrains
 import com.example.vottakvot.internet.getYourTrains
 import com.example.vottakvot.navigation.navigationLogic.Screen
@@ -155,6 +154,7 @@ fun FindYoursWorkouts(
     //keyWord: String
 )
 {
+     //val
    // var getSuccessed = inquirerViewModel.keyWord.value?.let {
         getYourTrains(
         inquirerViewModel = inquirerViewModel,
@@ -170,10 +170,10 @@ fun FindPopularWorkouts(
     trainPopularList: MutableLiveData<List<WorkoutDataItem>>
 )
 {
-    var getSuccessed = getAllTrains(
-        limit = 10,
-        trainPopularList = trainPopularList
-    )
+        var getSuccessed = getAllTrains(
+            limit = 100,
+            trainPopularList = trainPopularList,
+        )
 }
 
 @Composable
@@ -487,6 +487,7 @@ fun MuscleGroupsBlock(
             {
                 selectedItem = listItems[0]
                 inquirerViewModel.setSelectedWorkoutType(selectedItem)
+                inquirerViewModel.setKeyWord(selectedItem)
                 selectWorkoutType(selectedItem)
             }
             TrainFilterButton(
@@ -496,6 +497,7 @@ fun MuscleGroupsBlock(
             {
                 selectedItem = listItems[1]
                 inquirerViewModel.setSelectedWorkoutType(selectedItem)
+                inquirerViewModel.setKeyWord(selectedItem)
                 selectWorkoutType(selectedItem)
             }
         }
@@ -511,6 +513,7 @@ fun MuscleGroupsBlock(
                 {
                     selectedItem = listItems[2]
                     inquirerViewModel.setSelectedWorkoutType(selectedItem)
+                    inquirerViewModel.setKeyWord(selectedItem)
                     selectWorkoutType(selectedItem)
                 }
             }
@@ -523,6 +526,7 @@ fun MuscleGroupsBlock(
                 {
                     selectedItem = listItems[3]
                     inquirerViewModel.setSelectedWorkoutType(selectedItem)
+                    inquirerViewModel.setKeyWord(selectedItem)
                     selectWorkoutType(selectedItem)
                 }
             }
@@ -643,9 +647,9 @@ fun SearchWorkoutsButton(
                 //if (trainYoursListv.workoutListGeneral.value?.size == 0) {
 
                 // удаление старых тренировок из БД
-                deleteUOldTrains(
+               /* deleteUOldTrains(
                     trainList = trainList
-                )
+                )*/
 
                 // поиск новых тренировок
                 FindYoursWorkouts(

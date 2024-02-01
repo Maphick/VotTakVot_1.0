@@ -3,7 +3,9 @@ package com.example.vottakvot.navigation.screens
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.icons.Icons
@@ -22,9 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -36,9 +42,14 @@ import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.ui.theme.ExerciseCard
 import com.example.vottakvot.ui.theme.InfoIconWithText
 import com.example.vottakvot.ui.theme.TimeAndBodyPart
+import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.utils.HeaderBlock
 import com.example.vottakvot.utils.TextBlock
 import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
@@ -47,10 +58,15 @@ fun WorkoutScreen(
     //typeList: Int = 0,
     navController: NavHostController,
     trainList: TrainListViewModel,
-    //workoutItem: WorkoutDataItem
+    workoutItem: WorkoutDataItem
 ) {
-     val workoutIndex = trainList.currentWorkoutId
+     /*val workoutIndex = trainList.currentWorkoutId
      var workoutItem = trainList.findWorkoutById(workoutIndex)
+
+
+    val yourWorkouts = trainList
+        .workoutListGeneral
+        .observeAsState(listOf())
 
     val yourExercises = trainList
         .exerciseListGeneral
@@ -60,31 +76,50 @@ fun WorkoutScreen(
             // сформировать список тренировок
             //trainList.makeExerciseList()
 
-
-             workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
+*/
+           // workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
             //-24trainList.getAllExerciseForWorkout(workoutItem)
             //trainList.workoutListGeneral.value?.get(0)
             Column(
-                modifier = Modifier.fillMaxWidth()
-                    .fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
             )
             {
                 HeaderBlock(
                     text = "Тренировка",
-                    navController = navController
+                    navController = navController,
+                    isVisibleAddTrain = true // видно кнопку "добавить в мои"
                 )
+                {
+                    //Добавить тренировку в мои
+                    workoutItem.isAddedToMyTrainList = true
+                    trainList.updateWorkout(workoutItem)
+                }
+                Box(
+                    modifier = Modifier
+                        //.background(Color.Yellow)
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    // horizontalAlignment = Alignment.CenterHorizontally,
+                    // verticalArrangement = Arrangement.Top
+                )
+                {
+
                 LazyColumn(
                     modifier = Modifier
+                        //.background(Color.Green)
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
                             top = 16.dp,
-
-                            )
+                        )
                         .fillMaxWidth(1f)
                         .fillMaxHeight(0.9f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 )
                 {
                     item {
@@ -99,31 +134,45 @@ fun WorkoutScreen(
                                 ExerciseCard(
                                     exersiceItem = exercise,
                                     onExerciseClickListener = {
-
                                         trainList.currentExerciseId = it.id
-                                        // переход на страницу упражнения
-                                        /*when (typeList) {
-                                    0 -> navController.navigate(Screen.ExerciseForU.route)
-                                    1 -> navController.navigate(Screen.ExercisePopular.route)
-                                    else -> navController.navigate(Screen.ExerciseForU.route)
-                                }*/
+
+                                        GlobalScope.launch {
+                                            withContext(Dispatchers.Main) {
+                                                trainList.currentExerciseId = it.id
+                                                navController.navigate(Screen.Exercise.route)
+                                            }
+                                        }
                                     }
                                 )
                             }
                         }
                     }
                 }
-                StartButton(
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .height(50.dp),
-                    text = stringResource(R.string.start),
-                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Bottom
+                    )
+                    {
+                        StartButton(
+                            modifier = Modifier
+                                //.background(Color.Black)
+                                .padding(
+                                    bottom = 20.dp
+                                )
+                                .fillMaxWidth(1f)
+                                .height(50.dp),
+                            text = stringResource(R.string.start),
+                        ) {
 
-                }
+                        }
+                    }
+            }
             }
         }
-}
+//}
 
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -146,11 +195,11 @@ fun StartButton(
         {
             onClick()
         },
-        shape = CircleShape,
+        shape =  RoundedCornerShape(10.dp),
         //border= BorderStroke(1.dp, Color.Blue),
         colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.surface,
-            backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+            contentColor = MaterialTheme.colorScheme.background,
+            backgroundColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Row(
@@ -162,7 +211,9 @@ fun StartButton(
             InfoIconWithText(
                 modifier = Modifier,
                 iconResId = Icons.Filled.PlayArrow,
-                text = text
+                text = text,
+                colorText = MaterialTheme.colorScheme.background,
+                colorIcon = MaterialTheme.colorScheme.background
             )
         }
     }
@@ -258,13 +309,14 @@ fun WorkoutScreenWhitePrev() {
         darkTheme = false)
     {
         val context = LocalContext.current
-        val trainListForYou: TrainListViewModel =
-            TrainListViewModel(source = sourceListTrainsForYouExample)
-        val trainListPopular: TrainListViewModel =
-            TrainListViewModel(source = sourceListPopularExample)
+        // val trainListForYou: TrainListViewModel =
+        //     TrainListViewModel(source = sourceListTrainsForYouExample)
+        // val trainListPopular: TrainListViewModel =
+        //     TrainListViewModel(source = sourceListPopularExample)
         val navController = NavHostController(context = context)
         WorkoutScreen(
             navController = navController,
+            workoutItem = WorkoutDataItem(),
             trainList = trainListForYou
         )
     }
@@ -277,14 +329,16 @@ fun WorkoutScreenScreenBlackPrev() {
         darkTheme = true)
     {
         val context = LocalContext.current
-        val trainListForYou: TrainListViewModel =
-            TrainListViewModel(source = sourceListTrainsForYouExample)
-        val trainListPopular: TrainListViewModel =
-            TrainListViewModel(source = sourceListPopularExample)
+       // val trainListForYou: TrainListViewModel =
+       //     TrainListViewModel(source = sourceListTrainsForYouExample)
+       // val trainListPopular: TrainListViewModel =
+       //     TrainListViewModel(source = sourceListPopularExample)
         val navController = NavHostController(context = context)
         WorkoutScreen(
             navController = navController,
-            trainList = trainListForYou
+            workoutItem = WorkoutDataItem()
+            //trainList = trainListForYou
         )
     }
-}*/
+}
+*/

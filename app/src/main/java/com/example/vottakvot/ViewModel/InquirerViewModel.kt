@@ -16,7 +16,7 @@ class InquirerViewModel (
 
 
     private val  _keyWord = MutableLiveData<String>()
-    val keyWord : LiveData<String> = _keyWord
+    var keyWord : LiveData<String> = _keyWord
     fun setKeyWord(kW: String) {
         _keyWord.postValue(kW)
     }

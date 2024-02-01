@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.vottakvot.database.ExerciseDataItem
 import com.example.vottakvot.domain.StatisticItem
@@ -32,11 +33,11 @@ class TrainListViewModel(
 
     //----------------------------------------------------------ОБЩАЯ МОДЕЛЬ СПИСКА ТРЕНИРОВОК
     // список тренировок
-    val  _workoutListGeneral : LiveData<List<WorkoutDataItem>>
-    val workoutListGeneral: LiveData<List<WorkoutDataItem>>
+    private var _workoutListGeneral : LiveData<List<WorkoutDataItem>> = MutableLiveData<List<WorkoutDataItem>>()
+    var workoutListGeneral: LiveData<List<WorkoutDataItem>> = MutableLiveData<List<WorkoutDataItem>>()
 
-    private val  _exerciseListGeneral : LiveData<List<ExerciseDataItem>>
-    val  exerciseListGeneral : LiveData<List<ExerciseDataItem>>
+    private var _exerciseListGeneral : LiveData<List<ExerciseDataItem>> = MutableLiveData<List<ExerciseDataItem>>()
+    var exerciseListGeneral : LiveData<List<ExerciseDataItem>> = MutableLiveData<List<ExerciseDataItem>>()
 
     // список упражнений
    // private val  _workoutListGeneral : LiveData<List<WorkoutDataItem>>
@@ -54,13 +55,38 @@ class TrainListViewModel(
         val workoutDao = WorkoutDataBase.getDatabase(application).workoutDao()
             //WorkoutDataBase.getDatabase(application, "train").workoutDao()
         repository = WorkoutRepository(workoutDao = workoutDao)
-        _workoutListGeneral = repository.getAllItems()// as MutableLiveData<List<UserDataItem>>
-        _exerciseListGeneral = repository.getAllExercises()
-        exerciseListGeneral = _exerciseListGeneral
+
+        val allWorkouts = repository.getAllItems()
+        val allExercise = repository.getAllExercises()
+        if (allWorkouts!= null)
+        {
+            _workoutListGeneral = allWorkouts.asLiveData()
+                    //as LiveData<List<WorkoutDataItem>>
+            workoutListGeneral = _workoutListGeneral
+            _exerciseListGeneral = allExercise.asLiveData()
+            exerciseListGeneral = _exerciseListGeneral
+        }
+                //MutableLiveData<List<UserDataItem>>
 
 
+    }
 
-        workoutListGeneral = _workoutListGeneral as LiveData<List<WorkoutDataItem>>
+    fun Update()
+    {
+        //val workoutDao = WorkoutDataBase.getDatabase(application).workoutDao()
+        //WorkoutDataBase.getDatabase(application, "train").workoutDao()
+       // repository = WorkoutRepository(workoutDao = workoutDao)
+
+        val allWorkouts = repository.getAllItems()
+        val allExercise = repository.getAllExercises()
+        if (allWorkouts!= null)
+        {
+            _workoutListGeneral = allWorkouts.asLiveData()
+            //as LiveData<List<WorkoutDataItem>>
+            workoutListGeneral = _workoutListGeneral
+            _exerciseListGeneral = allExercise.asLiveData()
+            exerciseListGeneral = _exerciseListGeneral
+        }
     }
 
     fun makeExerciseList()
@@ -88,7 +114,7 @@ class TrainListViewModel(
     // поиск упражнений для каждой тренировки
     fun getAllExerciseForWorkout(workoutId: Int): LiveData<List<ExerciseDataItem>>
     {
-        return  repository.getExerciseListByWorkoutId(workoutId)
+        return  repository.getExerciseListByWorkoutId(workoutId) as LiveData<List<ExerciseDataItem>>
     }
 
     fun insertWorkoutList(workoutList: List<WorkoutDataItem>)
@@ -100,6 +126,12 @@ class TrainListViewModel(
         }
     }
 
+    fun insertOneWorkoutWithExercise(workout: WorkoutDataItem)
+    {
+        viewModelScope.launch {
+                repository.insertWorkoutWithExercise(workout)
+        }
+    }
 
     fun insertWorkoutWithExercise(workoutList: List<WorkoutDataItem>)
     {
@@ -119,7 +151,7 @@ class TrainListViewModel(
         }
     }
 
-    fun updateExerciset(exercise: ExerciseDataItem?)
+    fun updateExercise(exercise: ExerciseDataItem?)
     {
         if (exercise != null) {
             try {
@@ -197,8 +229,11 @@ class TrainListViewModel(
     fun removeWorkoutWithExercise(workout: WorkoutDataItem)
         {
             viewModelScope.launch {
+
+                val exerciseList = getExerciseListForOneWorkout(workout.id)
+
                 // удаление всех упражнений в тренировке
-                for (exercise in workout.exerciseList)
+                for (exercise in exerciseList)
                 {
                     removeExercise(exercise.id)
                 }
@@ -210,13 +245,18 @@ class TrainListViewModel(
     fun removeOldWorkouts()
         {
             viewModelScope.launch {
-                for (workout in _workoutListGeneral.value!!) {
-                    // если тренировки нет в списке моих тренировок и избранных
-                    if ((!workout.isAddedToMyTrainList) && (!workout.isAddedToFavourite))
-                    {
-                        // e
-                        removeWorkoutWithExercise(workout)
+                try {
+                    for (workout in _workoutListGeneral.value!!) {
+                        // если тренировки нет в списке моих тренировок и избранных
+                        if ((!workout.isAddedToMyTrainList) && (!workout.isAddedToFavourite)) {
+                            // e
+                            removeWorkoutWithExercise(workout)
+                        }
                     }
+                }
+                catch (e: Exception)
+                {
+                    Log.e("REMOVE", "removeOldWorkouts")
                 }
 
             }

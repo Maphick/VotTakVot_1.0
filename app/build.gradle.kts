@@ -125,6 +125,12 @@ dependencies {
     // OkHttp Logging
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-gif:2.2.2")
+
     /*
     val room_version = "2.6.0"
     implementation("androidx.room:room-runtime:$room_version")

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VotTakVot</string>
     <string name="botton_navigation_item_main">Главная</string>
-    <string name="botton_navigation_item_my_workouts">Тренирвки</string>
+    <string name="botton_navigation_item_my_workouts">Тренировки</string>
     <string name="botton_navigation_item_favourite">Избранное</string>
     <string name="botton_navigation_item_profile">Профиль</string>
     <string name="not_now">Не сейчас</string>
@@ -24,6 +24,7 @@
     Попробуйте установить подключение и попробовать ещё раз - и тогда мы сможем предложить самые
     популярные тренировки!</string>
     <string name="more_trains">Больше тренировок ...</string>
+    <string name="more_details">Подробнее ...</string>
     <string name="yes_of_cource">Да, конечно!</string>
     <string name="train_selection">Подобрать тренировки</string>
     <string name="question_train_type">"Какими типами тренировок "</string>

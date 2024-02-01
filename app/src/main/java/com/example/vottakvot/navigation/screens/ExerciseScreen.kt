@@ -58,6 +58,10 @@ fun ExerciseScreen(
             text = "Упражнение",
             navController = navController
         )
+        {
+            //  Добавить упражнение в свои?
+
+        }
         // Порядок выполнения
         LazyColumn(
             modifier = Modifier

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.vottakvot.domain.Exercise
+import kotlinx.coroutines.flow.Flow
 
 //import com.example.vottakvot.domain.Exercise
 //import com.example.vottakvot.domain.Workout
@@ -14,13 +15,13 @@ import com.example.vottakvot.domain.Exercise
 @Dao
 interface WorkoutDao {
     @Query("SELECT * FROM workout_table ORDER BY id ASC")
-    fun getAllWorkouts(): LiveData<List<WorkoutDataItem>>
+    fun getAllWorkouts(): Flow<List<WorkoutDataItem>>
 
     @Query("SELECT * FROM exercise_table ORDER BY id ASC")
-    fun getAllExercises(): LiveData<List<ExerciseDataItem>>
+    fun getAllExercises(): Flow<List<ExerciseDataItem>>
 
     @Query("SELECT * FROM exercise_table WHERE workoutId =:workoutId")
-    fun getExerciseListByWorkoutId(workoutId: Int): LiveData<List<ExerciseDataItem>>
+    fun getExerciseListByWorkoutId(workoutId: Int): Flow<List<ExerciseDataItem>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkout(user: WorkoutDataItem)

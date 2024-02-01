@@ -47,9 +47,9 @@ public val sourceListAnswersQuestionBodyPartExample = mutableListOf<OnBoardingAn
     add(answerItem_3)
 }
 
-
+/*
 public val sourceListMyTrainsExample = mutableListOf<WorkoutDataItem>().apply {
-    val workoutItem =  WorkoutDataItem(0, "Здоровая спина", 7, BodyType.BOTTOM_BODY.toString(),
+    val workoutItem =  WorkoutDataItem(0, workoutId = 0, "Здоровая спина", 7, BodyType.BOTTOM_BODY.toString(),
         0, false, false, false)
     add(workoutItem)
     add(workoutItem)
@@ -59,26 +59,29 @@ public val sourceListMyTrainsExample = mutableListOf<WorkoutDataItem>().apply {
 }
 
 public val sourceListTrainsForYouExample = mutableListOf<WorkoutDataItem>().apply {
-    val workoutItem_0 =  WorkoutDataItem(0, "Взбодрись утром!", 10,  BodyType.FULL_BODY.toString(),
+    val workoutItem_0 =  WorkoutDataItem(0,  workoutId = 0,"Взбодрись утром!", 10,  BodyType.FULL_BODY.toString(),
         0, false, false, false)
     add(workoutItem_0)
-    val workoutItem_1 =  WorkoutDataItem(1, "Сбросить стресс перед сном", 9, BodyType.UPPER_BODY.toString(),
+    val workoutItem_1 =  WorkoutDataItem(1,  workoutId = 1,"Сбросить стресс перед сном", 9, BodyType.UPPER_BODY.toString(),
         0, false, true, false)
     add(workoutItem_1)
-    val workoutItem_2 =  WorkoutDataItem(2, "Стальной пресс за 8 минут", 7, BodyType.ABD.toString(),
+    val workoutItem_2 =  WorkoutDataItem(2,  workoutId = 2,"Стальной пресс за 8 минут", 7, BodyType.ABD.toString(),
         0, false, true, false)
     add(workoutItem_2)
-    val workoutItem_3 =  WorkoutDataItem(3, "Сильные руки", 11, BodyType.UPPER_BODY.toString(),
+    val workoutItem_3 =  WorkoutDataItem(3,  workoutId = 3,"Сильные руки", 11, BodyType.UPPER_BODY.toString(),
         0, false, true, false)
     add(workoutItem_3)
-    val workoutItem_4 =  WorkoutDataItem(4, "Здоровая спина", 7, BodyType.FULL_BODY.toString(),
+    val workoutItem_4 =  WorkoutDataItem(4,  workoutId = 4,"Здоровая спина", 7, BodyType.FULL_BODY.toString(),
         0, false, true, false)
     add(workoutItem_4)
-    val workoutItem_5 =  WorkoutDataItem(4, "Здоровые ноги", 7, BodyType.BOTTOM_BODY.toString(),
+    val workoutItem_5 =  WorkoutDataItem(4,  workoutId = 0,"Здоровые ноги", 7, BodyType.BOTTOM_BODY.toString(),
         0, false, true, false)
     add(workoutItem_5)
 
 }
+*/
+
+/*
 public val sourceListPopularExample = mutableListOf<WorkoutDataItem>().apply {
     val workoutItem_0 =  WorkoutDataItem(0, "Здоровые ноги", 7, BodyType.BOTTOM_BODY.toString(),
         0, false, true, false)
@@ -108,7 +111,10 @@ public val sourceListPopularExample = mutableListOf<WorkoutDataItem>().apply {
         0, false, false, false)
     add(workoutItem_8)
 }
+*/
 
+
+/*
 private val sourceListFavouriteExample = mutableListOf<WorkoutDataItem>().apply {
     val workoutItem =  WorkoutDataItem(0, "Здоровая спина", 7, BodyType.FULL_BODY.toString(),
         0, false, false, false)
@@ -143,3 +149,4 @@ public val sourceListSearchResultExample = mutableListOf<WorkoutDataItem>().appl
     add(workoutItem_6)
 }
 
+*/
