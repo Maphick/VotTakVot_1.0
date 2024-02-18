@@ -15,9 +15,11 @@ import com.example.vottakvot.ViewModel.InquirerViewModel
 import com.example.vottakvot.ViewModel.SplashViewModel
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.WorkoutDataItem
+import com.example.vottakvot.navigation.screens.ExerciseListScreen
 import com.example.vottakvot.navigation.screens.ExerciseScreen
 import com.example.vottakvot.navigation.screens.FilterScreen
 import com.example.vottakvot.navigation.screens.HomeScreen
+import com.example.vottakvot.navigation.screens.MyTrainsScreen
 import com.example.vottakvot.navigation.screens.SearchResultScreen
 import com.example.vottakvot.navigation.screens.WorkoutScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -40,6 +42,9 @@ fun SetupNavGraph(
     welcomeScreenContent: @Composable () -> Unit,
     myTrainsContent: @Composable () -> Unit,
     editOneTrainsContent: @Composable () -> Unit,
+    preparationContent: @Composable () -> Unit,
+    doingContent: @Composable () -> Unit,
+    restContent: @Composable () -> Unit,
     favouriteContent: @Composable () -> Unit,
     profileContent: @Composable () -> Unit,
 ) {
@@ -97,6 +102,13 @@ fun SetupNavGraph(
             ExerciseScreen(
                 navController = navController,
                 trainList = trainListForYou
+            )
+        }
+        composable(route = Screen.MyExercise.route) {
+            ExerciseScreen(
+                navController = navController,
+                trainList = trainListForYou,
+                isVisibleAddExercise = true
             )
         }
         composable(route = Screen.Workout.route) {
@@ -192,11 +204,35 @@ fun SetupNavGraph(
         }
         //---------------------------------------------------------
         composable(route = Screen.MyTrains.route) {
-            myTrainsContent()
+            myTrainsContent(
+            )
         }
         // редактирование тренировки
         composable(route = Screen.EditOneTrain.route) {
             editOneTrainsContent()
+        }
+        composable(route = Screen.ExerciseList.route) {
+            ExerciseListScreen(
+                navController = navController,
+                trainList = trainListForYou,
+                workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
+            )
+        }
+        //  подготовка к тренировке
+        composable(route = Screen.Preparation.route) {
+            preparationContent(
+                //navController = navController,
+                //trainList = trainListForYou,
+                //workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
+            )
+        }
+        //  запуск тренировки
+        composable(route = Screen.Doing.route) {
+             doingContent()
+        }
+        //  отдых между упражнениями
+        composable(route = Screen.Rest.route) {
+            restContent()
         }
         composable(route = Screen.Favourite.route) {
             favouriteContent()

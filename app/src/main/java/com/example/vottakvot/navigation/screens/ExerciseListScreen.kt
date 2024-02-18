@@ -30,7 +30,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,48 +61,69 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.P)
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class,
     ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class
 )
 @Composable
-fun WorkoutScreen(
-    //typeList: Int = 0,
+fun ExerciseListScreen(
     navController: NavHostController,
     trainList: TrainListViewModel,
     workoutItem: WorkoutDataItem
 ) {
-            val context = LocalContext.current
-            workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
+    val context = LocalContext.current
+    val workoutIndex = trainList.currentWorkoutId
+    var workoutItem = trainList.findWorkoutById(workoutIndex)
+
+    /*
+    val yourWorkouts = trainList
+        .workoutListGeneral
+        .observeAsState(listOf())
+*/
+    val yourExercises = trainList
+        .exerciseListGeneral
+        .observeAsState(listOf())
+
+    if ((yourExercises.value != null) && (yourExercises.value.size != 0)) {
+        // сформировать список тренировок
+        //trainList.makeExerciseList()
+
+
+        // workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
+        //-24trainList.getAllExerciseForWorkout(workoutItem)
+        //trainList.workoutListGeneral.value?.get(0)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        )
+        {
+            HeaderBlock(
+                text = "Добавить упражнение",
+                navController = navController,
+                isVisibleAddTrain = false // видно кнопку "добавить в мои"
             )
             {
-                HeaderBlock(
-                    text = "Тренировка",
-                    navController = navController,
-                    isVisibleAddTrain = true // видно кнопку "добавить в мои"
-                )
-                {
-                    //Добавить тренировку в мои
-                    workoutItem.isAddedToMyTrainList = true
-                    trainList.updateWorkout(workoutItem)
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                )
-                {
 
+            }
+            Box(
+                modifier = Modifier
+                    //.background(Color.Yellow)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                // horizontalAlignment = Alignment.CenterHorizontally,
+                // verticalArrangement = Arrangement.Top
+            )
+            {
+                var isClicked by mutableStateOf(false)
                 LazyColumn(
                     modifier = Modifier
+                        //.background(Color.Green)
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
@@ -114,62 +138,50 @@ fun WorkoutScreen(
                     // для свайпа влево
                     item {
                         if (workoutItem != null) {
-                            LazyColumnWorkoutItem(
-                                navController = navController,
-                                workoutItem = workoutItem
-                            )
-                            for (exercise in workoutItem.exerciseList) {
+                            for (exercise in yourExercises.value) {
+
                                 ExerciseCard(
                                     exerciseItem = exercise,
-                                    onAddToMyTrain = {},
+                                    onAddToMyTrain = {
+                                        // при добавлении в текущую тренировку
+                                        var newExercise = it.copy()
+                                        newExercise.id = UUID.randomUUID().toString()
+                                            //Sequence.nextValue()
+                                        newExercise.workoutId = workoutIndex
+                                        newExercise.title = "my " + newExercise.title
+                                        trainList.addExerciseToWorkout(workoutItem, newExercise)
+                                        Toast.makeText(context,     "Упражнение " + newExercise.title + " было добавлено в мою тренировку " + workoutItem.title, Toast.LENGTH_SHORT).show()
+                                    },
                                     onExerciseClickListener = {
                                         trainList.currentExerciseId = it.id
+
                                         GlobalScope.launch {
                                             withContext(Dispatchers.Main) {
                                                 trainList.currentExerciseId = it.id
-                                                navController.navigate(Screen.Exercise.route)
+                                                //isClicked = true
+                                                navController.navigate(Screen.MyExercise.route)
                                             }
                                         }
-                                    }
+                                    },
+                                    isVisibleAddExercise = true // кнопка добавления упражнений в мои тренировки
                                 )
+                                // переход на страницу упражнения
+                                if (isClicked) {
+                                    isClicked = false
+
+                                }
                             }
+
                         }
                     }
                 }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    )
-                    {
-                        // запуск тренировки
-                        StartButton(
-                            modifier = Modifier
-                                //.background(Color.Black)
-                                .padding(
-                                    bottom = 20.dp
-                                )
-                                .fillMaxWidth(1f)
-                                .height(50.dp),
-                            text = stringResource(R.string.start),
-                        ) {
-                            trainList.currentWorkoutId = workoutItem.id
-                            if (workoutItem.exerciseList.size == 0)
-                            {
-
-                                Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
-                            }
-                            else
-                            // переход на страницу подготовки к проигрыванию тренировки
-                            navController.navigate(Screen.Preparation.route)
-                        }
-                    }
-            }
             }
         }
+    }
+}
 
+
+/*
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
@@ -295,7 +307,7 @@ fun  LazyColumnWorkoutItem(
         )
     }
 }
-
+*/
 
 /*
 @Preview

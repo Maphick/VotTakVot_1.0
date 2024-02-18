@@ -11,7 +11,7 @@ import com.google.gson.Gson
 @Entity(tableName = "workout_table")
 data class WorkoutDataItem(
     @PrimaryKey(autoGenerate = false)
-    var id: Int = 0,
+    var id: String = "0",
     //var workoutId: Int = 0,
     var title: String = "Здоровая спина",
     var time: Int = 7,

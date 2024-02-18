@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ExerciseCardBlackPrev">
-        <State />
-      </entry>
       <entry key="FilterBlockWhitePrev">
         <State>
           <runningDeviceTargetSelectedWithDropDown>
@@ -24,10 +21,13 @@
       <entry key="WorkoutCardWhitePrev">
         <State />
       </entry>
-      <entry key="WorkoutScreenScreenBlackPrev">
+      <entry key="WorkoutCardWhitePrev (1)">
         <State />
       </entry>
-      <entry key="WorkoutScreenWhitePrev">
+      <entry key="WorkoutScreenScreenBlackPrev (1)">
+        <State />
+      </entry>
+      <entry key="WorkoutScreenScreenBlackPrev (2)">
         <State />
       </entry>
       <entry key="app">
@@ -43,7 +43,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-01-24T13:27:58.972835Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-02-17T19:28:22.040738Z" />
         </State>
       </entry>
     </value>

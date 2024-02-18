@@ -107,6 +107,9 @@ fun SearchResultScreen(
                         it ->
                     val workoutItem = it
                     WorkoutCard(
+                        navController = navController,
+                        trainList = trainList,
+                        //workoutItem = trainList.findWorkoutById(trainList.currentWorkoutId)
                         //workoutViewModel = workoutViewModel,
                         workoutItem = workoutItem,
                         onCardClickListener = {

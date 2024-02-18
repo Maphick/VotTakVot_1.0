@@ -20,7 +20,8 @@ import java.lang.reflect.Type
 
 class Repository {
     val BASE_URL = "https://exercisedb.p.rapidapi.com/exercises"
-    val X_RapidAPI_Key = "89869e62a7msh8aae2e413f008cap11c8c6jsn17ad74ef16d0"
+    val X_RapidAPI_Key = "568e635a7fmsh455f805266f27cdp16734fjsn3917f09b41c7"
+        //"89869e62a7msh8aae2e413f008cap11c8c6jsn17ad74ef16d0"
         //"1e2a994b1amshca6105b44e649b1p1193cbjsn68a76ceb1446"
         //"89869e62a7msh8aae2e413f008cap11c8c6jsn17ad74ef16d0"
     val X_RapidAPI_Host = "exercisedb.p.rapidapi.com"

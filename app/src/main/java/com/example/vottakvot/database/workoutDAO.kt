@@ -39,10 +39,10 @@ interface WorkoutDao {
     suspend fun updateExercise(exercise: ExerciseDataItem)
 
     @Query("DELETE FROM workout_table where id = :id")
-    suspend fun removeWorkout(id: Int)
+    suspend fun removeWorkout(id: String)
 
     @Query("DELETE FROM exercise_table where id = :id")
-    suspend fun removeExercise(id: Int)
+    suspend fun removeExercise(id: String)
 
 }
 

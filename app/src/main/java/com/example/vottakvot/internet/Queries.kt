@@ -194,7 +194,7 @@ fun getUTrains(
 {
     // запрос к внешнему API
     val repo = Repository()
-    val isInternetOn = repo.makeBodyTypeRequest(bodyType, limit)
+    val isInternetOn = repo.makeBodyTypeRequest(bodyType, 20)
     if (isInternetOn) {
         val workoutEntities = repo.worcoutListEntity
         val transformation = TransormWorkoutEntityToWorkoutDataItem(workoutEntities)

@@ -62,7 +62,7 @@ fun WorkoutNameString(
     isWorkoutNameEditNow: MutableState<Boolean>,
     //users: UserListViewModel,
     stringHeight: Dp = 80.dp,
-    fontSize: TextUnit = 45.sp,
+    fontSize: TextUnit = 30.sp,
     colorText: Color = MaterialTheme.colorScheme.primary,
     onParametrClick: () -> Unit
 ) {
@@ -175,6 +175,7 @@ fun WorkoutNameString(
                         singleLine = true,
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                         textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = fontSize,
                             textAlign = TextAlign.Center,
                         ),
@@ -212,6 +213,8 @@ fun WorkoutNameString(
                                 isSightHeightNow.value = false*/
                                 isWorkoutNameEditNow.value = true
                             },
+                        //maxLines = 1,
+                        lineHeight = 40.sp,
                         text = workoutItem.title.toString(),
                         //currentUser.shootingDistance.toString()  + " " + units,
                         //fontWeight = FontWeight.Bold,

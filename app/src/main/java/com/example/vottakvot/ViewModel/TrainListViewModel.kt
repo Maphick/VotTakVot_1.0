@@ -13,7 +13,11 @@ import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.database.WorkoutDataBase
 import com.example.vottakvot.database.WorkoutRepository
 import com.example.vottakvot.domain.Exercise
+import com.example.vottakvot.navigation.navigationLogic.Screen
+import com.example.vottakvot.navigation.screens.Sequence
 import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
+import java.util.UUID
 
 // общая вью модель для всех списков тренировок
 /*class TrainListViewModel(
@@ -33,8 +37,8 @@ class TrainListViewModel(
 
     //----------------------------------------------------------ОБЩАЯ МОДЕЛЬ СПИСКА ТРЕНИРОВОК
     // список тренировок
-    private var _workoutListGeneral : LiveData<List<WorkoutDataItem>> = MutableLiveData<List<WorkoutDataItem>>()
-    var workoutListGeneral: LiveData<List<WorkoutDataItem>> = MutableLiveData<List<WorkoutDataItem>>()
+    private var _workoutListGeneral = MutableLiveData<List<WorkoutDataItem>>()
+    var workoutListGeneral: LiveData<List<WorkoutDataItem>> = _workoutListGeneral
 
     private var _exerciseListGeneral : LiveData<List<ExerciseDataItem>> = MutableLiveData<List<ExerciseDataItem>>()
     var exerciseListGeneral : LiveData<List<ExerciseDataItem>> = MutableLiveData<List<ExerciseDataItem>>()
@@ -44,10 +48,36 @@ class TrainListViewModel(
    // val workoutListGeneral: LiveData<List<WorkoutDataItem>>
 
     // выбранная тренировка
-    var currentWorkoutId = 0
+    var currentWorkoutId = "0"
     // выбранное упражнение
-    var currentExerciseId = 0
+    var currentExerciseId = "0"
 
+
+    // текущий индекс проигрываемой тренировки
+    var currentExercisePlaying = 0
+    // текущий индекс проигрываемого подхода
+    var currentApproachPlaying = 0
+    // страница, с которой было запущено упражнение
+    var startDest = Screen.Home.route
+
+    fun addToWorkoutList(item : WorkoutDataItem)
+    {
+        val oldWorkouts = workoutListGeneral.value ?: throw IllegalStateException()
+        val newWorkouts = oldWorkouts.toMutableList().apply {
+            replaceAll{ oldItem ->
+                if (oldItem.isAddedToFavourite == item.isAddedToFavourite)
+                {
+                    oldItem.copy()//count = oldItem.count + 1)
+                }
+                else
+                {
+                    oldItem
+                }
+            }
+        }
+
+        _workoutListGeneral.value = workoutListGeneral.value
+    }
 
 
     private val repository: WorkoutRepository
@@ -60,7 +90,7 @@ class TrainListViewModel(
         val allExercise = repository.getAllExercises()
         if (allWorkouts!= null)
         {
-            _workoutListGeneral = allWorkouts.asLiveData()
+            _workoutListGeneral = allWorkouts.asLiveData() as MutableLiveData<List<WorkoutDataItem>>
                     //as LiveData<List<WorkoutDataItem>>
             workoutListGeneral = _workoutListGeneral
             _exerciseListGeneral = allExercise.asLiveData()
@@ -69,6 +99,20 @@ class TrainListViewModel(
                 //MutableLiveData<List<UserDataItem>>
 
 
+    }
+
+    // добавление упражнения в текущую тренировку
+    fun addExerciseToWorkout(workout: WorkoutDataItem, exercise: ExerciseDataItem)
+    {
+        // новый id для упражнения
+        exercise.id = UUID.randomUUID().toString()
+            //Sequence.nextValue()
+        //
+        exercise.workoutId = workout.id
+        // обновить тренировку вместе с упражнением
+        updateWorkout(workout)
+        updateExercise(exercise)
+        //updateWorkoutWithExercise(workout)
     }
 
     fun Update()
@@ -81,7 +125,7 @@ class TrainListViewModel(
         val allExercise = repository.getAllExercises()
         if (allWorkouts!= null)
         {
-            _workoutListGeneral = allWorkouts.asLiveData()
+            _workoutListGeneral = allWorkouts.asLiveData() as MutableLiveData<List<WorkoutDataItem>>
             //as LiveData<List<WorkoutDataItem>>
             workoutListGeneral = _workoutListGeneral
             _exerciseListGeneral = allExercise.asLiveData()
@@ -102,7 +146,7 @@ class TrainListViewModel(
     }
 
 
-    fun getExerciseListForOneWorkout(workoutId: Int) : MutableList<ExerciseDataItem>
+    fun getExerciseListForOneWorkout(workoutId: String) : MutableList<ExerciseDataItem>
     {
         var items = exerciseListGeneral.value?.toMutableList() ?: mutableListOf()
         val _exerciseList = items.filter { it -> it.workoutId == workoutId} as MutableList<ExerciseDataItem>
@@ -151,6 +195,21 @@ class TrainListViewModel(
         }
     }
 
+    fun insertExercise(exercise: ExerciseDataItem?)
+    {
+        if (exercise != null) {
+            try {
+                // currentUser = null
+                viewModelScope.launch {
+                    repository.insertExercise(exercise)
+                }
+                //setCurrentUser(null)
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
     fun updateExercise(exercise: ExerciseDataItem?)
     {
         if (exercise != null) {
@@ -187,6 +246,7 @@ class TrainListViewModel(
         if (workout != null) {
             try {
                 viewModelScope.launch {
+
                     // удаление всех упражнений в тренировке
                     for (exercise in workout.exerciseList) {
 
@@ -212,14 +272,14 @@ class TrainListViewModel(
 
 
 
-    fun removeExercise(id: Int)
+    fun removeExercise(id: String)
     {
         viewModelScope.launch {
             repository.deleteExercise(id)
         }
     }
 
-    fun removeWorkout(id: Int)
+    fun removeWorkout(id: String)
     {
         viewModelScope.launch {
             repository.deleteWorkout(id)
@@ -284,13 +344,19 @@ class TrainListViewModel(
      */
 
 
-    fun findWorkoutById(id: Int): WorkoutDataItem {
+    fun findWorkoutById(id: String): WorkoutDataItem {
         val modifiedList = _workoutListGeneral .value?.toMutableList() ?: mutableListOf()
         var item =  modifiedList.find{it.id == id}
         return item!!
     }
 
-    fun findExerciseById(idWorkout: Int, idExercise: Int): ExerciseDataItem {
+    fun findExerciseById(idExercise: String): ExerciseDataItem {
+        val modifiedList = _exerciseListGeneral.value?.toMutableList() ?: mutableListOf()
+        var item =  modifiedList.find{it.id == idExercise}
+        return item!!
+    }
+
+    fun findExerciseById(idWorkout: String, idExercise: String): ExerciseDataItem {
         val workout = findWorkoutById(idWorkout)
         var item = workout.exerciseList.find{it.id == idExercise}
         return item!!

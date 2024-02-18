@@ -3,6 +3,7 @@
 package com.example.vottakvot.navigation.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,14 +52,17 @@ import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.navigation.navigationLogic.Screen
+import com.example.vottakvot.navigation.screens.Sequence.nextValue
 import com.example.vottakvot.ui.theme.TrainTypeCard
 import com.example.vottakvot.ui.theme.WorkoutCard
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
+
 
 // домашний экран после прохождения онбординга
 // домашний экран
@@ -645,6 +650,7 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
     //trainListMy: TrainListViewModel,
     navController: NavHostController
 ) {
+    val context = LocalContext.current
     val yourTrains = trainList
         .workoutListGeneral
         .observeAsState(listOf())
@@ -657,6 +663,9 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
         for (i in 0..minCount - 1) {
             var workoutItem = yourTrains.value[i]
             WorkoutCard(
+                navController = navController,
+                trainList = trainList,
+                //workoutItem = trainList.findWorkoutById(trainList.currentWorkoutId),
                 //workoutViewModel = workoutViewModel,
                 workoutItem = workoutItem,
                 // клик по карточке
@@ -669,40 +678,46 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
                         }
 
                     }
-
-                    // id текущег упражнения
-
-                    // переход на страницу упражнения
-                     /*WorkoutScreen(
-                       navController = navController ,
-                         trainList = trainList
-                    )*/
-
-
                 },
                 // при добавлении в мои тренировки
                 onAddedClickListener = {
                     // если тренировки нет в списке моих тренировок
                     if (!it.isAddedToMyTrainList) {
+                        // создание новой Моей Тренировки
+                        val newMyTrain = it.copy()
                         // добавляем в мои тренировки как новую тренировку
-                        it.id += 3000
-                        it.isAddedToMyTrainList = true
-                        trainList.insertOneWorkoutWithExercise(it)
+                        newMyTrain.id = UUID.randomUUID().toString()
+                            //nextValue()
+                        newMyTrain.title = "My " + newMyTrain.title
+                        newMyTrain.isAddedToMyTrainList = true
+                        //  добавление упражнений в тренировку
+                        val allExercises = trainList.getExerciseListForOneWorkout(it.id)
                         // добавить упражнения к этой тренировке
+                        for (exercise in allExercises)
+                        {
+                            var ex = exercise.copy(
+                                id = UUID.randomUUID().toString(),
+                                //nextValue(),
+                                workoutId = newMyTrain.id
+                            )
+                            newMyTrain.exerciseList.add(ex)
+                        }
+                        trainList.insertOneWorkoutWithExercise(newMyTrain)
+                        Toast.makeText(context,      it.title + " была добавлена в Мои Тренировки", Toast.LENGTH_SHORT).show()
+
                     }
                     else
                     {
-                        trainList.changeAddedStatusList(it)
+                        //trainList.changeAddedStatusList(it)
                     }
-
-
-
                     //trainList.changeAddedStatusList(it)
                     //trainListMy.changeAddedStatusList(it)
                 },
                 onLikeClickListener = {
                     //it.isAddedToFavourite= true
                     trainList.changeLikedStatusList(it)
+                    Toast.makeText(context,      it.title + " была добавлена в Избранное", Toast.LENGTH_SHORT).show()
+
                     //trainListFavourite.changeLikedStatusList(it)
                 },
                 onPlayClickListener = {
@@ -713,6 +728,13 @@ private  fun TrainsBlockWithOnBoardingAndInternet (
     }
 }
 
+
+object Sequence {
+    private val counter = AtomicInteger()
+    fun nextValue(): Int {
+        return counter.getAndIncrement()
+    }
+}
 // блок отображающий 3 видимые тренировки для вас или 3 видимые популярные тренировки
 @Composable
 private  fun TrainsBlockPopularWithOnBoardingAndInternet (
@@ -722,6 +744,7 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
     trainListPopular: LiveData<List<WorkoutDataItem>>,
     navController: NavHostController
 ) {
+    val context = LocalContext.current
     //val yourTrains = trainListPopular //trainList.workoutListGeneral.observeAsState(listOf())
     if (trainListPopular.value == null)
         return
@@ -731,6 +754,9 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
             var workoutItem = trainListPopular.value?.get(i)
             if (workoutItem != null) {
                 WorkoutCard(
+                    navController = navController,
+                    trainList = trainListForYou,
+                    //workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
                     //workoutViewModel = workoutViewModel,
                     workoutItem = workoutItem,
                     // клик по карточке
@@ -752,13 +778,47 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
                     },
                     // слушатели клика
                     onAddedClickListener = {
-                        //it.isAddedToMyTrainList = true
-                        trainListForYou.changeAddedStatusList(it)
+                        if (!it.isAddedToMyTrainList) {
+                            // создание новой Моей Тренировки
+                            val newMyTrain = it.copy()
+                            // добавляем в мои тренировки как новую тренировку
+                            newMyTrain.id = UUID.randomUUID().toString()
+                                //nextValue()
+                            newMyTrain.title = "My " + newMyTrain.title
+                            newMyTrain.isAddedToMyTrainList = true
+                            //  добавление упражнений в тренировку
+                            val allExercises = trainListForYou.getExerciseListForOneWorkout(it.id)
+                            // добавить упражнения к этой тренировке
+                            for (exercise in allExercises)
+                            {
+                                var ex = exercise.copy(
+                                    id = UUID.randomUUID().toString(),
+                                    //nextValue(),
+                                    workoutId = newMyTrain.id
+                                )
+                                newMyTrain.exerciseList.add(ex)
+                            }
+                            trainListForYou.insertOneWorkoutWithExercise(newMyTrain)
+                            //trainListForYou.changeAddedStatusList(it)
+                            Toast.makeText(context,  it.title + " была добавлена в Мои Тренировки", Toast.LENGTH_SHORT).show()
+
+                        }
+                        else
+                        {
+                            //trainList.changeAddedStatusList(it)
+                        }
+                       // trainListForYou.changeAddedStatusList(it)
+                        //Toast.makeText(context,      it.title + " была добавлена в Мои Тренировки", Toast.LENGTH_SHORT).show()
+
                         //trainListMy.changeAddedStatusList(it)
                     },
                     onLikeClickListener = {
                         //it.isAddedToFavourite = true
-                        trainListForYou.changeLikedStatusList(it)
+                        it.isAddedToFavourite = true
+                        trainListForYou.insertOneWorkoutWithExercise(it)
+                        //trainListForYou.changeLikedStatusList(it)
+                        Toast.makeText(context,      it.title + " была добавлена в Избранное", Toast.LENGTH_SHORT).show()
+
                         //trainListFavourite.changeLikedStatusList(it)
                     },
                     onPlayClickListener = {
@@ -880,7 +940,7 @@ private fun IconFilterButton(
             modifier = modifier
                 .clip(CircleShape)
                 .clickable {
-                    navController.navigate(Screen.Filter.route,)
+                    navController.navigate(Screen.Filter.route)
                 }
             ,
             imageVector = if (isChanged) {

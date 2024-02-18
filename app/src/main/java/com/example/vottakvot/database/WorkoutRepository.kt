@@ -76,14 +76,14 @@ class WorkoutRepository(private val workoutDao: WorkoutDao) {
         }
     }
 
-    suspend fun deleteWorkout(id: Int) {
+    suspend fun deleteWorkout(id: String) {
         withContext(Dispatchers.IO) {
             workoutDao.removeWorkout(id)
         }
     }
 
 
-    suspend fun deleteExercise(id: Int) {
+    suspend fun deleteExercise(id: String) {
         withContext(Dispatchers.IO) {
             workoutDao.removeExercise(id)
         }

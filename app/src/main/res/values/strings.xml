@@ -17,7 +17,9 @@
     <string name="abd">Пресс</string>
     <string name="workouts_for_you">Тренировки для Вас</string>
     <string name="workouts_my">Мои тренировки</string>
+    <string name="add_exercise">Добавить упражнение</string>
     <string name="popular">Популярные</string>
+    <string name="favourite">Избранные тренировки</string>
     <string name="trains_block_without_onboarding">Если Вы хотите подобрать свой индивидуальный
         план тренировок, то предлагаем Вам пройти небольшой опрос и ответить на вопросы."</string>
     <string name="trains_block_without_internet">Возможно, Вы не подключены к интернету.

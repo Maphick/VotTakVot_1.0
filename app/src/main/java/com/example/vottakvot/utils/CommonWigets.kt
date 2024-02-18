@@ -1,11 +1,16 @@
 package com.example.vottakvot.utils
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIos
@@ -14,6 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.navigation.screens.IconCloseButton
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 
@@ -59,68 +68,112 @@ fun TextBlock(
 fun HeaderBlock(
     text: String = "Тренировка",
     navController: NavHostController,
+    iconResId: ImageVector = Icons.Outlined.PlaylistAdd,
     isVisibleAddTrain: Boolean = false, // видно ли кнопку  "Добавить в мои"
+    goTo: String = Screen.Home.route,
+    isPlay: Boolean = false, // проигрывается ли тренировка
     addTrainToMy: () -> Unit
 )
 {
-    Box(
+    Row(
         modifier = Modifier
             .padding(
-                top = 8.dp,
-                start = 8.dp
+                //top = 8.dp,
+                //start = 8.dp
             )
-            .fillMaxWidth(1f),
+            .height(80.dp)
+            .fillMaxSize(),
         // verticalAlignment = Alignment.CenterVertically,
         // horizontalArrangement = Arrangement.Center
     )
     {
-        IconCloseButton(
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .size(
-                    35.dp
-                )
-                .padding(
-                    top = 8.dp,
-                    //start = 8.dp
-                ),
-            horizontalArrangement = Arrangement.Start,
-            iconResId = Icons.Outlined.ArrowBackIos,
-            iconResIdPressed = Icons.Outlined.ArrowBackIos,
-            isChanged = true
+                    //.background(Color.Gray)
+                    .weight(0.1f)
+                    .height(80.dp)
         )
         {
-            navController.popBackStack()
-        }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(
-                    // start = 8.dp
-                ),
-            text = text,
-            fontSize = 30.sp,
-            textAlign = TextAlign.Center,
-            //fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        // если видно кнопку  "Добавить в Мои"
-        if (isVisibleAddTrain) {
             IconCloseButton(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CircleShape)
                     .size(
                         35.dp
                     )
                     .padding(
-                        // top = 16.dp,
+                        //top = 8.dp,
                         //start = 8.dp
                     ),
-                iconResId = Icons.Outlined.PlaylistAdd,
-                iconResIdPressed = Icons.Outlined.PlaylistAdd,
+               // horizontalArrangement = Arrangement.Start,
+                iconResId = Icons.Outlined.ArrowBackIos,
+                iconResIdPressed = Icons.Outlined.ArrowBackIos,
                 isChanged = true
             )
             {
-                addTrainToMy()
-                //navController.popBackStack()
+                if (!isPlay)
+                    // в обычном случае возврат назад
+                    navController.popBackStack()
+                else
+                {
+                    //  в случае проигрывания тренировки - возврат к домашней странице
+                    navController.navigate(goTo)
+                }
+            }
+        }
+        Row(
+            modifier = Modifier
+                //.background(Color.Blue)
+                .weight(0.8f)
+                .height(60.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Text(
+                modifier = Modifier
+                    //.background(Color.Blue)
+                    //.weight(0.6f)
+                    .padding(
+                        // start = 8.dp
+                    ),
+                text = text,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                //fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+        // если видно кнопку  "Добавить в Мои"
+        if (isVisibleAddTrain) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    //.background(Color.Gray)
+                    .weight(0.1f)
+                    .height(80.dp)
+            )
+            {
+                IconCloseButton(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        //.fillMaxSize()
+                        .size(35.dp)
+                        .padding(
+                            // top = 16.dp,
+                            //start = 8.dp
+                        ),
+                    iconResId = iconResId,
+                    iconResIdPressed = iconResId,
+                    isChanged = true
+                )
+                {
+                    addTrainToMy()
+                    //navController.popBackStack()
+                }
             }
         }
     }

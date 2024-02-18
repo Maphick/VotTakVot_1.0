@@ -1,5 +1,6 @@
 package com.example.vottakvot.ui.theme
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,19 +33,24 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.BodyType
 import com.example.vottakvot.database.WorkoutDataItem
+import com.example.vottakvot.navigation.navigationLogic.Screen
 
 @Composable
 fun WorkoutCard(
+    navController: NavHostController,
+    trainList: TrainListViewModel,
     workoutItem: WorkoutDataItem,
     onCardClickListener: (WorkoutDataItem) -> Unit,
     onPlayClickListener: (WorkoutDataItem) -> Unit,
     onAddedClickListener: (WorkoutDataItem) -> Unit,
     onLikeClickListener: (WorkoutDataItem) -> Unit,
 ) {
+    val context = LocalContext.current
     // это нужно, т.к. компоуз не умеет работать с лайвдатой напрямую
     // val isPlaying = workoutViewModel.isPlaying.observeAsState(false)
     // val isAddedToMyTrainList = workoutViewModel.isAddedToMyTrainList.observeAsState(false)
@@ -125,7 +132,17 @@ fun WorkoutCard(
                         isChanged = workoutItem.isAddedToMyTrainList
                     )
                     {
-                        onAddedClickListener(workoutItem)
+                        trainList.currentWorkoutId = workoutItem.id
+                        // переход на страницу подготовки к проигрыванию тренировки
+                        if (workoutItem.exerciseList.size == 0)
+                        {
+
+                            Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
+                        }
+                        else
+                        // переход на страницу подготовки к проигрыванию тренировки
+                            navController.navigate(Screen.Preparation.route)
+                        //onAddedClickListener(workoutItem)
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     // добавление тренировки в избранное
@@ -190,7 +207,17 @@ fun WorkoutCard(
                         isChanged = workoutItem.isPlaying,
                         iconColor = colorScheme.primary
                     ) {
-                        onPlayClickListener(workoutItem)
+                        trainList.currentWorkoutId = workoutItem.id
+                        // переход на страницу подготовки к проигрыванию тренировки
+                        trainList.currentWorkoutId = workoutItem.id
+                        if (workoutItem.exerciseList.size == 0)
+                        {
+
+                            Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
+                        }
+                        else
+                        // переход на страницу подготовки к проигрыванию тренировки
+                            navController.navigate(Screen.Preparation.route)
                     }
                 }
             }

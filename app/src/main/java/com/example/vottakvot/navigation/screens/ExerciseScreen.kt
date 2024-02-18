@@ -1,6 +1,9 @@
 package com.example.vottakvot.navigation.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +30,7 @@ import com.example.vottakvot.R
 import com.example.vottakvot.ViewModel.TrainListViewModel
 import com.example.vottakvot.database.BodyType
 import com.example.vottakvot.database.ExerciseDataItem
+import com.example.vottakvot.ui.theme.Gif
 import com.example.vottakvot.ui.theme.TimeAndBodyPart
 import com.example.vottakvot.ui.theme.VotTakVotTheme
 import com.example.vottakvot.utils.HeaderBlock
@@ -35,16 +39,17 @@ import com.example.vottakvot.utils.TextBlock
 
 @Composable
 fun ExerciseScreen(
-    typeList: Int = 0,
     navController: NavHostController,
     trainList: TrainListViewModel,
+    isVisibleAddExercise: Boolean = false, // видно ли кнопку добавления
+    //onAddToMyTrain: (ExerciseDataItem) -> Unit, // при добавлении в мою текущую тренировку
     ) {
 
     val workoutIndex = trainList.currentWorkoutId
     val exerciseIndex = trainList.currentExerciseId
 
     var workoutItem = trainList.findWorkoutById(workoutIndex)
-    var exerciseItem = trainList.findExerciseById(workoutIndex, exerciseIndex)
+    var exerciseItem = trainList.findExerciseById(exerciseIndex)
 
 
 
@@ -56,11 +61,12 @@ fun ExerciseScreen(
     {
         HeaderBlock(
             text = "Упражнение",
-            navController = navController
+            navController = navController,
+            isVisibleAddTrain  = isVisibleAddExercise, //  видно ли кнопку добавления тренировки
         )
         {
             //  Добавить упражнение в свои?
-
+            trainList.addExerciseToWorkout(workoutItem, exerciseItem)
         }
         // Порядок выполнения
         LazyColumn(
@@ -133,6 +139,7 @@ fun ExerciseScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun  LazyColumnExerciseItem(
     navController: NavHostController,
@@ -140,13 +147,27 @@ fun  LazyColumnExerciseItem(
 )
 {
     val instructionsCount = exerciseItem.instructionList.instructions.size
-    Image(
+    /*Image(
         painter = painterResource(id = R.drawable.exercise),
         contentDescription = "Exercise Screen",
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
+    )*/
+    Row(
+        modifier = Modifier
+            //.background(Color.Red)
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth(1f)
     )
+    {
+        Gif(
+            gifUrl = exerciseItem.url,
+            //modifier = Modifier
+                //.width(150.dp)
+                //.height(100.dp)
+        )
+    }
     Spacer(modifier = Modifier.height(16.dp))
     if (exerciseItem != null) {
         TextBlock(
@@ -157,10 +178,10 @@ fun  LazyColumnExerciseItem(
         )
         Spacer(modifier = Modifier.height(16.dp))
         val bodyType =  when (exerciseItem.bodyType) {
-            "Пресс" ->  BodyType.ABD
-            "Верхняя часть" ->  BodyType.UPPER_BODY
-            "Нижняя часть" ->  BodyType.BOTTOM_BODY
-            "Все тело" ->  BodyType.FULL_BODY
+            "ABD" ->  BodyType.ABD
+            "UPPER_BODY" ->  BodyType.UPPER_BODY
+            "BOTTOM_BODY" ->  BodyType.BOTTOM_BODY
+            "FULL_BODY" ->  BodyType.FULL_BODY
             else -> {
                 BodyType.FULL_BODY
             }

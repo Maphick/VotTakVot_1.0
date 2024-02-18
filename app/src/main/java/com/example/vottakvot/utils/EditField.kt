@@ -54,37 +54,21 @@ import com.example.vottakvot.database.WorkoutDataItem
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RepetitionString(
-    navController: NavHostController,
-    exerciseItem: ExerciseDataItem,
-    workoutItem: WorkoutDataItem,
-    trainList: TrainListViewModel,
     step: Int,
+    repetitionValue: Int, // текущее значение повтора
     editingStep: MutableState<Int>,
     focusRequester: FocusRequester,
     isRepetitionEditNow: MutableState<Boolean>,
-    //users: UserListViewModel,
     stringHeight: Dp = 30.dp,
     fontSize: TextUnit = 15.sp,
     colorText: Color = MaterialTheme.colorScheme.primary,
     minValue: Int = 10,
     maxValue: Int = 50,
-    onParametrClick: () -> Unit
+    onParametrClick: () -> Unit,
+    onValueChange: (Int) -> Unit // при изменении значения параметра
 ) {
-    val yourExercises = trainList
-        .exerciseListGeneral
-        .observeAsState(listOf())
-
-
-   // var exercise = ExerciseDataItem()
-    //var step = 0
-    // текущее упражнение
-    //val currentExercise = trainList.findExerciseById(exerciseItem)
-
     // текущее значение повтора
-    var value = exerciseItem.repetitions.repetitions[step]
-        //yourExercises.value
-        //exercise.repetitions.repetitions[step]
-    val windowInfo = LocalWindowInfo.current
+    var value = repetitionValue
     // первоначальное значение
     var stateText by remember {
         mutableStateOf(TextFieldValue(value.toString()))
@@ -93,7 +77,6 @@ fun RepetitionString(
 
     Row(
         modifier = Modifier
-            //.background(Color.Gray)
             .clickable {
                 onParametrClick()
             }
@@ -129,11 +112,8 @@ fun RepetitionString(
                             val v = it.text.toIntOrNull()
                             if ((v!=null) && (v.toInt() <= maxValue)) {
                                 stateText = it
-                                exerciseItem.repetitions.repetitions[step] = v
-
-                                // обновить текущее упражнение
-                                trainList.updateExercise(exerciseItem)
-                                //currentUser.shootingDistance = v
+                                // изменить значение повторений
+                                onValueChange(v)
                             }
                         },
                         modifier = Modifier
@@ -173,12 +153,8 @@ fun RepetitionString(
                                 {
                                     stateText = TextFieldValue(minValue.toString())
                                 }
-                                exerciseItem.repetitions.repetitions[step] = stateText.text.toInt()
-                                // обновить значение в базе
-                                trainList.updateExercise(exerciseItem)
-
-                                /*currentUser.shootingDistance = stateText.text.toInt()
-                                users.updateUser(currentUser)*/
+                                // изменить значение повторений
+                                onValueChange(stateText.text.toInt())
                                 isRepetitionEditNow.value = false
                                 editingStep.value = -1
                             }
@@ -186,15 +162,11 @@ fun RepetitionString(
                         singleLine = true,
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                         textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = fontSize,
                             textAlign = TextAlign.End,
                         ),
                     )
-
-                    /*LaunchedEffect(focusRequester) {
-                        delay(100)
-                        focusRequester.requestFocus()
-                    }*/
                 }
             } else {
                 Row(
@@ -217,29 +189,18 @@ fun RepetitionString(
                     {
                         stateText = TextFieldValue(minValue.toString())
                     }
-                    exerciseItem.repetitions.repetitions[step] = stateText.text.toInt()
-                    // обновить значение в базе
-                    trainList.updateExercise(exerciseItem)
-
-                    /*currentUser.shootingDistance = stateText.text.toInt()
-                    users.updateUser(currentUser)*/
+                    // изменить значение повторений
+                    onValueChange(stateText.text.toInt())
                     Text(
                         modifier = Modifier
                             .clickable {
-                                /*isRiflingDirectionNow.value = false
-                                isRiflingPitchNow.value = false
-                                isSightHeightNow.value = false*/
                                 isRepetitionEditNow.value = true
                             },
-                        text = exerciseItem.repetitions.repetitions[step].toString(),
-                        //currentUser.shootingDistance.toString()  + " " + units,
-                        //fontWeight = FontWeight.Bold,
-                        //fontSize = 20.sp,
+                        text = stateText.text,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
-
         }
     }
 }

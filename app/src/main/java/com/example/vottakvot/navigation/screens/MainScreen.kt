@@ -108,6 +108,9 @@ fun NavigationHomeScreen(
         Screen.Inquirer.route -> false // опрос
         Screen.Workout.route -> false // тренировка
         Screen.Exercise.route -> false // упражнение
+        Screen.Preparation.route -> false // подготовка к упражнению
+        Screen.Doing.route -> false // выполнение упражнения
+        Screen.Rest.route -> false // запуск между подходами
         else -> true // in all other cases show bottom bar
     }
     Scaffold(
@@ -194,6 +197,7 @@ fun navBottomBar(
     }
 
 //  Содержимое страницы
+@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun ContentScreen(
@@ -239,9 +243,8 @@ fun ContentScreen(
             isTrainListGets = isTrainListGets
         )
         },
-
-
-        myTrainsContent = { MyTrainsScreen(
+        myTrainsContent = {
+            MyTrainsScreen(
             navController = navHostController,
             trainList = trainListForYou
         )},
@@ -250,8 +253,35 @@ fun ContentScreen(
                 navController = navHostController,
                 trainList = trainListForYou
             )
+            {
+                trainListForYou.removeExercise(it.id)
+            }
         },
-        favouriteContent = { FavouriteScreen()},
+        preparationContent = {
+            PreparationScreen(
+                navController = navHostController,
+                trainList = trainListForYou,
+                workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
+              )
+        },
+        doingContent = {
+            DoingScreen(
+                navController = navHostController,
+                trainList = trainListForYou,
+                workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
+            )
+        },
+        restContent = {
+            RestScreen(
+                navController = navHostController,
+            trainList = trainListForYou,
+            workoutItem = trainListForYou.findWorkoutById(trainListForYou.currentWorkoutId)
+            )
+        },
+        favouriteContent = { FavouriteScreen(
+            navController = navHostController,
+            trainList = trainListForYou
+        )},
         profileContent = { ProfileScreen()},
         splashViewModel = splashViewModel,
         inquirerViewModel = inquirerViewModel,

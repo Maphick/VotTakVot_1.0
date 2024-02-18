@@ -38,10 +38,11 @@ class TransormWorkoutEntityToWorkoutDataItem(
                     }
 
 
-            val approaches = Random.nextInt(2,4)
+            val approaches = Random.nextInt(1,2)
             val _exercise =
                     ExerciseDataItem(
-                        id = exercise.id.toInt(),
+                        id = exercise.id,
+                            //.toInt(),
                         //exerciseId = exercise.id.toInt(),
                         title = exercise.name,
                         time = Random.nextInt(1, 3),
