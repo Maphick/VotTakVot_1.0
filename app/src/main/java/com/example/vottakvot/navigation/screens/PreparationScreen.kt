@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.vottakvot.ViewModel.TrainListViewModel
+import com.example.vottakvot.database.ExerciseDataItem
 import com.example.vottakvot.database.WorkoutDataItem
 import com.example.vottakvot.navigation.navigationLogic.Screen
 import com.example.vottakvot.ui.theme.Gif
@@ -95,9 +96,15 @@ fun PreparationScreen(
         Toast.makeText(context,    "В тренировке" + workoutItem.title + " ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
         //return
     }
-    val currentExercise = workoutItem.exerciseList[numberExercise]
-    // время выполнения текущего упражнения
-    val currentTime = currentExercise.repetitions.repetitions[numberAproach]
+
+    var currentExercise = ExerciseDataItem()
+    try {
+        currentExercise = workoutItem.exerciseList[numberExercise]
+    }
+    catch (e: Exception)
+    {
+        Log.d("EX", "numberExercise = " +  numberExercise)
+    }
 
     var isPlaying = remember {
         mutableStateOf(true)

@@ -111,7 +111,7 @@ fun EditOneWorkoutScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
                         .fillMaxWidth()
-                        .fillMaxHeight(0.87f)
+                        .fillMaxHeight(0.8f)
                 )
                 {
                     val exercises = yourExercises.value
@@ -221,7 +221,7 @@ fun EditOneWorkoutScreen(
             modifier = Modifier
                 //.background(Color.Red)
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f),
+                .fillMaxHeight(0.9f),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Bottom
         )
@@ -241,7 +241,7 @@ fun EditOneWorkoutScreen(
                             bottom = 8.dp
                         )
                         .height(60.dp)
-                        .fillMaxWidth(0.8f),
+                        .fillMaxWidth(0.9f),
                     text = "Добавить упражнение",
                 )
                 {

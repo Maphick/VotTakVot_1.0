@@ -1,6 +1,7 @@
 package com.example.vottakvot.navigation.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
@@ -83,88 +84,33 @@ import kotlin.math.sin
     var numberExercisePlaying = trainList.currentExercisePlaying
     //var numberExercisePlaying = 0
     // текущий индекс проигрываемого подхода
-
-    if (numberExercisePlaying == workoutItem.exerciseList.size) {
-        navController.navigate(Screen.Home.route)
+    // все упражнения проиграны
+    // переход на домашнюю страницу?
+    if (numberExercisePlaying >= workoutItem.exerciseList.size) {
+        /*Finish(
+            navController = navController
+        )*/
     } else {
-        // текущее упражнение
         var currentExercise = ExerciseDataItem()
         try {
             currentExercise = workoutItem.exerciseList[numberExercisePlaying]
-        } catch (e: Exception) {
-            navController.navigate(Screen.Home.route)
         }
+        catch (e: Exception)
+        {
+            Log.d("EX", "numberExercise = " +  numberExercisePlaying)
+        }
+        // текущее упражнение
+
         // текущий индекс проигрываемого подхода
         //var numberApproachPlaying = 0
         var numberApproachPlaying = trainList.currentApproachPlaying
-        if (numberApproachPlaying >= currentExercise.repetitions.repetitions.size) {
-            ++numberExercisePlaying
-            numberApproachPlaying = 0
-            trainList.currentExercisePlaying = numberExercisePlaying
-            trainList.currentApproachPlaying = numberApproachPlaying
-        }
-        // все упражнения проиграны
-        // переход на домашнюю страницу?
-        if (numberExercisePlaying == workoutItem.exerciseList.size) {
-             //  тренировка окончена
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                )
-                {
-                    HeaderBlock(
-                        text = "",
-                        navController = navController,
-                        iconResId = Icons.Rounded.VolumeUp,
-                        isVisibleAddTrain = true,
-                        isPlay = true
-                    )
-                    {
-
-                    }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    )
-                    {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row(
-                            modifier = Modifier
-                                .padding(
-                                    8.dp
-                                ),
-                            horizontalArrangement = Arrangement.Center
-                        )
-                        {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth(1f)
-                                    .padding(
-
-                                    ),
-                                text = "Тренировка окончена!",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 45.sp,
-                                //fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 45.sp
-                            )
-                        }
-                    }
-                }
-        } else {
             var currentTime = 0
             try {
-                // время выполнения текущего упражнения
                 currentTime = currentExercise.repetitions.repetitions[numberApproachPlaying]
-            } catch (e: Exception) {
-                navController.navigate(Screen.Home.route)
+            }
+            catch (e: Exception)
+            {
+                Log.d("EX", "numberApproachPlaying = " +  numberApproachPlaying)
             }
             var isPlaying = remember {
                 mutableStateOf(true)
@@ -188,7 +134,6 @@ import kotlin.math.sin
 
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                val gifurl = "https://v2.exercisedb.io/image/ozgMekY0bIcGND"
                 if (isPlaying.value) {
                     val a = ""
                 }
@@ -219,14 +164,12 @@ import kotlin.math.sin
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
-                            //trainList.currentExercisePlaying = 0
-                            //trainList.currentApproachPlaying = 0
                             Timer(
                                 isDoingNow = true, // идет проигрывание тренировки
                                 trainList = trainList,
                                 navController = navController,
                                 isPlaying = isPlaying,
-                                totalTime = 10L * 1000L,
+                                totalTime = currentTime * 1000L,
                                 handleColor = MaterialTheme.colorScheme.primary,
                                 inactiveBarColor = MaterialTheme.colorScheme.background,
                                 activeBarColor = MaterialTheme.colorScheme.primary,
@@ -234,7 +177,7 @@ import kotlin.math.sin
                                     .size(120.dp),
                                 skipTo =
                                 // если это последнее упражнение - переход к домашнему экрану
-                                if (numberExercisePlaying == workoutItem.exerciseList.size - 1) {
+                                if (numberExercisePlaying == workoutItem.exerciseList.size ) {
                                     Screen.Home.route
                                 }
                                 // если нет - к экрану отдыха
@@ -278,7 +221,6 @@ import kotlin.math.sin
                             //lineHeight = 25.sp
                         )
                     }
-                    //Spacer(modifier = Modifier.width(8.dp))
                     Row(
                         modifier = Modifier
                             .weight(0.1f)
@@ -298,8 +240,9 @@ import kotlin.math.sin
                 }
             }
         }
+
     }
-}
+
 
 @Composable
 fun Timer(
@@ -344,7 +287,6 @@ fun Timer(
             navController.navigate(skipTo)
         }
     }
-
     // пауза
     Row()
     {
@@ -357,10 +299,10 @@ fun Timer(
                         if (currentTime <= 0L) {
                             currentTime = totalTime
                             isTimerRunning = true
-                            isPlaying.value = true
+                            //isPlaying.value = true
                         } else {
                             isTimerRunning = !isTimerRunning
-                            isPlaying.value = false
+                            //isPlaying.value = false
                         }
                     }
                     .weight(0.3f),
@@ -469,6 +411,7 @@ fun Timer(
             Row(
                 modifier = Modifier
                     .clickable {
+
                         // переход на страницу с отдыхом
                         //trainList.currentExercisePlaying = 0
                         //trainList.currentApproachPlaying++
@@ -486,8 +429,10 @@ fun Timer(
                         .clip(CircleShape)
                         .clickable {
                             // переход на страницу с отдыхом
-                            ++trainList.currentApproachPlaying
-                            navController.navigate(Screen.Rest.route)
+                            trainList.currentApproachPlaying++
+                            navController.navigate(skipTo)
+                            //++trainList.currentApproachPlaying
+                            //navController.navigate(Screen.Rest.route)
                         },
                     //.fillMaxWidth(1f)
                     //.height(60.dp)
@@ -513,8 +458,65 @@ fun Timer(
 }
 
 
+// окончание тренировки
+@Composable
+fun Finish(
+    navController: NavHostController
+)
+{
+        //  тренировка окончена
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            HeaderBlock(
+                text = "",
+                navController = navController,
+                iconResId = Icons.Rounded.VolumeUp,
+                isVisibleAddTrain = true,
+                isPlay = true
+            )
+            {
 
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            8.dp
+                        ),
+                    horizontalArrangement = Arrangement.Center
+                )
+                {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .padding(
 
+                            ),
+                        text = "Тренировка окончена!",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 45.sp,
+                        //fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 45.sp
+                    )
+                }
+            }
+        }
+    }
 
 
 /*

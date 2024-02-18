@@ -822,7 +822,7 @@ private  fun TrainsBlockPopularWithOnBoardingAndInternet (
                         //trainListFavourite.changeLikedStatusList(it)
                     },
                     onPlayClickListener = {
-                        //trainListForYou.changePlayingStatusList(it)
+                        trainListForYou.changePlayingStatusList(it)
                     }
                 )
             }

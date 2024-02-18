@@ -159,7 +159,7 @@ fun WorkoutScreen(
                             if (workoutItem.exerciseList.size == 0)
                             {
 
-                                Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context,    "В тренировке " + workoutItem.title + " ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
                             }
                             else
                             // переход на страницу подготовки к проигрыванию тренировки

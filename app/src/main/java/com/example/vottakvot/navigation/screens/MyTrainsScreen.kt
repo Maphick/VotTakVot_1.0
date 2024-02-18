@@ -87,7 +87,7 @@ fun MyTrainsScreen(
                 modifier = Modifier
                     //.background(Color.Green)
                     .fillMaxWidth()
-                    .fillMaxHeight(0.87f)
+                    .fillMaxHeight(0.92f)
             )
             {
                 TitleBlock(

@@ -133,16 +133,9 @@ fun WorkoutCard(
                     )
                     {
                         trainList.currentWorkoutId = workoutItem.id
-                        // переход на страницу подготовки к проигрыванию тренировки
-                        if (workoutItem.exerciseList.size == 0)
-                        {
+                        onAddedClickListener(workoutItem)
+                        Toast.makeText(context,  workoutItem.title + " была добавлена в Мои Тренировки", Toast.LENGTH_SHORT).show()
 
-                            Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
-                        }
-                        else
-                        // переход на страницу подготовки к проигрыванию тренировки
-                            navController.navigate(Screen.Preparation.route)
-                        //onAddedClickListener(workoutItem)
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     // добавление тренировки в избранное
@@ -213,7 +206,7 @@ fun WorkoutCard(
                         if (workoutItem.exerciseList.size == 0)
                         {
 
-                            Toast.makeText(context,    "В тренировке " + workoutItem.title + "ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context,    "В тренировке " + workoutItem.title + " ещё нет упражнений. Добавьте хотя бы одно упражнение.", Toast.LENGTH_LONG).show()
                         }
                         else
                         // переход на страницу подготовки к проигрыванию тренировки

@@ -1,5 +1,6 @@
 package com.example.vottakvot.navigation.screens
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,243 +49,219 @@ fun RestScreen(
 ) {
     // чтобы возвращаться на экран, с которго было запущено упражнение
     //navController.popBackStack()
+    // менялось ли название упражнения
+    var exNameChanged = remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
-    //val numberExercise = 0
-    //val numberAproach = 0
-    // val workoutItem = WorkoutDataItem()
-    // workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
-    // текущее упражнение
-    if (trainList.currentExercisePlaying < workoutItem.exerciseList.size) {
+    var numberExercisePlaying = trainList.currentExercisePlaying
+    //var numberExercisePlaying = 0
+    // текущий индекс проигрываемого подхода
+    // все упражнения проиграны
+    // переход на домашнюю страницу?
+    if (numberExercisePlaying >= workoutItem.exerciseList.size) {
+        /*Finish(
+            navController = navController
+        )*/
+    } else {
         var currentExercise = ExerciseDataItem()
-                try {
-                    currentExercise = workoutItem.exerciseList[trainList.currentExercisePlaying]
-                }
-                catch (e: Exception)
-                {
-                    navController.navigate(Screen.Home.route)
-                }
-        // время выполнения текущего упражнения
+        try {
+            currentExercise = workoutItem.exerciseList[numberExercisePlaying]
+        } catch (e: Exception) {
+            Log.d("EX", "numberExercise = " + numberExercisePlaying)
+        }
+        // текущий индекс проигрываемого подхода
+        //var numberApproachPlaying = 0
+        var numberApproachPlaying = trainList.currentApproachPlaying
         var currentTime = 0
         try {
-            currentTime = currentExercise.repetitions.repetitions[trainList.currentApproachPlaying]
+            currentTime = currentExercise.repetitions.repetitions[numberApproachPlaying]
+        } catch (e: Exception) {
+            Log.d("EX", "numberApproachPlaying = " + numberApproachPlaying)
         }
-        catch (e: Exception)
-        {
-            navController.navigate(Screen.Home.route)
+        if (!exNameChanged.value) {
+            if (numberApproachPlaying > currentExercise.repetitions.repetitions.size - 1) {
+                //numberExercisePlaying++
+                //numberApproachPlaying = 0
+                trainList.currentExercisePlaying = numberExercisePlaying + 1
+                trainList.currentApproachPlaying = 0
+                exNameChanged.value = !exNameChanged.value
+            }
         }
-
-        var isPlaying = remember {
-            mutableStateOf(true)
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            HeaderBlock(
-                text = "",
-                navController = navController,
-                iconResId = Icons.Rounded.VolumeUp,
-                isVisibleAddTrain = true,
-                isPlay = true
+        //val numberExercise = 0
+        //val numberAproach = 0
+        // val workoutItem = WorkoutDataItem()
+        // workoutItem.exerciseList = trainList.getExerciseListForOneWorkout(workoutItem.id)
+        // текущее упражнение
+        if (trainList.currentExercisePlaying >= workoutItem.exerciseList.size) {
+            Finish(
+                navController = navController
             )
-            {
-
+        } else {
+            var currentExercise = ExerciseDataItem()
+            //  текущий индекс проигрываемой тренировки
+            var numberExercisePlaying = trainList.currentExercisePlaying
+            try {
+                currentExercise = workoutItem.exerciseList[numberExercisePlaying]
+            } catch (e: Exception) {
+                Log.d("EX", "numberExercise = " + numberExercisePlaying)
+            }
+            var isPlaying = remember {
+                mutableStateOf(true)
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(
+                HeaderBlock(
+                    text = "",
+                    navController = navController,
+                    iconResId = Icons.Rounded.VolumeUp,
+                    isVisibleAddTrain = true,
+                    isPlay = true
+                ) {}
+                Column(
                     modifier = Modifier
-                        .padding(
-                            8.dp
-                        ),
-                    horizontalArrangement = Arrangement.Center
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 )
                 {
-                    Text(
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth(1f)
                             .padding(
-
+                                8.dp
                             ),
-                        text = "Отдых. Далее:",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 45.sp,
-                        //fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 45.sp
+                        horizontalArrangement = Arrangement.Center
                     )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier
-                        //.height(.dp)
-                        .fillMaxWidth(0.6f)
-                        .padding(
-                        ),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                    {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(1f)
+                                .padding(
+
+                                ),
+                            text = "Отдых. Далее:",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 45.sp,
+                            //fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 45.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier
                             //.height(.dp)
-                            .weight(0.9f)
+                            .fillMaxWidth(0.6f)
                             .padding(
                             ),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
+                        Row(
                             modifier = Modifier
+                                //.height(.dp)
+                                .weight(0.9f)
                                 .padding(
                                 ),
-                            text = currentExercise.title,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 26.sp,
-                            maxLines = 3,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Row(
-                        modifier = Modifier
-                            .weight(0.1f)
-                            .padding(
-                            ),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        QuestionButton(
-                            navController = navController,
-                            trainList = trainList,
-                            workoutItem = workoutItem,
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(60.dp))
-                Row(
-                    // color =  MaterialTheme.colorScheme.background,
-                    modifier = Modifier
-                        //.background(Color.Green)
-                        .fillMaxWidth()
-                        .height(120.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .weight(0.4f),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-
-                    }
-                    Row(
-                        modifier = Modifier
-                            //.background(Color.Green)
-                            .weight(0.3f),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            //trainList.currentExercisePlaying = 0
-                            //trainList.currentApproachPlaying = 0
-                            Timer(
-                                trainList = trainList,
-                                navController = navController,
-                                isPlaying = isPlaying,
-                                totalTime = 10L * 1000L,
-                                handleColor = MaterialTheme.colorScheme.primary,
-                                inactiveBarColor = MaterialTheme.colorScheme.background,
-                                activeBarColor = MaterialTheme.colorScheme.primary,
+                            Text(
                                 modifier = Modifier
-                                    //.background(Color.Yellow)
-                                    .size(120.dp)
+                                    .padding(
+                                    ),
+                                text = currentExercise.title,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 26.sp,
+                                maxLines = 3,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
                             )
                         }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                            //.background(Color.Yellow)
-                            .weight(0.4f),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // пропустить приготовление к упражнению
-                        SkipButton(
-                            text = "Пропустить"
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .weight(0.1f)
+                                .padding(
+                                ),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // переход на страницу выполнения упражнени
-                            navController.navigate(Screen.Doing.route)
+                            QuestionButton(
+                                navController = navController,
+                                trainList = trainList,
+                                workoutItem = workoutItem,
+                            ) {
+
+                            }
                         }
                     }
-                }
-            }
-        }
-    }
-    else
-    {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            HeaderBlock(
-                text = "",
-                navController = navController,
-                iconResId = Icons.Rounded.VolumeUp,
-                isVisibleAddTrain = true,
-                isPlay = true
-            )
-            {
-
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(
-                    modifier = Modifier
-                        .padding(
-                            8.dp
-                        ),
-                    horizontalArrangement = Arrangement.Center
-                )
-                {
-                    Text(
+                    Spacer(modifier = Modifier.height(60.dp))
+                    Row(
+                        // color =  MaterialTheme.colorScheme.background,
                         modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(
+                            //.background(Color.Green)
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .weight(0.4f),
+                            horizontalArrangement = Arrangement.End
+                        ) {
 
-                            ),
-                        text = "Тренировка окончена!",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 45.sp,
-                        //fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 45.sp
-                    )
+                        }
+                        Row(
+                            modifier = Modifier
+                                //.background(Color.Green)
+                                .weight(0.3f),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                //trainList.currentExercisePlaying = 0
+                                //trainList.currentApproachPlaying = 0
+                                Timer(
+                                    trainList = trainList,
+                                    navController = navController,
+                                    isPlaying = isPlaying,
+                                    totalTime = 10L * 1000L,
+                                    handleColor = MaterialTheme.colorScheme.primary,
+                                    inactiveBarColor = MaterialTheme.colorScheme.background,
+                                    activeBarColor = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        //.background(Color.Yellow)
+                                        .size(120.dp)
+                                )
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                //.background(Color.Yellow)
+                                .weight(0.4f),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // пропустить приготовление к упражнению
+                            SkipButton(
+                                text = "Пропустить"
+                            ) {
+                                // переход на страницу выполнения упражнени
+                                navController.navigate(Screen.Doing.route)
+                            }
+                        }
+                    }
                 }
             }
         }
